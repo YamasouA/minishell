@@ -43,32 +43,38 @@ void	*ft_calloc(size_t count, size_t size)
     return (reserve_mem);
 }
 
-t_token *create_token(t_kind kind, char c, size_t len)
+t_token *create_token(t_kind kind, char *c, size_t len)
 {
     t_token *token;
     token = ft_calloc(1, sizeof(t_token));
     token->kind = kind;
-    token->str = c;
+    strlcpy(token->str, c, len + 1);
     token->len = len;
     token->next = NULL;
     return token;
 }
 
-bool is_keyword(char *c)
+char *is_keyword(char *c)
 {
     char *kw[] = {"|", ">>", "<<", "<", ">", "$"};
+    char *kw2[] = {"export"};
     int i;
 
     i = 0;
     while (i < 6)
     {
         if (strncmp(kw[i],c, strlen(kw[i])) != 0)
-        {
-            return (true);
-        }
+            return (kw[i]);
         i++;
     }
-    return (false);
+    i = 0;
+    while (i < 1)
+    {
+        if (strncmp(kw2[i], c, strlen(kw2[i])) != 0\
+            && !isalnum(c[strlen(kw2[i])]))
+            return (kw2[i]);
+     }
+    return (NULL);
 }
 
 void print_list(t_token *list)
@@ -76,37 +82,52 @@ void print_list(t_token *list)
     while (list != NULL)
     {
         printf("ENUM: %d\n", list->kind);
-        printf("str: %c\n", list->str);
+        printf("str: %s\n", list->str);
         printf("len: %zu\n", list->len);
 
         list = list->next;
     }
 }
 
+size_t	cmd_len(char *line)
+{
+	char *tmp;
+
+	tmp = line;
+	while (isalnum(*tmp))
+		tmp++;
+	return tmp - line;
+}
+
 void lexer(char *line)
 {
-    size_t  idx;
+    //size_t  idx;
     t_token *head;
     t_token *cur;
-    // char *str;
+    char *kw;
 
-    idx = 0;
-    head = create_token(TK_HEAD, ' ', 0);
+    head = create_token(TK_HEAD, "", 0);
     cur = head;
-    while (line[idx] != '\0')
+    while (*line != '\0')
     {
-        if (ft_isspace(&line[idx])) {
-            idx++;
+        if (ft_isspace(line)) {
+            line++;
             continue;
         }
-        if (isalnum(line[idx]))
-            cur->next = create_token(TK_STR, line[idx], 1);
-        else if (is_keyword(&line[idx]))
-            cur->next = create_token(TK_KEYWORD, line[idx], 1);
+        kw = is_keyword(line);
+	if (kw)
+	{
+	    line += strlen(kw);
+            cur->next = create_token(TK_KEYWORD, line, strlen(kw));
+	}
+        else if (isalnum(*line))
+	{
+            cur->next = create_token(TK_STR, line, cmd_len(line));
+	    line += cmd_len(line);
+	}
         if (cur->next == NULL)
             printf("fuck");
         cur = cur->next;
-        idx++;
     }
     print_list(head);
 

@@ -1,2 +1,5 @@
 *.o
 .vscode/settings.json
+test
+a.out
+*.swp
