@@ -1,3 +1,14 @@
 ls | cat main.c
 ls | asf |,.ma:
 ls | cat | , | .test
+ls -l | grep *.c
+.test
+vim ./libft.c
+
+|
+|||||||||
+> > > >
+cat << delimiter
+ls|>-l
+cat <<< filename
+cat >>> filename

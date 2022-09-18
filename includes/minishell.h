@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "libft.h"
+#include "get_next_line.h"
 
 typedef enum e_token_kind t_kind;
 enum e_token_kind
