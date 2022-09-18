@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "libft.h"
 
 typedef enum e_token_kind t_kind;
 enum e_token_kind

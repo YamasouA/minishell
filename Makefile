@@ -21,8 +21,8 @@ OBJS += $(PARCER_OBJS)
 OBJS += $(LEXER_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
-INCLUDE = -I includes
-
+INCLUDE = -I includes -I ./libft/includes
+LIBFT = libft/libft.a
 
 all: $(NAME)
 
