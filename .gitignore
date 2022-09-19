@@ -4,3 +4,4 @@ test
 a.out
 *.swp
 .DS_STORE
+*.a

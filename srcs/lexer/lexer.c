@@ -50,7 +50,8 @@ size_t	is_keyword(char *c)
 	 tmp = c;
 	 while (i < 1)
 	 {
-	 	if (strncmp(kw3[i], c, strlen(kw3[i])) == 0)
+	 	if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
+			&& is_not_keyword(*(c + 1)))
 		{
 			while (is_not_keyword(*tmp))
 				tmp++;
@@ -90,6 +91,7 @@ void lexer(char *line)
 	t_token *head;
 	t_token *cur;
 	size_t	len;
+	char	*later_quote;
 
 	head = create_token(TK_HEAD, "", 0);
 	cur = head;
@@ -99,6 +101,12 @@ void lexer(char *line)
 		{
 			line++;
 			continue;
+		}
+		if(*line == '\'' || *line == '\"')
+		{
+			later_quote = ft_strchr(line + 1, *line);
+			cur->next = create_token(TK_STR, line, later_quote - line);
+			line += (later_quote - line);
 		}
 		len = is_keyword(line);
 		if (len > 0)

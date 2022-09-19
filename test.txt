@@ -16,3 +16,9 @@ echo $|>ABC
 echo $hello
 echo $ hello
 echo $
+echo "abc def"
+echo "abc"def
+"a\"''"
+echo'abc def'
+echo 'abc'def
+'a\'""'
