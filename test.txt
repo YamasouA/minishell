@@ -12,3 +12,4 @@ cat << delimiter
 ls|>-l
 cat <<< filename
 cat >>> filename
+echo $|>ABC

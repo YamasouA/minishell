@@ -20,7 +20,7 @@ t_token *create_token(t_kind kind, char *c, size_t len)
 
 char *is_keyword(char *c)
 {
-    char *kw[] = {"|", ">>", "<<", "<", ">", "$"};
+    char *kw[] = {"|", ">>", "<<", "<", ">"};
     char *kw2[] = {"export"};
     int i;
 
@@ -93,6 +93,10 @@ void lexer(char *line)
 			line += strlen(kw);
 		}
 //		if (isalnum(*line))
+		else if(*line == '$' && is_not_keyword(*(line + 1)))
+		{
+			cur->next = create_token(TK_EXPAND, line , cmd_len(line));
+		}
 		else if (is_not_keyword(*line))
 		{
 			cur->next = create_token(TK_STR, line, cmd_len(line));

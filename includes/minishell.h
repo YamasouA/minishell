@@ -13,7 +13,8 @@
 typedef enum e_token_kind t_kind;
 enum e_token_kind
 {
-    TK_KEYWORD, // | >> > << < $
+    TK_KEYWORD, // | >> > << <
+	TK_EXPAND, // $
     TK_STR,
     TK_IDENT,
     // TK_NUM,
