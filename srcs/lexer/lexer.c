@@ -1,21 +1,21 @@
 #include "minishell.h"
 
-bool    ft_isspace(char *str)
+bool	ft_isspace(char *str)
 {
-	 return (('\t' <= *str && *str <= '\r') || *str == ' ');
+	return (('\t' <= *str && *str <= '\r') || *str == ' ');
 }
 
 
 t_token *create_token(t_kind kind, char *c, size_t len)
 {
-    t_token *token;
-    token = ft_calloc(1, sizeof(t_token));
-    token->kind = kind;
+	t_token *token;
+	token = ft_calloc(1, sizeof(t_token));
+	token->kind = kind;
 	token->str = (char *)malloc(sizeof(char) * (len + 1));
-    strlcpy(token->str, c, len + 1);
-    token->len = len;
-    token->next = NULL;
-    return token;
+	strlcpy(token->str, c, len + 1);
+	token->len = len;
+	token->next = NULL;
+	return token;
 }
 
 bool	is_not_keyword(char c)
@@ -45,12 +45,12 @@ size_t	is_keyword(char *c)
 			&& !isalnum(c[strlen(kw2[i])]))
 			return (ft_strlen(kw2[i]));
 		i++;
-	 }
-	 i = 0;
-	 tmp = c;
-	 while (i < 1)
-	 {
-	 	if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
+	}
+	i = 0;
+	tmp = c;
+	while (i < 1)
+	{
+		if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
 			&& is_not_keyword(*(c + 1)))
 		{
 			while (is_not_keyword(*tmp))
