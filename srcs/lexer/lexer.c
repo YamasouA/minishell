@@ -27,9 +27,9 @@ size_t	is_keyword(char *c)
 {
 	char	*kw[] = {"|", ">>", "<<", "<", ">"};
 	char	*kw2[] = {"export"};
-	char	*kw3[] = {"$"};
+//	char	*kw3[] = {"$"};
 	int		i;
-	char	*tmp;
+//	char	*tmp;
 
 	i = 0;
 	while (i < 5)
@@ -46,19 +46,19 @@ size_t	is_keyword(char *c)
 			return (ft_strlen(kw2[i]));
 		i++;
 	}
-	i = 0;
-	tmp = c;
-	while (i < 1)
-	{
-		if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
-			&& is_not_keyword(*(c + 1)))
-		{
-			while (is_not_keyword(*tmp))
-				tmp++;
-			return (tmp - c);
-		}
-		i++;
-	}
+//	i = 0;
+//	tmp = c;
+//	while (i < 1)
+//	{
+//		if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
+//			&& is_not_keyword(*(c + 1)))
+//		{
+//			while (is_not_keyword(*tmp))
+//				tmp++;
+//			return (tmp - c);
+//		}
+//		i++;
+//	}
 	return (0);
 }
 
