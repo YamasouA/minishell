@@ -13,3 +13,6 @@ ls|>-l
 cat <<< filename
 cat >>> filename
 echo $|>ABC
+echo $hello
+echo $ hello
+echo $

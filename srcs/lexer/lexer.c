@@ -18,33 +18,47 @@ t_token *create_token(t_kind kind, char *c, size_t len)
     return token;
 }
 
-char *is_keyword(char *c)
-{
-    char *kw[] = {"|", ">>", "<<", "<", ">"};
-    char *kw2[] = {"export"};
-    int i;
-
-    i = 0;
-    while (i < 6)
-    {
-        if (strncmp(kw[i], c, strlen(kw[i])) == 0)
-            return (kw[i]);
-        i++;
-    }
-    i = 0;
-    while (i < 1)
-    {
-        if (strncmp(kw2[i], c, strlen(kw2[i])) == 0\
-            && !isalnum(c[strlen(kw2[i])]))
-            return (kw2[i]);
-		i++;
-     }
-    return (NULL);
-}
-
 bool	is_not_keyword(char c)
 {
 	return (!strchr(" \t|&;()<>", c));
+}
+
+size_t	is_keyword(char *c)
+{
+	char	*kw[] = {"|", ">>", "<<", "<", ">"};
+	char	*kw2[] = {"export"};
+	char	*kw3[] = {"$"};
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	while (i < 5)
+	{
+		if (strncmp(kw[i], c, strlen(kw[i])) == 0)
+			return (ft_strlen(kw[i]));
+		i++;
+	}
+	i = 0;
+	while (i < 1)
+	{
+		if (strncmp(kw2[i], c, strlen(kw2[i])) == 0\
+			&& !isalnum(c[strlen(kw2[i])]))
+			return (ft_strlen(kw2[i]));
+		i++;
+	 }
+	 i = 0;
+	 tmp = c;
+	 while (i < 1)
+	 {
+	 	if (strncmp(kw3[i], c, strlen(kw3[i])) == 0)
+		{
+			while (is_not_keyword(*tmp))
+				tmp++;
+			return (tmp - c);
+		}
+		i++;
+	}
+	return (0);
 }
 
 void print_list(t_token *list)
@@ -75,7 +89,7 @@ void lexer(char *line)
 {
 	t_token *head;
 	t_token *cur;
-	char *kw;
+	size_t	len;
 
 	head = create_token(TK_HEAD, "", 0);
 	cur = head;
@@ -86,16 +100,11 @@ void lexer(char *line)
 			line++;
 			continue;
 		}
-		kw = is_keyword(line);
-		if (kw)
+		len = is_keyword(line);
+		if (len > 0)
 		{
-			cur->next = create_token(TK_KEYWORD, line, strlen(kw));
-			line += strlen(kw);
-		}
-//		if (isalnum(*line))
-		else if(*line == '$' && is_not_keyword(*(line + 1)))
-		{
-			cur->next = create_token(TK_EXPAND, line , cmd_len(line));
+			cur->next = create_token(TK_KEYWORD, line, len);
+			line += len;
 		}
 		else if (is_not_keyword(*line))
 		{
@@ -103,7 +112,7 @@ void lexer(char *line)
 			line += cmd_len(line);
 		}
 		if (cur->next == NULL)
-			printf("fuck");
+			printf("error");
 		cur = cur->next;
 	}
 	print_list(head);

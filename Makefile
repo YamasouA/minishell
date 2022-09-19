@@ -2,8 +2,7 @@ CC = gcc
 # CFLAGS = -Wall -Wextra -Werror -I $(shell brew --prefix readline)/include -g -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 NAME = test
 
-SRCS = readline.c \
-		main.c \
+SRCS = main.c \
 		minishell.c \
 		get_next_line.c \
 		get_next_line_utils.c
