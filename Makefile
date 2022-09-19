@@ -12,13 +12,15 @@ PARCER_FILES = parse.c
 PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 
 LEXER_DIR = srcs/lexer/
-LEXER_FILES = lexer.c
+LEXER_FILES = lexer.c \
+	lexer_utils.c
 LEXER_SRCS = $(addprefix $(LEXER_DIR), $(LEXER_FILES))
 
 LEXER_TEST_SRCS = srcs/lexer/tester.c \
 	get_next_line.c \
 	get_next_line_utils.c \
-	srcs/lexer/lexer.c
+	srcs/lexer/lexer.c \
+	srcs/lexer/lexer_utils.c
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)

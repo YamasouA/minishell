@@ -35,4 +35,9 @@ struct s_token
 void minishell(int argc, char **argv);
 char *read_line();
 void parse(void);
+
+// lexer.c
 void lexer(char *line);
+
+// lexer_utils.c
+void ft_exit(char *msg);

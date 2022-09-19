@@ -86,6 +86,17 @@ size_t	cmd_len(char *line)
 	return tmp - line;
 }
 
+char	*find_quote(char *line, char quote)
+{
+	while (*line != '\0')
+	{
+		if (*line == quote && *(line - 1) != '\\')
+			return (line);
+		line++;
+	}
+	return (NULL);
+}
+
 void lexer(char *line)
 {
 	t_token *head;
@@ -102,17 +113,20 @@ void lexer(char *line)
 			line++;
 			continue;
 		}
-		if(*line == '\'' || *line == '\"')
-		{
-			later_quote = ft_strchr(line + 1, *line);
-			cur->next = create_token(TK_STR, line, later_quote - line);
-			line += (later_quote - line);
-		}
 		len = is_keyword(line);
 		if (len > 0)
 		{
 			cur->next = create_token(TK_KEYWORD, line, len);
 			line += len;
+		}
+		else if(*line == '\'' || *line == '\"')
+		{
+			later_quote = find_quote(line + 1, *line);
+			if (later_quote == NULL)
+				ft_exit("quote number is bad");
+			later_quote += 1;
+			cur->next = create_token(TK_STR, line, later_quote - line);
+			line += (later_quote - line);
 		}
 		else if (is_not_keyword(*line))
 		{

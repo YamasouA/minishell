@@ -22,3 +22,13 @@ echo "abc"def
 echo'abc def'
 echo 'abc'def
 'a\'""'
+'$ABC'
+'$"Hell'
+"'abc"
+">'"
+"<>'"
+$">>>>"
+$"><<"|>
+'$$$'
+'
+"
