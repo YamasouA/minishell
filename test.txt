@@ -31,6 +31,7 @@ $">>>>"
 $"><<"|>
 |"hello"
 abc"defg"
+abc'def'ghi"jkl"mno
 '$$$'
 // ERROR case
 '

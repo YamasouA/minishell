@@ -94,7 +94,6 @@ ssize_t	len_word(char *line)
 			tmp = find_quote(tmp + 1, *tmp);
 			if (tmp == NULL)
 				return -1;
-			return (tmp - line + 1);
 		}
 		tmp++;
 			

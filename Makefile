@@ -41,7 +41,7 @@ all: $(NAME)
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT)
 
-lexer_test: $(LEXER_TEST_OBJS) $(LIBFT)
+ltest: $(LEXER_TEST_OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o lexer_test $(LEXER_TEST_OBJS) $(LIBFT)
 
 $(LIBFT):
