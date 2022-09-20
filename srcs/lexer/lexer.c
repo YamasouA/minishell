@@ -2,7 +2,7 @@
 
 bool	ft_isspace(char *str)
 {
-	return (('\t' <= *str && *str <= '\r') || *str == ' ');
+	return ((*str == '\t' || *str == ' ');
 }
 
 
@@ -10,26 +10,25 @@ t_token *create_token(t_kind kind, char *c, size_t len)
 {
 	t_token *token;
 	token = ft_calloc(1, sizeof(t_token));
+	if (token == NULL)
+		return (NULL);
 	token->kind = kind;
-	token->str = (char *)malloc(sizeof(char) * (len + 1));
-	strlcpy(token->str, c, len + 1);
+	token->str = c;
 	token->len = len;
 	token->next = NULL;
 	return token;
 }
 
-bool	is_not_keyword(char c)
+bool	is_keyword(char c)
 {
-	return (!strchr(" \t|&;()<>", c));
+	return (strchr(" \t|&;()<>", c));
 }
 
-size_t	is_keyword(char *c)
+size_t	len_keyword(char *c)
 {
 	char	*kw[] = {"|", ">>", "<<", "<", ">"};
 	char	*kw2[] = {"export"};
-//	char	*kw3[] = {"$"};
 	int		i;
-//	char	*tmp;
 
 	i = 0;
 	while (i < 5)
@@ -46,19 +45,6 @@ size_t	is_keyword(char *c)
 			return (ft_strlen(kw2[i]));
 		i++;
 	}
-//	i = 0;
-//	tmp = c;
-//	while (i < 1)
-//	{
-//		if (strncmp(kw3[i], c, strlen(kw3[i])) == 0\
-//			&& is_not_keyword(*(c + 1)))
-//		{
-//			while (is_not_keyword(*tmp))
-//				tmp++;
-//			return (tmp - c);
-//		}
-//		i++;
-//	}
 	return (0);
 }
 
@@ -76,16 +62,6 @@ void print_list(t_token *list)
 	}
 }
 
-size_t	cmd_len(char *line)
-{
-	char *tmp;
-
-	tmp = line;
-	while (*tmp && is_not_keyword(*tmp))
-		tmp++;
-	return tmp - line;
-}
-
 char	*find_quote(char *line, char quote)
 {
 	while (*line != '\0')
@@ -97,12 +73,31 @@ char	*find_quote(char *line, char quote)
 	return (NULL);
 }
 
+ssize_t	len_word(char *line)
+{
+	char	*tmp;
+
+	tmp = line;
+	while (*tmp != '\0' && !is_keyword(*tmp))
+	{
+		if (*tmp == '\'' || *tmp == '"')
+		{
+			tmp = find_quote(tmp + 1, *tmp);
+			if (tmp == NULL)
+				return -1;
+			return (tmp - line + 1);
+		}
+		tmp++;
+			
+	}
+	return (tmp - line);
+}
+
 void lexer(char *line)
 {
 	t_token *head;
 	t_token *cur;
-	size_t	len;
-	char	*later_quote;
+	ssize_t	len;
 
 	head = create_token(TK_HEAD, "", 0);
 	cur = head;
@@ -113,25 +108,19 @@ void lexer(char *line)
 			line++;
 			continue;
 		}
-		len = is_keyword(line);
+		len = len_keyword(line);
 		if (len > 0)
 		{
 			cur->next = create_token(TK_KEYWORD, line, len);
 			line += len;
 		}
-		else if(*line == '\'' || *line == '\"')
+		else if (!is_keyword(*line))
 		{
-			later_quote = find_quote(line + 1, *line);
-			if (later_quote == NULL)
-				ft_exit("quote number is bad");
-			later_quote += 1;
-			cur->next = create_token(TK_STR, line, later_quote - line);
-			line += (later_quote - line);
-		}
-		else if (is_not_keyword(*line))
-		{
-			cur->next = create_token(TK_STR, line, cmd_len(line));
-			line += cmd_len(line);
+			len = len_word(line);
+			if (len == -1)
+				ft_exit("hello");
+			cur->next = create_token(TK_STR, line, len);
+			line += len;
 		}
 		if (cur->next == NULL)
 			printf("error");
