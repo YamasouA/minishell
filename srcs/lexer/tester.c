@@ -13,6 +13,8 @@ static void tester(void)
 		printf("\n=========================\n");
 		free(line);
 		line = get_next_line(fd);
+		if (line[0] == '/' && line[1] == '/')
+			continue;
 		if (line == NULL)
 			break;
 		printf("input line: %s\n", line);

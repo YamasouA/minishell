@@ -2,7 +2,7 @@
 
 bool	ft_isspace(char *str)
 {
-	return ((*str == '\t' || *str == ' ');
+	return (*str == '\t' || *str == ' ');
 }
 
 
@@ -51,10 +51,19 @@ size_t	len_keyword(char *c)
 void print_list(t_token *list)
 {
 	char *kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
+	size_t	i;
+
 	while (list != NULL)
 	{
 		printf("ENUM: %s\n", kind[list->kind]);
-		printf("str: %s\n", list->str);
+		printf("str: ");
+		i = 0;
+		while (i < list->len)
+		{
+			printf("%c", *(list->str + i));
+			i++;
+		}
+		printf("\n");
 		printf("len: %zu\n", list->len);
 		printf("\n");
 
@@ -93,14 +102,44 @@ ssize_t	len_word(char *line)
 	return (tmp - line);
 }
 
+void	tokenize(t_token *cur, char *line)
+{
+	ssize_t	len;
+
+	while (*line != '\0')
+	{
+		if (ft_isspace(line)) 
+		{
+			line++;
+			continue;
+		}
+		len = len_keyword(line);
+		if (len > 0)
+			cur->next = create_token(TK_KEYWORD, line, len);
+		else if (!is_keyword(*line))
+		{
+			len = len_word(line);
+			if (len == -1)
+				ft_exit("hello");
+			cur->next = create_token(TK_STR, line, len);
+		}
+		line += len;
+		if (cur->next == NULL)
+			ft_exit("error");
+		cur = cur->next;
+	}
+}
+
 void lexer(char *line)
 {
 	t_token *head;
 	t_token *cur;
-	ssize_t	len;
+	//ssize_t	len;
 
 	head = create_token(TK_HEAD, "", 0);
 	cur = head;
+	tokenize(cur, line);
+	/*
 	while (*line != '\0')
 	{
 		if (ft_isspace(line)) 
@@ -125,6 +164,6 @@ void lexer(char *line)
 		if (cur->next == NULL)
 			printf("error");
 		cur = cur->next;
-	}
+	}*/
 	print_list(head);
 }

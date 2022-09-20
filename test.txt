@@ -29,6 +29,9 @@ echo 'abc'def
 "<>'"
 $">>>>"
 $"><<"|>
+|"hello"
+abc"defg"
 '$$$'
+// ERROR case
 '
 "
