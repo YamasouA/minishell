@@ -1,0 +1,62 @@
+program = linebreak complete_commands linebreak | linebreak
+
+linebreak = newline_list | /* empty */
+
+complete_commands = complete_commands newline_list complete_command | complete_command
+
+newline_list = NEWLINE | newline_list NEWLINE
+
+complete_command = list separator_op | list
+
+list = list separator_op and_or |  and_or
+
+separator_op = '&' | ';'
+
+and_or = pipeline | and_or AND_IF linebreak pipeline | and_or OR_IF  linebreak pipeline
+
+pipeline = pipe_sequence | Bang pipe_sequence
+
+pipe_sequence = command | pipe_sequence '|' linebreak command
+
+Bang = '!'
+
+command = simple_command | compound_command | compound_command redirect_list
+
+simple_command = cmd_prefix cmd_word cmd_suffix | cmd_prefix cmd_word | cmd_prefix | cmd_name cmd_suffix | cmd_name
+
+compound_command = brace_group | subshell | for_clause | case_clause | if_clause | while_clause | until_clause
+
+redirect_list = io_redirect | redirect_list io_redirect
+
+io_redirect = io_file | IO_NUMBER io_file | io_here | IO_NUMBER io_here
+
+io_file = '<' filename | LESSAND filename | '>' filename | GREATAND  filename | DGREAT filename | LESSGREAT filename | CLOBBER filename
+                           '<&'                              '>&'                '>>'                '<<'                '>|'
+
+filename = WORD                      /* Apply rule 2 */
+
+io_here = DLESS here_end | DLESSDASH here_end
+          '>>'　　　　　　　　　'<<-'
+
+here_end = WORD                      /* Apply rule 3 */
+
+cmd_prefix = io_redirect | cmd_prefix io_redirect | ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD
+
+cmd_word = WORD         /* Apply rule 7b */
+
+cmd_name = WORD         /* Apply rule 7a */
+
+cmd_suffix = io_redirect | cmd_suffix io_redirect | WORD | cmd_suffix WORD
+
+brace_group = Lbrace compound_list Rbrace
+
+Lbrace = '{'
+
+Rbrace = '}'
+
+compound_list = linebreak term | linebreak term separator
+
+subshell = '(' compound_list ')'
+
+AND_IF = '&&' 
+OR_IF = '||' 
