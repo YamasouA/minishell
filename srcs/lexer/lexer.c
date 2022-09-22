@@ -5,10 +5,10 @@ bool	ft_isspace(char *str)
 	return (*str == '\t' || *str == ' ');
 }
 
-
-t_token *create_token(t_kind kind, char *c, size_t len)
+t_token	*create_token(t_kind kind, char *c, size_t len)
 {
-	t_token *token;
+	t_token	*token;
+
 	token = ft_calloc(1, sizeof(t_token));
 	if (token == NULL)
 		return (NULL);
@@ -16,7 +16,7 @@ t_token *create_token(t_kind kind, char *c, size_t len)
 	token->str = c;
 	token->len = len;
 	token->next = NULL;
-	return token;
+	return (token);
 }
 
 bool	is_keyword(char c)
@@ -26,9 +26,9 @@ bool	is_keyword(char c)
 
 size_t	len_keyword(char *c)
 {
-	char	*kw[] = {"|", ">>", "<<", "<", ">"};
-	char	*kw2[] = {"export"};
-	int		i;
+	static char	*kw[] = {"|", ">>", "<<", "<", ">"};
+	static char	*kw2[] = {"export"};
+	int			i;
 
 	i = 0;
 	while (i < 5)
@@ -40,7 +40,7 @@ size_t	len_keyword(char *c)
 	i = 0;
 	while (i < 1)
 	{
-		if (strncmp(kw2[i], c, strlen(kw2[i])) == 0\
+		if (strncmp(kw2[i], c, strlen(kw2[i])) == 0 \
 			&& !isalnum(c[strlen(kw2[i])]))
 			return (ft_strlen(kw2[i]));
 		i++;
@@ -48,10 +48,10 @@ size_t	len_keyword(char *c)
 	return (0);
 }
 
-void print_list(t_token *list)
+void	print_list(t_token *list)
 {
-	char *kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
-	size_t	i;
+	static char	*kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
+	size_t		i;
 
 	while (list != NULL)
 	{
@@ -66,7 +66,6 @@ void print_list(t_token *list)
 		printf("\n");
 		printf("len: %zu\n", list->len);
 		printf("\n");
-
 		list = list->next;
 	}
 }
@@ -93,10 +92,9 @@ ssize_t	len_word(char *line)
 		{
 			tmp = find_quote(tmp + 1, *tmp);
 			if (tmp == NULL)
-				return -1;
+				return (-1);
 		}
 		tmp++;
-			
 	}
 	return (tmp - line);
 }
@@ -107,10 +105,10 @@ void	tokenize(t_token *cur, char *line)
 
 	while (*line != '\0')
 	{
-		if (ft_isspace(line)) 
+		if (ft_isspace(line))
 		{
 			line++;
-			continue;
+			continue ;
 		}
 		len = len_keyword(line);
 		if (len > 0)
@@ -129,10 +127,10 @@ void	tokenize(t_token *cur, char *line)
 	}
 }
 
-void lexer(char *line)
+void	lexer(char *line)
 {
-	t_token *head;
-	t_token *cur;
+	t_token	*head;
+	t_token	*cur;
 	//ssize_t	len;
 
 	head = create_token(TK_HEAD, "", 0);
