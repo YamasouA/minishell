@@ -10,6 +10,72 @@ t_node	*new_unary(t_node_kind kind, t_node *expr, t_token *tok)
 
 }
 
+t_node	*io_file()
+{
+	if ( == '<')
+	{
+		filename();
+	}
+	else if (== '>')
+	{
+		filename();
+	}
+	else if ( == ">>")
+	{
+		filename();
+	}
+	else
+		error("OUT!!!");
+	return (node);
+}
+
+t_node *io_here()
+{
+	if (== "<<")
+	{
+		here_end;
+	}
+	else
+		error("OUT!!!");
+	return (node);
+}
+
+t_node	*io_redirect()
+{
+	if (is_io_file())
+	{
+	}
+	else if(is_io_here())
+	{
+	}
+	else
+		error("OUT!!!");
+	return (node);
+}
+
+t_node *cmd_suffix()
+{
+	int	cnt;
+
+	cnt = 0;
+	while (1)
+	{
+		if (is_io_redirect())
+		{
+			io_redirect();
+		}
+		else if (WORD)
+		{
+		}
+		else if (cnt == 0)
+			error("OUT!!!");
+		else
+			break ;
+		cnt = 1;
+	}
+	return (node);
+}
+
 t_node	*command()
 {
 	int	cnt;
@@ -25,10 +91,23 @@ t_node	*command()
 		}
 		else if (cnt == 0)
 			error("OUT!!!");
-		cnt++;
+		else
+			break ;
+		cnt = 1;
 	}
-	if (is_cmd_word
-	
+	if (is_cmd_word())
+	{
+		if (is_cmd_suffix())
+		{
+		}
+	}
+	else if(is_cmd_name())
+	{
+		if (is_cmd_suffix())
+	}
+	else
+		error("OUT!!!");
+	return (node);
 }
 
 t_node	*complete_commands()
