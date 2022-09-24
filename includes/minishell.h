@@ -31,6 +31,30 @@ struct s_token
 	size_t	len;
 };
 
+typedef enum e_node_kind t_node_kind;
+enum e_node_kind
+{
+	ND_PIPE,
+	ND_REDIRECT_IN,
+	ND_REDIRECT_OUT,
+	ND_HEREDOC,
+	ND_APPEND,
+	ND_NULL,
+	ND_ASSIGN,
+	ND_VAR,
+	ND_COMMAND,
+	ND_ARG,
+};
+
+typedef struct s_node t_node;
+struct s_node
+{
+	t_node_kind	kind;
+	t_node		*lhs;
+	t_node		*rhs;
+	char		*str;
+};
+
 
 void minishell(int argc, char **argv);
 char *read_line();

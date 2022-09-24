@@ -1,29 +1,26 @@
-program = complete_commands linebreak | linebreak
+program  ::= complete_commands? linebreak
 
-linebreak = newline | /* empty */
-newline = '\n'
+linebreak  ::= '\n'?
 
-complete_commands =  pipe_sequence
+complete_commands ::= command ( '|' command )*
 
-pipe_sequence = command | pipe_sequence '|' command
+command ::= simple_command
 
-command = simple_command
-
-simple_command = cmd_prefix cmd_word cmd_suffix | cmd_prefix cmd_word | cmd_prefix | cmd_name cmd_suffix | cmd_name
+simple_command ::= ( io_redirect | ASSIGNMENT_WORD )+ ( cmd_word cmd_suffix? )? | cmd_name cmd_suffix?
 
 // コマンドの前では、代入操作が行える
-cmd_prefix = io_redirect | cmd_prefix io_redirect | ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD
+cmd_prefix ::= io_redirect | cmd_prefix io_redirect | ASSIGNMENT_WORD | cmd_prefix ASSIGNMENT_WORD
 
 // コマンドの後ろでは、代入操作は行われず、コマンドの引数として扱われる
-cmd_suffix = io_redirect | cmd_suffix io_redirect | WORD | cmd_suffix WORD
+cmd_suffix ::= ( io_redirect | WORD )+
 
-cmd_word = WORD         /* Apply rule 7b */
-cmd_name = WORD         /* Apply rule 7a */  = がない
+cmd_word ::= WORD         /* Apply rule 7b */
+cmd_name ::= WORD         /* Apply rule 7a */  = がない
 
-io_redirect = io_file | IO_NUMBER io_file | io_here | IO_NUMBER io_here
+io_redirect ::= IO_NUMBER? ( io_file | io_here )
 
-io_file = '<' filename | '>' filename | DGREAT filename
+io_file  ::= ( '<' | '>' | DGREAT ) filename
 
-io_here = DLESS here_end
+io_here  ::= DLESS here_end
 
-here_end = WORD
+here_end ::= WORD
