@@ -124,7 +124,18 @@ t_node	*complete_commands()
 	return (node);
 }
 
-t_node	*cmd(t_token tok)
+bool	peek(t_token **tok, char *op,  int len)
+{
+	while (len-- && *tok != NULL)
+		*tok = (*tok)->next;
+	if ((*tok)->kind != TK_KEYWORD
+		|| (*tok)->len != ft_strlen(op))
+		|| ft_memcmp((*tok)->str, op, (*tok)->len))
+		return (false);
+	return (true);
+}
+
+t_node	*cmd(t_token *tok)
 {
 	t_node	*node;
 	char	*cmd;
@@ -135,11 +146,21 @@ t_node	*cmd(t_token tok)
 	node->kind = ND_COMMAND;
 	node->lhs = NULL;
 	node->rhs = NULL;
-	node->cmd = ;
-	cmd = 
-	while ((tok->kind == TK_KEYWORD && token->str == '|'))
+	node->cmd = ft_substr(tok->str, 0, tok->len);
+	if (node->cmd == NULL)
+		error("OUT!!");
+	while ((tok->kind == TK_KEYWORD && token->str != '|'))
 	{
-		
+		tok = tok->next;
+		tmp = node->cmd;
+		tmp2 = ft_substr(tok->str, 0, tok->len);
+		if (node->cmd == NULL)
+			error("OUT!!");
+		node->cmd = ft_strjoin(node->cmd, tmp2);
+		if (node->cmd == NULL)
+			error("OUT!!");
+		free(tmp);
+		free(tmp2);
 	}
 }
 
