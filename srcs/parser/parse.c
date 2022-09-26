@@ -124,14 +124,41 @@ t_node	*complete_commands()
 	return (node);
 }
 
+t_node	*cmd(t_token tok)
+{
+	t_node	*node;
+	char	*cmd;
+
+	node = (t_node *)malloc(sizeof(t_node) * 1);
+	if (node == NULL)
+		error("OUT!!");
+	node->kind = ND_COMMAND;
+	node->lhs = NULL;
+	node->rhs = NULL;
+	node->cmd = ;
+	cmd = 
+	while ((tok->kind == TK_KEYWORD && token->str == '|'))
+	{
+		
+	}
+}
+
 t_node	*program()
 {
 	t_node	*node;
 
+	/*
 	if (is_complete_commands())
 	{
 		complete_commands();
+	}*/
+	node = cmd();
+	while (token->str == '|' && token->kind == TK_KEYWORD)
+	{
+		consume(token);
+		node = new_binary(node, cmd(), ND_PIPE);
 	}
+
 	return (node);
 }
 
