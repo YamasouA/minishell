@@ -1,138 +1,49 @@
 #include "minishell.h"
 
-t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs, t_token *tok)
-{
-
-}
-
-t_node	*new_unary(t_node_kind kind, t_node *expr, t_token *tok)
-{
-
-}
-
-t_node	*io_file()
-{
-	if ( == '<')
-	{
-		filename();
-	}
-	else if (== '>')
-	{
-		filename();
-	}
-	else if ( == ">>")
-	{
-		filename();
-	}
-	else
-		error("OUT!!!");
-	return (node);
-}
-
-t_node *io_here()
-{
-	if (== "<<")
-	{
-		here_end;
-	}
-	else
-		error("OUT!!!");
-	return (node);
-}
-
-t_node	*io_redirect()
-{
-	if (is_io_file())
-	{
-	}
-	else if(is_io_here())
-	{
-	}
-	else
-		error("OUT!!!");
-	return (node);
-}
-
-t_node *cmd_suffix()
-{
-	int	cnt;
-
-	cnt = 0;
-	while (1)
-	{
-		if (is_io_redirect())
-		{
-			io_redirect();
-		}
-		else if (WORD)
-		{
-		}
-		else if (cnt == 0)
-			error("OUT!!!");
-		else
-			break ;
-		cnt = 1;
-	}
-	return (node);
-}
-
-t_node	*command()
-{
-	int	cnt;
-
-	cnt = 0;
-	while (1)
-	{
-		if (is_io_redirect())
-		{
-		}
-		else if (ASIIGNMENT_WORD)
-		{
-		}
-		else if (cnt == 0)
-			error("OUT!!!");
-		else
-			break ;
-		cnt = 1;
-	}
-	if (is_cmd_word())
-	{
-		if (is_cmd_suffix())
-		{
-		}
-	}
-	else if(is_cmd_name())
-	{
-		if (is_cmd_suffix())
-	}
-	else
-		error("OUT!!!");
-	return (node);
-}
-
-t_node	*complete_commands()
+t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
-	t_token	*tok;
 
-	node = command();
-	while (tok = consume("|"))
-	{
-		node = new_unary(ND_COMMAND, node, node->tok);
-		node = new_binary(ND_PIPE, node, command(), tok);
-	}
+	node = (t_node *)malloc(sizeof(t_node) * 1);
+	if (node == NULL)
+		error("OUT");
+	node->kind = kind;
+	node->lhs = lhs;
+	node->rhs = rhs;
 	return (node);
 }
 
-bool	peek(t_token **tok, char *op,  int len)
+bool	peek(t_token *tok, char *op)
 {
-	while (len-- && *tok != NULL)
-		*tok = (*tok)->next;
-	if ((*tok)->kind != TK_KEYWORD
-		|| (*tok)->len != ft_strlen(op))
-		|| ft_memcmp((*tok)->str, op, (*tok)->len))
+	if (tok->kind != TK_KEYWORD
+		|| tok->len != ft_strlen(op)
+		|| ft_memcmp(tok->str, op, tok->len))
 		return (false);
 	return (true);
+}
+
+bool	*consume(t_token **tok, char *op)
+{
+	t_token *t
+
+	if (!peek(*tok, op))
+		return false;
+	t = *tok;
+	*tok = (*tok)->next;
+	return true;
+}
+
+t_node	*new_node(e_node_kind)
+{
+	t_node	*node;
+
+	node = (t_node *)malloc(sizeof(t_node) * 1);
+	if (node == NULL)
+		error("OUT");
+	node->kind = ND_COMMAND;
+	node->lhs = NULL;
+	node->rhs = NULL;
+	return (node);
 }
 
 t_node	*cmd(t_token *tok)
@@ -140,16 +51,13 @@ t_node	*cmd(t_token *tok)
 	t_node	*node;
 	char	*cmd;
 
-	node = (t_node *)malloc(sizeof(t_node) * 1);
+	node = new_node(ND_COMMAND);
 	if (node == NULL)
 		error("OUT!!");
-	node->kind = ND_COMMAND;
-	node->lhs = NULL;
-	node->rhs = NULL;
 	node->cmd = ft_substr(tok->str, 0, tok->len);
 	if (node->cmd == NULL)
 		error("OUT!!");
-	while ((tok->kind == TK_KEYWORD && token->str != '|'))
+	while (!peek(tok, '|'))
 	{
 		tok = tok->next;
 		tmp = node->cmd;
@@ -164,23 +72,36 @@ t_node	*cmd(t_token *tok)
 	}
 }
 
-t_node	*program()
+t_node	*program(t_token *tok)
 {
 	t_node	*node;
 
-	/*
-	if (is_complete_commands())
-	{
-		complete_commands();
-	}*/
 	node = cmd();
-	while (token->str == '|' && token->kind == TK_KEYWORD)
-	{
-		consume(token);
+	while (consume(tok, '|'))
 		node = new_binary(node, cmd(), ND_PIPE);
-	}
 
 	return (node);
+}
+
+void	print_node(t_node *node, int tab_n)
+{
+	int	cnt;
+
+	cnt = 0;
+	while (cnt++ < tab_n)
+		printf(" ");
+	if (node->lhs == NULL && node->rhs == NULL)
+		printf("node: %s\n", node->cmd);
+	if (node->lhs != NULL)
+	{
+		printf("node_type: %s\n", node->kind);
+		print_node(node->lhs, tab_n + 2);
+	}
+	if (node->rhs != NULL)
+	{
+		printf("node_type: %s\n", node->kind);
+		print_node(node->rhs, tab_n + 2);
+	}
 }
 
 void parse(t_token list)
