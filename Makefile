@@ -20,7 +20,8 @@ LEXER_TEST_SRCS = srcs/lexer/tester.c \
 	get_next_line.c \
 	get_next_line_utils.c \
 	srcs/lexer/lexer.c \
-	srcs/lexer/lexer_utils.c
+	srcs/lexer/lexer_utils.c \
+	srcs/parser/parse.c
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)

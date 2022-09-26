@@ -127,7 +127,7 @@ void	tokenize(t_token *cur, char *line)
 	}
 }
 
-void	lexer(char *line)
+t_token	*lexer(char *line)
 {
 	t_token	*head;
 	t_token	*cur;
@@ -163,4 +163,5 @@ void	lexer(char *line)
 		cur = cur->next;
 	}*/
 	print_list(head);
+	return (head->next);
 }

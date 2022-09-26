@@ -5,6 +5,7 @@ static void tester(void)
 	int fd;
 	char *file_name;
 	char *line;
+	t_token	*tok;
 
 	file_name = "test.txt";
 	fd = open(file_name, O_RDONLY);
@@ -19,7 +20,8 @@ static void tester(void)
 			break;
 		printf("input line: %s\n", line);
 		line[ft_strlen(line) - 1] = '\0';
-		lexer(line);
+		tok = lexer(line);
+		parse(tok);
 	} while (1);
 	free(line);
 }

@@ -58,10 +58,10 @@ struct s_node
 
 void minishell(int argc, char **argv);
 char *read_line();
-void parse(void);
+t_node *parse(t_token *tok);
 
 // lexer.c
-void lexer(char *line);
+t_token *lexer(char *line);
 
 // lexer_utils.c
 void ft_exit(char *msg);
