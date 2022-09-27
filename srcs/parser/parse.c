@@ -5,7 +5,15 @@ void	print_node(t_node *node, int tab_n);
 void	syntax_error()
 {
 	perror("OUT!!");
+//	clear_data();
+//	init();
+//	set_exit_status();
 }
+
+//char	**get_cmd()
+//{
+//	
+//}
 
 t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
@@ -48,19 +56,30 @@ t_node	*new_node(t_node_kind kind)
 	if (node == NULL)
 		perror("OUT");
 	node->kind = kind;
+	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
+}
+
+size_t	cmd_len(t_token *tok)
+{
+	size_t	n;
+
+	n = 0;
+	while (tok != NULL && !peek(tok, "|"))
+	{
+		n++;
+		tok = tok->next;
+	}
+	return (n);
 }
 
 t_node	*cmd(t_token **tok)
 {
 	t_node	*node;
 	t_token	*t;
-//	char	*cmd;
-	char	*tmp;
-	char	*tmp2;
-	char	*tmp3;
+	size_t	i;
 
 	t = *tok;
 	node = new_node(ND_COMMAND);
@@ -71,28 +90,18 @@ t_node	*cmd(t_token **tok)
 	if (node == NULL)
 		perror("OUT!!");
 
-	node->cmd = ft_substr((*tok)->str, 0, (*tok)->len);
+	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
+	node->cmd->cmd[0] = ft_substr((*tok)->str, 0, (*tok)->len);
 	if (node->cmd == NULL)
 		perror("OUT!!");
 	*tok = (*tok)->next;
+	i = 1;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
-		tmp = node->cmd;
-		tmp2 = ft_substr((*tok)->str, 0, (*tok)->len);
-		if (node->cmd == NULL)
-			perror("OUT!!");
-		node->cmd = ft_strjoin(node->cmd, " ");
-		if (node->cmd == NULL)
-			perror("OUT!!");
-		tmp3 = node->cmd;
-		node->cmd = ft_strjoin(node->cmd, tmp2);
-		if (node->cmd == NULL)
-			perror("OUT!!");
-		free(tmp);
-		free(tmp2);
-		free(tmp3);
+		node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
 		*tok = (*tok)->next;
 	}
+	node->cmd->cmd[i] = NULL;
 	return (node);
 }
 
@@ -117,14 +126,19 @@ t_node	*parse(t_token *tok)
 
 void	print_node(t_node *node, int tab_n)
 {
+	int	i;
 	int	cnt;
 	char	*node_type[2] = {"ND_PIPE", "ND_COMMAND"};
 
 	cnt = 0;
 	while (cnt++ < tab_n)
 		printf(" ");
+	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
-		printf("node: %s\n", node->cmd);
+	{
+		while (node->cmd->cmd[i] != NULL)
+			printf("node: %s\n", node->cmd->cmd[i++]);
+	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
 		printf("node_type: %s\n", node_type[node->kind]);

@@ -117,7 +117,7 @@ void	tokenize(t_token *cur, char *line)
 		{
 			len = len_word(line);
 			if (len == -1)
-				ft_exit("hello");
+				ft_exit("error");
 			cur->next = create_token(TK_STR, line, len);
 		}
 		line += len;

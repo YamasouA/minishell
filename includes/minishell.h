@@ -46,21 +46,22 @@ enum e_node_kind
 	//ND_ARG,
 };
 
-typedef e_redirect_type t_redirect_type;
+typedef enum e_redirect_type t_redirect_type;
 enum e_redirect_type
 {
-	REDIRECT_IN 1,
-	REDIRECT_OUT 2,
-	HEREDOC 4,
-	APPEND 8,
-}
+	REDIRECT_IN,
+	REDIRECT_OUT,
+	HEREDOC,
+	APPEND,
+};
 
-typedef s_redirect	t_redirect;
+typedef struct s_redirect	t_redirect;
 struct s_redirect
 {
-	char	*delemiter;
+	char			*delemiter;
 	t_redirect_type	type;
-	char	*file_name;
+	char			*file_name;
+	t_redirect		*next;
 };
 
 typedef struct s_cmd	t_cmd;
