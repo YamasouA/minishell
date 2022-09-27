@@ -30,6 +30,8 @@ echo 'abc'def
 $">>>>"
 $"><<"|>
 |"hello"
+cat main.c |
+cat main.c || grep hello
 abc"defg"
 abc'def'ghi"jkl"mno
 '$$$'

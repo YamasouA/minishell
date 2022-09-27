@@ -2,6 +2,11 @@
 
 void	print_node(t_node *node, int tab_n);
 
+void	syntax_error()
+{
+	perror("OUT!!");
+}
+
 t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
@@ -21,7 +26,6 @@ bool	peek(t_token *tok, char *op)
 		|| tok->len != ft_strlen(op)
 		|| ft_memcmp(tok->str, op, tok->len))
 		return (false);
-	printf("true\n");
 	return (true);
 }
 
@@ -56,13 +60,17 @@ t_node	*cmd(t_token **tok)
 //	char	*cmd;
 	char	*tmp;
 	char	*tmp2;
+	char	*tmp3;
 
 	t = *tok;
 	node = new_node(ND_COMMAND);
 	if (*tok == NULL)
 		return node;
+	if (peek(*tok, "|"))
+		syntax_error();
 	if (node == NULL)
 		perror("OUT!!");
+
 	node->cmd = ft_substr((*tok)->str, 0, (*tok)->len);
 	if (node->cmd == NULL)
 		perror("OUT!!");
@@ -73,11 +81,16 @@ t_node	*cmd(t_token **tok)
 		tmp2 = ft_substr((*tok)->str, 0, (*tok)->len);
 		if (node->cmd == NULL)
 			perror("OUT!!");
+		node->cmd = ft_strjoin(node->cmd, " ");
+		if (node->cmd == NULL)
+			perror("OUT!!");
+		tmp3 = node->cmd;
 		node->cmd = ft_strjoin(node->cmd, tmp2);
 		if (node->cmd == NULL)
 			perror("OUT!!");
 		free(tmp);
 		free(tmp2);
+		free(tmp3);
 		*tok = (*tok)->next;
 	}
 	return (node);
@@ -88,13 +101,15 @@ t_node	*parse(t_token *tok)
 {
 	t_node	*node;
 
-	//printf("bef: %s\n", tok->str);
 	node = cmd(&tok);
-	//printf("aft: %s\n", tok->str);
 	while (tok != NULL && consume(&tok, "|"))
 	{
 	//	printf("aft: %s\n", tok->str);
+		if (tok == NULL || peek(tok, "|"))
+			syntax_error();
 		node = new_binary(ND_PIPE, node, cmd(&tok));
+		if (node->rhs == NULL)
+			syntax_error();
 	}
 	print_node(node, 0);
 	return (node);
