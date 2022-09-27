@@ -46,13 +46,44 @@ enum e_node_kind
 	//ND_ARG,
 };
 
+typedef e_redirect_type t_redirect_type;
+enum e_redirect_type
+{
+	REDIRECT_IN 1,
+	REDIRECT_OUT 2,
+	HEREDOC 4,
+	APPEND 8,
+}
+
+typedef s_redirect	t_redirect;
+struct s_redirect
+{
+	char	*delemiter;
+	t_redirect_type	type;
+	char	*file_name;
+};
+
+typedef struct s_cmd	t_cmd;
+struct s_cmd
+{
+	//int	flag;
+	char	**cmd;
+	t_redirect	*redirect_in;
+	t_redirect	*redirect_out;
+	//char	*delemiter;
+	//char	**redirect_in;
+	//char	**redirect_out; // >
+	//char	**redirect_append; // >>
+};
+
 typedef struct s_node t_node;
 struct s_node
 {
 	t_node_kind	kind;
 	t_node		*lhs;
 	t_node		*rhs;
-	char		*cmd;
+	//char		**cmd;
+	t_cmd		*cmd;
 };
 
 
