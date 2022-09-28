@@ -2,26 +2,25 @@
 
 void	print_node(t_node *node, int tab_n);
 
-void	syntax_error()
+t_node	*syntax_error()
 {
 	perror("OUT!!");
 //	clear_data();
 //	init();
 //	set_exit_status();
+	return (NULL);
 }
-
-//char	**get_cmd()
-//{
-//	
-//}
 
 t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
 
 	node = (t_node *)malloc(sizeof(t_node) * 1);
-	if (node == NULL)
+	if (node == NULL || lhs == NULL || rhs == NULL)
+	{
 		perror("OUT");
+		return (NULL);
+	}
 	node->kind = kind;
 	node->lhs = lhs;
 	node->rhs = rhs;
@@ -102,7 +101,7 @@ int	which_redir(t_token *tok)
 
 void	parse_redir(t_token **tok, t_node *node, int redir_type)
 {
-		*tok = (*tok)->next; // include which_redir?
+		*tok = (*tok)->next;
 		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
 		{
 			perror("OUT!!");
@@ -136,34 +135,23 @@ t_node	*cmd(t_token **tok)
 	if (*tok == NULL)
 		return node;
 	if (peek(*tok, "|"))
-		syntax_error();
+		return (syntax_error());
 	if (node == NULL)
 		perror("OUT!!");
 	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 		perror("OUT!!");
-	/*
-	redir_type = which_redir(*tok);
-	if (redir_type >= 0) //cut func parse_redir
-	{
-		parse_redir(tok, node, redir_type);
-	}
-	else
-	{
-		node->cmd->cmd[0] = ft_substr((*tok)->str, 0, (*tok)->len);
-		*tok = (*tok)->next;
-	}*/
 	i = 0;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
 		redir_type = which_redir(*tok);
-		if (redir_type > 0)
+		if (redir_type >= 0)
+		{
 			parse_redir(tok, node, redir_type);
+		}
 		else
 		{
 			node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
-//		if (*tok == NULL)
-//			printf("abc\n");
 			*tok = (*tok)->next;
 		}
 	}
@@ -177,14 +165,15 @@ t_node	*parse(t_token *tok)
 	t_node	*node;
 
 	node = cmd(&tok);
+	if (node == NULL)
+		return (NULL);
 	while (tok != NULL && consume(&tok, "|"))
 	{
-	//	printf("aft: %s\n", tok->str);
 		if (tok == NULL || peek(tok, "|"))
-			syntax_error();
+			return (syntax_error());
 		node = new_binary(ND_PIPE, node, cmd(&tok));
 		if (node->rhs == NULL)
-			syntax_error();
+			return (syntax_error());
 	}
 	print_node(node, 0);
 	return (node);

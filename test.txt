@@ -41,5 +41,6 @@ filename >
 exec > sample
 // ERROR case
 < filename echo
+> filename
 '
 "
