@@ -57,6 +57,7 @@ t_node	*new_node(t_node_kind kind)
 		perror("OUT");
 	node->kind = kind;
 	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
+	node->cmd->cmd = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
@@ -75,11 +76,23 @@ size_t	cmd_len(t_token *tok)
 	return (n);
 }
 
+bool	is_redir(t_token *tok)
+{
+	return (peek(tok, "<") || peek(tok, ">")
+			|| (peek(tok, "<<") || peek(tok, ">>")));
+}
+
+int	which_redir(t_token *tok)
+{
+	if (is_redir(tok) && !is_redir(tok->next))
+}
+
 t_node	*cmd(t_token **tok)
 {
 	t_node	*node;
 	t_token	*t;
 	size_t	i;
+//	int		redir_flag;
 
 	t = *tok;
 	node = new_node(ND_COMMAND);
@@ -89,15 +102,43 @@ t_node	*cmd(t_token **tok)
 		syntax_error();
 	if (node == NULL)
 		perror("OUT!!");
-
-	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
-	node->cmd->cmd[0] = ft_substr((*tok)->str, 0, (*tok)->len);
-	if (node->cmd == NULL)
+	redir_flag = which_redir();
+	if (redir_flag > 0) //cut func parse_redir
+	{
+		*tok = (*tok)->next; // include which_redir?
+		if (redir_flag == REDIRECT_IN || redir_flag == HEREDOC)
+		{
+			if (redir_flag == HEREDOC)
+				node->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
+			else
+				node->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+			node->cmd->redirect_in->type = redir_flag;
+		}
+		else if (redir_flag == REDIRECT_OUT || redir_flag == APPEND)
+		{
+			node->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+			node->cmd->redirect_out->type = redir_flag;
+		}
+	}
+	else if (redir_flag == -1)
 		perror("OUT!!");
+	else
+	{
+		node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
+		if (node->cmd->cmd == NULL)
+			perror("OUT!!");
+		node->cmd->cmd[0] = ft_substr((*tok)->str, 0, (*tok)->len);
+	}
 	*tok = (*tok)->next;
 	i = 1;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
+//		redir_flag = which_redir();
+//		if (redir_flag > 0)
+//			parse_redir();
+//		else if (redir_flag == -1)
+//			perror("OUT!!");
+//		else
 		node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
 		*tok = (*tok)->next;
 	}
@@ -136,6 +177,8 @@ void	print_node(t_node *node, int tab_n)
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
+		if (node->cmd->cmd == NULL)
+			return ;
 		while (node->cmd->cmd[i] != NULL)
 			printf("node: %s\n", node->cmd->cmd[i++]);
 	}
