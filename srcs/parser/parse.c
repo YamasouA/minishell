@@ -120,7 +120,8 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type)
 		{
 			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
 			node->cmd->redirect_out->type = redir_type;
-		}	
+		}
+		*tok = (*tok)->next;
 }
 
 t_node	*cmd(t_token **tok)
@@ -141,6 +142,7 @@ t_node	*cmd(t_token **tok)
 	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 		perror("OUT!!");
+	/*
 	redir_type = which_redir(*tok);
 	if (redir_type >= 0) //cut func parse_redir
 	{
@@ -149,19 +151,21 @@ t_node	*cmd(t_token **tok)
 	else
 	{
 		node->cmd->cmd[0] = ft_substr((*tok)->str, 0, (*tok)->len);
-	}
-	*tok = (*tok)->next;
-	i = 1;
+		*tok = (*tok)->next;
+	}*/
+	i = 0;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
 		redir_type = which_redir(*tok);
 		if (redir_type > 0)
 			parse_redir(tok, node, redir_type);
 		else
+		{
 			node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
 //		if (*tok == NULL)
 //			printf("abc\n");
-		*tok = (*tok)->next;
+			*tok = (*tok)->next;
+		}
 	}
 	node->cmd->cmd[i] = NULL;
 	return (node);
@@ -192,23 +196,42 @@ void	print_node(t_node *node, int tab_n)
 	int	cnt;
 	char	*node_type[2] = {"ND_PIPE", "ND_COMMAND"};
 
-	cnt = 0;
-	while (cnt++ < tab_n)
-		printf(" ");
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
+		cnt = 0;
+		while (cnt++ < tab_n)
+			printf(" ");
+		printf("node_type: %s\n", node_type[node->kind]);
 		if (node->cmd->cmd == NULL)
 			return ;
-		if (node->cmd->redirect_in->file_name)
-			printf("redirin_file_name %s\n", node->cmd->redirect_in->file_name);
-		if (node->cmd->redirect_out->file_name)
-			printf("redirout_file_name %s\n", node->cmd->redirect_out->file_name);
 		while (node->cmd->cmd[i] != NULL)
+		{
+			cnt = 0;
+			while (cnt++ < tab_n + 2)
+				printf(" ");
 			printf("node: %s\n", node->cmd->cmd[i++]);
+		}
+		if (node->cmd->redirect_in->file_name)
+		{
+			cnt = 0;
+			while (cnt++ < tab_n + 4)
+				printf(" ");
+			printf("redirin: %s\n", node->cmd->redirect_in->file_name);
+		}
+		if (node->cmd->redirect_out->file_name)
+		{
+			cnt = 0;
+			while (cnt++ < tab_n + 4)
+				printf(" ");
+			printf("redirout: %s\n", node->cmd->redirect_out->file_name);
+		}
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
+		cnt = 0;
+		while (cnt++ < tab_n)
+			printf(" ");
 		printf("node_type: %s\n", node_type[node->kind]);
 		if (node->lhs != NULL)
 			print_node(node->lhs, tab_n+2);
