@@ -59,7 +59,9 @@ t_node	*new_node(t_node_kind kind)
 	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
 	node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)malloc(sizeof(t_cmd) * 1);
+	node->cmd->redirect_in->file_name = NULL;
 	node->cmd->redirect_out = (t_redirect *)malloc(sizeof(t_cmd) * 1);
+	node->cmd->redirect_out->file_name = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
@@ -98,12 +100,35 @@ int	which_redir(t_token *tok)
 		
 }
 
+void	parse_redir(t_token **tok, t_node *node, int redir_type)
+{
+		*tok = (*tok)->next; // include which_redir?
+		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
+		{
+			perror("OUT!!");
+			return ;
+		}
+		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
+		{
+			if (redir_type == HEREDOC)
+				node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
+			else
+				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+			node->cmd->redirect_in->type = redir_type;
+		}
+		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
+		{
+			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+			node->cmd->redirect_out->type = redir_type;
+		}	
+}
+
 t_node	*cmd(t_token **tok)
 {
 	t_node	*node;
 	t_token	*t;
 	size_t	i;
-	int		redir_flag;
+	int		redir_type;
 
 	t = *tok;
 	node = new_node(ND_COMMAND);
@@ -116,26 +141,10 @@ t_node	*cmd(t_token **tok)
 	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 		perror("OUT!!");
-	redir_flag = which_redir(*tok);
-	printf("redir_flag: %i\n", redir_flag);
-	if (redir_flag >= 0) //cut func parse_redir
+	redir_type = which_redir(*tok);
+	if (redir_type >= 0) //cut func parse_redir
 	{
-		*tok = (*tok)->next; // include which_redir?
-		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
-			perror("OUT!!");
-		if (redir_flag == REDIRECT_IN || redir_flag == HEREDOC)
-		{
-			if (redir_flag == HEREDOC)
-				node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
-			else
-				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_in->type = redir_flag;
-		}
-		else if (redir_flag == REDIRECT_OUT || redir_flag == APPEND)
-		{
-			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_out->type = redir_flag;
-		}
+		parse_redir(tok, node, redir_type);
 	}
 	else
 	{
@@ -145,14 +154,13 @@ t_node	*cmd(t_token **tok)
 	i = 1;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
-//		redir_flag = which_redir();
-//		if (redir_flag > 0)
-//			parse_redir();
-//		else if (redir_flag == -1)
-//			perror("OUT!!");
-//		else
-		node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
-		write(1, "abc", 3);
+		redir_type = which_redir(*tok);
+		if (redir_type > 0)
+			parse_redir(tok, node, redir_type);
+		else
+			node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
+//		if (*tok == NULL)
+//			printf("abc\n");
 		*tok = (*tok)->next;
 	}
 	node->cmd->cmd[i] = NULL;
@@ -192,6 +200,10 @@ void	print_node(t_node *node, int tab_n)
 	{
 		if (node->cmd->cmd == NULL)
 			return ;
+		if (node->cmd->redirect_in->file_name)
+			printf("redirin_file_name %s\n", node->cmd->redirect_in->file_name);
+		if (node->cmd->redirect_out->file_name)
+			printf("redirout_file_name %s\n", node->cmd->redirect_out->file_name);
 		while (node->cmd->cmd[i] != NULL)
 			printf("node: %s\n", node->cmd->cmd[i++]);
 	}
