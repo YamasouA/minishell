@@ -43,7 +43,7 @@ $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT)
 
 ltest: $(LEXER_TEST_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o lexer_test $(LEXER_TEST_OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o ltest $(LEXER_TEST_OBJS) $(LIBFT)
 
 $(LIBFT):
 	$(MAKE) -C ./libft
@@ -54,7 +54,7 @@ clean:
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
-	$(RM) $(NAME) lexer_test
+	$(RM) $(NAME) ltest
 
 re: fclean all
 

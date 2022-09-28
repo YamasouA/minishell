@@ -7,12 +7,12 @@ vim ./libft.c
 
 |
 |||||||||
-> > > >
+//> > > >
 cat << delimiter
-ls|>-l
+//ls|>-l
 cat <<< filename
 cat >>> filename
-echo $|>ABC
+//echo $|>ABC
 echo $hello
 echo $ hello
 echo $
@@ -28,13 +28,18 @@ echo 'abc'def
 ">'"
 "<>'"
 $">>>>"
-$"><<"|>
+//$"><<"|>
 |"hello"
 cat main.c |
 cat main.c || grep hello
 abc"defg"
 abc'def'ghi"jkl"mno
 '$$$'
+< filename
+< filename | grep
+filename >
+exec > sample
 // ERROR case
+< filename echo
 '
 "
