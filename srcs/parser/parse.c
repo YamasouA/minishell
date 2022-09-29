@@ -50,11 +50,21 @@ void	free_node(t_node *node)
 	free(node);
 }
 
-t_node	*syntax_error(char *msg, t_node *node, t_token *tok)
+t_node	*syntax_error(t_node *node, t_token *tok, t_token *head)
 {
-	perror("syntax error: ");
-	perror(msg);
-	free_token(tok);
+	size_t	i;
+
+	i = 0;
+	ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
+	if (tok == NULL)
+		ft_putstr_fd("newline", STDERR_FILENO);
+	else
+	{
+		while (i < tok->len)
+			ft_putchar_fd(tok->str[i++], STDERR_FILENO);
+	}
+	ft_putendl_fd("'", STDERR_FILENO);
+	free_token(head);
 	free_node(node);
 	return (NULL);
 }
@@ -107,8 +117,10 @@ t_node	*new_node(t_node_kind kind)
 	node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)malloc(sizeof(t_cmd) * 1);
 	node->cmd->redirect_in->file_name = NULL;
+	node->cmd->redirect_in->delemiter= NULL;
 	node->cmd->redirect_out = (t_redirect *)malloc(sizeof(t_cmd) * 1);
 	node->cmd->redirect_out->file_name = NULL;
+	node->cmd->redirect_out->delemiter= NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
@@ -147,11 +159,12 @@ int	which_redir(t_token *tok)
 		
 }
 
-void	parse_redir(t_token **tok, t_node *node, int redir_type)
+void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 {
 		*tok = (*tok)->next;
 		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
 		{
+			*error_flag = 1;
 			//perror("OUT!!");
 			return ;
 		}
@@ -162,16 +175,18 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type)
 			else
 				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
 			node->cmd->redirect_in->type = redir_type;
+			node->cmd->redirect_in->next = NULL;
 		}
 		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
 		{
 			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
 			node->cmd->redirect_out->type = redir_type;
+			node->cmd->redirect_out->next = NULL;
 		}
 		*tok = (*tok)->next;
 }
 
-t_node	*cmd(t_token **tok)
+t_node	*cmd(t_token **tok, int *error_flag)
 {
 	t_node	*node;
 	t_token	*t;
@@ -206,11 +221,17 @@ t_node	*cmd(t_token **tok)
 		redir_type = which_redir(*tok);
 		if (redir_type >= 0)
 		{
-			parse_redir(tok, node, redir_type);
+			parse_redir(tok, node, redir_type, error_flag);
+			if (*error_flag == 1)
+				return (node);
 		}
 		else
 		{
-			node->cmd->cmd[i++] = ft_substr((*tok)->str, 0, (*tok)->len);
+			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
+			if (node->cmd->cmd[i++] == NULL) {
+				perror("OUT4!!");
+				return (NULL);
+			}
 			*tok = (*tok)->next;
 		}
 	}
@@ -218,24 +239,29 @@ t_node	*cmd(t_token **tok)
 	return (node);
 }
 
-//t_node	*program(t_token *tok)
 t_node	*parse(t_token *tok)
 {
 	t_node	*node;
+	int	error_flag;
+	t_token	*tok_head;
 
-	node = cmd(&tok);
+	error_flag = 0;
+	tok_head = tok;
+	node = cmd(&tok, &error_flag);
 	if (node == NULL)
 		return (NULL);
 	while (tok != NULL && consume(&tok, "|"))
 	{
-		if (tok == NULL)
-			return (syntax_error("pipe should have rhs", node, tok));
-		if (peek(tok, "|"))
-			return (syntax_error("consecutive pipe", node, tok));
-		node = new_binary(ND_PIPE, node, cmd(&tok));
+		if (tok == NULL || peek(tok, "|"))
+			return (syntax_error(node, tok, tok_head));
+		node = new_binary(ND_PIPE, node, cmd(&tok, &error_flag));
+		if (error_flag == 1)
+			return (syntax_error(node, tok, tok_head));
+		/*
 		if (node->rhs == NULL)
 			return (syntax_error("pipe should have rhs", node, tok));
-		if (node == NULL || node->rhs == NULL)
+		*/
+		if (node == NULL)
 			return (NULL);
 	}
 	print_node(node, 0);
