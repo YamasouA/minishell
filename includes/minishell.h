@@ -90,9 +90,12 @@ struct s_node
 
 void minishell(int argc, char **argv);
 char *read_line();
-t_node *parse(t_token *tok);
 
-// lexer.c
+// srcs/parser
+t_node *parse(t_token *tok);
+void	print_node(t_node *node, int tab_n);
+
+// srcs/lexer
 t_token *lexer(char *line);
 
 // lexer_utils.c

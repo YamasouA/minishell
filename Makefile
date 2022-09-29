@@ -8,7 +8,8 @@ SRCS = main.c \
 		get_next_line_utils.c
 
 PARCER_DIR = srcs/parser/
-PARCER_FILES = parse.c
+PARCER_FILES = parse.c \
+	parse_utils.c
 PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 
 LEXER_DIR = srcs/lexer/
@@ -21,7 +22,8 @@ LEXER_TEST_SRCS = srcs/lexer/tester.c \
 	get_next_line_utils.c \
 	srcs/lexer/lexer.c \
 	srcs/lexer/lexer_utils.c \
-	srcs/parser/parse.c
+	srcs/parser/parse.c \
+	srcs/parser/parse_utils.c
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)
