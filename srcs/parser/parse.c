@@ -118,9 +118,11 @@ t_node	*new_node(t_node_kind kind)
 	node->cmd->redirect_in = (t_redirect *)malloc(sizeof(t_cmd) * 1);
 	node->cmd->redirect_in->file_name = NULL;
 	node->cmd->redirect_in->delemiter= NULL;
+	node->cmd->redirect_in->next = NULL;
 	node->cmd->redirect_out = (t_redirect *)malloc(sizeof(t_cmd) * 1);
 	node->cmd->redirect_out->file_name = NULL;
 	node->cmd->redirect_out->delemiter= NULL;
+	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
