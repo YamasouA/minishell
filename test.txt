@@ -5,14 +5,9 @@ ls -l | grep *.c
 .test
 vim ./libft.c
 
-|
-|||||||||
-//> > > >
 cat << delimiter
-//ls|>-l
-cat <<< filename
-cat >>> filename
-//echo $|>ABC
+ls|>-l
+echo $|>ABC
 echo $hello
 echo $ hello
 echo $
@@ -28,19 +23,25 @@ echo 'abc'def
 ">'"
 "<>'"
 $">>>>"
-//$"><<"|>
-|"hello"
-cat main.c |
-cat main.c || grep hello
 abc"defg"
 abc'def'ghi"jkl"mno
 '$$$'
 < filename
 < filename | grep
-filename >
 exec > sample
+
 // ERROR case
+filename >
+|"hello"
+cat main.c || grep hello
+cat main.c |
+|
+|||||||||
+> > > >
 < filename echo
 > filename
+cat <<< filename
+cat >>> filename
 '
 "
+$"><<"|>
