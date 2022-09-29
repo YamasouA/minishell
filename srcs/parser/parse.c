@@ -1,13 +1,61 @@
 #include "minishell.h"
 
-void	print_node(t_node *node, int tab_n);
-
-t_node	*syntax_error()
+void	free_redirect(t_redirect *redir)
 {
-	perror("OUT!!");
-//	clear_data();
-//	init();
-//	set_exit_status();
+	t_redirect	*tmp;
+
+	while (redir != NULL)
+	{
+		tmp = redir;
+		redir = redir->next;
+		free(tmp->delemiter);
+		free(tmp->file_name);
+		free(tmp);
+	}
+}
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd->cmd[i] != NULL)
+		free(cmd->cmd[i++]);
+	free(cmd->cmd);
+	free_redirect(cmd->redirect_in);
+	free_redirect(cmd->redirect_out);
+}
+
+void	free_token(t_token *tok)
+{
+	t_token	*tmp;
+
+	while (tok != NULL)
+	{
+		tmp = tok;
+		tok = tok->next;
+		free(tmp);
+	}
+}
+
+void	free_node(t_node *node)
+{
+	if (node == NULL)
+		return ;
+	if (node->lhs != NULL)
+		free_node(node->lhs);
+	if (node->rhs != NULL)
+		free_node(node->rhs);
+	free_cmd(node->cmd);
+	free(node);
+}
+
+t_node	*syntax_error(char *msg, t_node *node, t_token *tok)
+{
+	perror("syntax error: ");
+	perror(msg);
+	free_token(tok);
+	free_node(node);
 	return (NULL);
 }
 
@@ -18,7 +66,7 @@ t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 	node = (t_node *)malloc(sizeof(t_node) * 1);
 	if (node == NULL || lhs == NULL || rhs == NULL)
 	{
-		perror("OUT");
+		perror("OUT1");
 		return (NULL);
 	}
 	node->kind = kind;
@@ -53,7 +101,7 @@ t_node	*new_node(t_node_kind kind)
 
 	node = (t_node *)malloc(sizeof(t_node) * 1);
 	if (node == NULL)
-		perror("OUT");
+		perror("OUT2");
 	node->kind = kind;
 	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
 	node->cmd->cmd = NULL;
@@ -104,7 +152,7 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type)
 		*tok = (*tok)->next;
 		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
 		{
-			perror("OUT!!");
+			//perror("OUT!!");
 			return ;
 		}
 		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
@@ -130,17 +178,28 @@ t_node	*cmd(t_token **tok)
 	size_t	i;
 	int		redir_type;
 
+	if (*tok == NULL)
+		//return node;
+		return (NULL);
+
+	/* parseの中で確認してるからいらない
+	if (peek(*tok, "|"))
+		//return (syntax_error(node));
+		return (NULL);
+	*/
 	t = *tok;
 	node = new_node(ND_COMMAND);
-	if (*tok == NULL)
-		return node;
-	if (peek(*tok, "|"))
-		return (syntax_error());
 	if (node == NULL)
-		perror("OUT!!");
+	{
+		perror("OUT3!!");
+		return (NULL);
+	}
 	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
-		perror("OUT!!");
+	{
+		perror("OUT4!!");
+		return (NULL);
+	}
 	i = 0;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
@@ -169,67 +228,16 @@ t_node	*parse(t_token *tok)
 		return (NULL);
 	while (tok != NULL && consume(&tok, "|"))
 	{
-		if (tok == NULL || peek(tok, "|"))
-			return (syntax_error());
+		if (tok == NULL)
+			return (syntax_error("pipe should have rhs", node, tok));
+		if (peek(tok, "|"))
+			return (syntax_error("consecutive pipe", node, tok));
 		node = new_binary(ND_PIPE, node, cmd(&tok));
 		if (node->rhs == NULL)
-			return (syntax_error());
+			return (syntax_error("pipe should have rhs", node, tok));
+		if (node == NULL || node->rhs == NULL)
+			return (NULL);
 	}
 	print_node(node, 0);
 	return (node);
 }
-
-void	print_node(t_node *node, int tab_n)
-{
-	int	i;
-	int	cnt;
-	char	*node_type[2] = {"ND_PIPE", "ND_COMMAND"};
-
-	i = 0;
-	if (node->lhs == NULL && node->rhs == NULL)
-	{
-		cnt = 0;
-		while (cnt++ < tab_n)
-			printf(" ");
-		printf("node_type: %s\n", node_type[node->kind]);
-		if (node->cmd->cmd == NULL)
-			return ;
-		while (node->cmd->cmd[i] != NULL)
-		{
-			cnt = 0;
-			while (cnt++ < tab_n + 2)
-				printf(" ");
-			printf("node: %s\n", node->cmd->cmd[i++]);
-		}
-		if (node->cmd->redirect_in->file_name)
-		{
-			cnt = 0;
-			while (cnt++ < tab_n + 4)
-				printf(" ");
-			printf("redirin: %s\n", node->cmd->redirect_in->file_name);
-		}
-		if (node->cmd->redirect_out->file_name)
-		{
-			cnt = 0;
-			while (cnt++ < tab_n + 4)
-				printf(" ");
-			printf("redirout: %s\n", node->cmd->redirect_out->file_name);
-		}
-	}
-	if (node->lhs != NULL || node->rhs != NULL)
-	{
-		cnt = 0;
-		while (cnt++ < tab_n)
-			printf(" ");
-		printf("node_type: %s\n", node_type[node->kind]);
-		if (node->lhs != NULL)
-			print_node(node->lhs, tab_n+2);
-		if (node->rhs != NULL)
-			print_node(node->rhs, tab_n+2);
-	}
-}
-
-//void parse(t_token list)
-//{
-//	program();
-//}
