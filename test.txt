@@ -28,6 +28,8 @@ abc'def'ghi"jkl"mno
 '$$$'
 < filename
 < filename | grep
+< filename <filename2 | grepp hello
+< filename <filename2 <filename3| grepp hello
 exec > sample
 
 // ERROR case

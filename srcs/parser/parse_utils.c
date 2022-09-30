@@ -14,7 +14,6 @@ void	print_node(t_node *node, int tab_n)
 	int	i;
 	char	*node_type[2] = {"ND_PIPE", "ND_COMMAND"};
 
-//	printf("ok\n");
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{

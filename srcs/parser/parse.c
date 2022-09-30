@@ -175,6 +175,16 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 	return (redirect);
 }
 
+void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
+{
+	t_redirect	*tmp;
+
+	tmp = node->cmd->redirect_in;
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	tmp->next = new_redir(redir_type, tok);
+}
+
 void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 {
 		*tok = (*tok)->next;
@@ -187,17 +197,20 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
 		{
 			if (redir_type == HEREDOC)
-				node->cmd->redirect_in->next = new_redir(redir_type, *tok);
+				add_tail_redir(node, redir_type, *tok);
+				//node->cmd->redirect_in->next = new_redir(redir_type, *tok);
 				//node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
 			else
-				node->cmd->redirect_in->next = new_redir(redir_type, *tok);
+				add_tail_redir(node, redir_type, *tok);
+				//node->cmd->redirect_in->next = new_redir(redir_type, *tok);
 //				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
 //			node->cmd->redirect_in->type = redir_type;
 //			node->cmd->redirect_in->next = NULL;
 		}
 		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
 		{
-			node->cmd->redirect_out->next = new_redir(redir_type, *tok);
+			add_tail_redir(node, redir_type, *tok);
+			//node->cmd->redirect_out->next = new_redir(redir_type, *tok);
 //			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
 //			node->cmd->redirect_out->type = redir_type;
 //			node->cmd->redirect_out->next = NULL;
