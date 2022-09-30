@@ -109,19 +109,15 @@ t_node	*new_node(t_node_kind kind)
 {
 	t_node	*node;
 
-	node = (t_node *)malloc(sizeof(t_node) * 1);
+	node = (t_node *)ft_calloc(sizeof(t_node), 1);
 	if (node == NULL)
 		perror("OUT2");
 	node->kind = kind;
-	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
-	node->cmd->cmd = NULL;
-	node->cmd->redirect_in = (t_redirect *)malloc(sizeof(t_cmd) * 1);
-	node->cmd->redirect_in->file_name = NULL;
-	node->cmd->redirect_in->delemiter= NULL;
+	node->cmd = (t_cmd *)ft_calloc(sizeof(t_node), 1);
+//	node->cmd->cmd = NULL;
+	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
 	node->cmd->redirect_in->next = NULL;
-	node->cmd->redirect_out = (t_redirect *)malloc(sizeof(t_cmd) * 1);
-	node->cmd->redirect_out->file_name = NULL;
-	node->cmd->redirect_out->delemiter= NULL;
+	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
 	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
@@ -198,22 +194,12 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 		{
 			if (redir_type == HEREDOC)
 				add_tail_redir(node, redir_type, *tok);
-				//node->cmd->redirect_in->next = new_redir(redir_type, *tok);
-				//node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
 			else
 				add_tail_redir(node, redir_type, *tok);
-				//node->cmd->redirect_in->next = new_redir(redir_type, *tok);
-//				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-//			node->cmd->redirect_in->type = redir_type;
-//			node->cmd->redirect_in->next = NULL;
 		}
 		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
 		{
 			add_tail_redir(node, redir_type, *tok);
-			//node->cmd->redirect_out->next = new_redir(redir_type, *tok);
-//			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-//			node->cmd->redirect_out->type = redir_type;
-//			node->cmd->redirect_out->next = NULL;
 		}
 		*tok = (*tok)->next;
 }
@@ -241,8 +227,7 @@ t_node	*cmd(t_token **tok, int *error_flag)
 		perror("OUT3!!");
 		return (NULL);
 	}
-	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
-	node->cmd->cmd[0] = NULL;
+	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 	{
 		perror("OUT4!!");
