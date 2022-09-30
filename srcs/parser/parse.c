@@ -161,6 +161,20 @@ int	which_redir(t_token *tok)
 		
 }
 
+t_redirect	*new_redir(int redir_type, t_token *tok)
+{
+	t_redirect	*redirect;
+
+	redirect = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	redirect->type = redir_type;
+	if (redir_type == HEREDOC)
+		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
+	else
+		redirect->file_name = ft_substr(tok->str, 0, tok->len);
+	redirect->next = NULL;
+	return (redirect);
+}
+
 void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 {
 		*tok = (*tok)->next;
@@ -173,17 +187,20 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
 		{
 			if (redir_type == HEREDOC)
-				node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
+				node->cmd->redirect_in->next = new_redir(redir_type, *tok);
+				//node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
 			else
-				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_in->type = redir_type;
-			node->cmd->redirect_in->next = NULL;
+				node->cmd->redirect_in->next = new_redir(redir_type, *tok);
+//				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+//			node->cmd->redirect_in->type = redir_type;
+//			node->cmd->redirect_in->next = NULL;
 		}
 		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
 		{
-			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_out->type = redir_type;
-			node->cmd->redirect_out->next = NULL;
+			node->cmd->redirect_out->next = new_redir(redir_type, *tok);
+//			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
+//			node->cmd->redirect_out->type = redir_type;
+//			node->cmd->redirect_out->next = NULL;
 		}
 		*tok = (*tok)->next;
 }
@@ -212,6 +229,7 @@ t_node	*cmd(t_token **tok, int *error_flag)
 		return (NULL);
 	}
 	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
+	node->cmd->cmd[0] = NULL;
 	if (node->cmd->cmd == NULL)
 	{
 		perror("OUT4!!");
@@ -250,6 +268,8 @@ t_node	*parse(t_token *tok)
 	error_flag = 0;
 	tok_head = tok;
 	node = cmd(&tok, &error_flag);
+	if (error_flag == 1)
+		return (syntax_error(node, tok, tok_head));
 	if (node == NULL)
 		return (NULL);
 	while (tok != NULL && consume(&tok, "|"))
