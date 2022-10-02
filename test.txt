@@ -33,6 +33,7 @@ abc'def'ghi"jkl"mno
 exec > sample
 
 // ERROR case
+echo "abc
 filename >
 |"hello"
 cat main.c || grep hello
