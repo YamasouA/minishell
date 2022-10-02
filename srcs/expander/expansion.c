@@ -52,23 +52,30 @@ char	*handle_single_quote(char *str, int *i)
 
 char	*handle_double_quote(char *str, int	*i)
 {
+	char	*s;
 	char	*tmp;
+	size_t	j;
 	char	*in_quote_str;
 	
-	tmp	= ft_substr(str, 0, i);
-	quote_head_index = i + 1;
-//	ft_strchr(str, '\"')
+	s	= ft_substr(str, 0, i);
+	j = i + 1;
 	while (str[++i] != '\"')
 	{
 		if (str[i] == '$')
 		{
-			free(tmp);
-			tmp = ft_substr(str, 0, i);
-			1handle_dollar();
+			s = ft_joinfree(s, ft_substr());
+			s = ft_joinfree(s, handle_dollar(str[i], &i));
+			j = i;
 		}
-		j++;
 	}
+	if (j != i - 1)
+		s = ft_joinfree(s, ft_substr(str[], 0, i - 1 - j));
+	return (s);
 }
+
+// "HOME abcdefg"
+// "HOME $HOMEabc"
+// "abc$HOME abcd"
 
 echo "abc$HOME abc $HOME def"
 
