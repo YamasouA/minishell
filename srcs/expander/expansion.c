@@ -104,9 +104,9 @@ char	*handle_dollar(char *str, int *i)
 char	*handle_double_quote(char *str, int *i)
 {
 	char	*s;
-	char	*tmp;
-	size_t	j;
-	char	*in_quote_str;
+//	char	*tmp;
+	ssize_t	j;
+//	char	*in_quote_str;
 	
 //	s	= ft_substr(str, 0, i);
 	s = ft_strdup("");
@@ -115,13 +115,13 @@ char	*handle_double_quote(char *str, int *i)
 	{
 		if (str[*i] == '$')
 		{
-			s = ft_joinfree(s, ft_substr(str[], ));
-			s = ft_joinfree(s, handle_dollar(str[*i], i));
-			j = i;
+			s = ft_joinfree(s, ft_substr(str, j, j - *i));
+			s = ft_joinfree(s, handle_dollar(str, i));
+			j = *i;
 		}
 	}
 	if (j != *i - 1)
-		s = ft_joinfree(s, ft_substr(str[], 0, *i - 1 - j));
+		s = ft_joinfree(s, ft_substr(str, j, *i - 1 - j));
 	return (s);
 }
 
@@ -129,15 +129,17 @@ char	*handle_double_quote(char *str, int *i)
 // "HOME $HOMEabc"
 // "abc$HOME abcd"
 
-echo "abc$HOME abc $HOME def"
+//echo "abc$HOME abc $HOME def"
 
-void	expansion()
+char	*expand(char *str)
 {
 	char	*expanded_str;
-	char	*
+	char	*tmp;
 	int		i;
+	int		head_index;
 
 	expanded_str = ft_strdup("");
+	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
@@ -152,7 +154,7 @@ void	expansion()
 			str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
 //			free(tmp);
 		}
-		if (str[i] == '$' && str[i + 1] && !is_space(str[i + 1]))
+		if (str[i] == '$' && str[i + 1] && !isspace(str[i + 1]))
 		{
 			tmp = str;
 			str = handle_dollar(str, &i);
@@ -160,13 +162,13 @@ void	expansion()
 		}
 		else
 		{
-			head_index = i
+			head_index = i;
 			while (str[i] && str[i] != '\'' && str[i] != '\"' && str[i] != '$')
 				i++;
 			expanded_str = ft_joinfree(expanded_str, ft_substr(str, head_index, i - head_index));
 		}
 	}
-
+	return (expanded_str);
 	//if double_quote
 	//	handle_double_quote
 	//		if $
@@ -203,7 +205,8 @@ void	expansion()
 
 void	expansion(t_node *node)
 {
-	int	i;
+	char	*tmp;
+	int		i;
 
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
@@ -213,22 +216,46 @@ void	expansion(t_node *node)
 		while (node->cmd->cmd[i] != NULL)
 		{
 			if (ft_strchr(node->cmd->cmd[i], '$') || ft_strchr(node->cmd->cmd[i], '\'') || ft_strchr(node->cmd->cmd[i], '\"'))
-				tmp = ndoe->cmd->cmd[i];
-				node->cmd->cmd[i] = expand();
+			{
+				tmp = node->cmd->cmd[i];
+				node->cmd->cmd[i] = expand(node->cmd->cmd[i]);
 				free(tmp);
+			}
 		}
 		while (node->cmd->redirect_in->next)
 		{
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
 			if (node->cmd->redirect_in->type == HEREDOC)
-				node->cmd->redirect_in->delemiter;
+			{
+				if (ft_strchr(node->cmd->redirect_in->delemiter, '$') || ft_strchr(node->cmd->redirect_in->delemiter, '\'')
+					|| ft_strchr(node->cmd->redirect_in->delemiter, '\"'))
+				{
+					tmp = node->cmd->redirect_in->delemiter;
+					node->cmd->redirect_in->delemiter = expand(node->cmd->redirect_in->delemiter);
+					free(tmp);
+				}
+			}
 			else
-				node->cmd->redirect_in->file_name;
+			{
+				if (ft_strchr(node->cmd->redirect_in->file_name, '$') || ft_strchr(node->cmd->redirect_in->file_name, '\'')
+					|| ft_strchr(node->cmd->redirect_in->file_name, '\"'))
+				{
+					tmp = node->cmd->redirect_in->file_name;
+					node->cmd->redirect_in->file_name = expand(node->cmd->redirect_in->file_name);
+					free(tmp);
+				}
+			}
 		}
 		while (node->cmd->redirect_out->next)
 		{
 			node->cmd->redirect_out = node->cmd->redirect_out->next;
-			node->cmd->redirect_out->file_name;
+			if (ft_strchr(node->cmd->redirect_out->file_name, '$') || ft_strchr(node->cmd->redirect_out->file_name, '\'')
+				|| ft_strchr(node->cmd->redirect_out->file_name, '\"'))
+			{
+				tmp = node->cmd->redirect_out->file_name;
+				node->cmd->redirect_out->file_name = expand(node->cmd->redirect_out->file_name);
+				free(tmp);
+			}
 		}
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
