@@ -1,37 +1,18 @@
-//void	exp_dollar(char *str, int i)
-//{
-//	while (str[i])
-//	{
-//		
-//	}
-//}
-//
-//void	replace_dollar(str, i)
-//{
-//	char	*s;
-//	char	*exp_str;
-//	char	*ret;
-//
-//	s = ft_substr(str, 0, i);
-//	exp_str = exp_dollar(str, i);
-//	ret = ft_strjoin(s, exp_dollar);
-//}
+#include "minishell.h"
 
 char	*handle_single_quote(char *str, int *i)
 {
 //	char	*quote_next;
-	char	*expanded_str;
 	char	*in_quote_str;
 //	char	*prev_str;
-	char	*tmp;
 	int		quote_head_index;
 	int	j;
 
 //	prev_str
 //	tmp	= ft_substr(str, 0, i);
-	quote_head_index = i + 1;
+	quote_head_index = *i + 1;
 	j = 0;
-	while (str[++i] != '\'')
+	while (str[++(*i)] != '\'')
 	{
 		j++;
 	}
@@ -51,21 +32,76 @@ char	*handle_single_quote(char *str, int *i)
 //	return (expanded_str);
 }
 
+size_t	strptr_len(char **line)
+{
+	size_t	cnt;
+
+	cnt = 0;
+	if (line == NULL)
+		return (0);
+	while (*line++ != NULL)
+		cnt++;
+	return (cnt);
+}
+
+void	split_free(char **ptr_ptr)
+{
+	size_t	len;
+	size_t	i;
+
+	if (ptr_ptr == NULL)
+		return ;
+	len = strptr_len(ptr_ptr);
+	i = 0;
+	while (i < len)
+		free(ptr_ptr[i++]);
+	free(ptr_ptr);
+}
+
+/*
+char	*find_env(char *var, size_t len)
+{
+	size_t	i;
+	char	*exp_var;
+	char	**split;
+
+	i = 0;
+	while (envp[i] != NULL)
+	{
+		split = ft_split(envp[i], "=");
+		if (split == NULL)
+			return (NULL);
+		if (ft_strlen(split == len) && ft_strncmp(var, split[0], len) == 0)
+		{
+			exp_var = split[1];
+			free_split(split);
+			return (exp_var);
+		}
+		i++;
+	}
+	return (ft_strdup(""));
+}
+*/
 char	*handle_dollar(char *str, int *i)
 {
-
+	char	*var;
+	int	j;
 	(*i)++;
+	
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
 		return (ft_strdup(""));
 	}
-	while (str[*i] != '$' && str[*i] && !is_space(str[*i]))
-	{
-			
-	}
+	j = *i;
+	while (str[*i] != '$' && str[*i] && !ft_isspace(str))
+		j++;
+	//var = find_env(str[i], j - i);
+	var = ft_strdup("");
+	*i = j;
+	return (var);
 }
 
-char	*handle_double_quote(char *str, int	*i)
+char	*handle_double_quote(char *str, int *i)
 {
 	char	*s;
 	char	*tmp;
@@ -74,18 +110,18 @@ char	*handle_double_quote(char *str, int	*i)
 	
 //	s	= ft_substr(str, 0, i);
 	s = ft_strdup("");
-	j = i + 1;
-	while (str[++i] != '\"')
+	j = *i + 1;
+	while (str[++(*i)] != '\"')
 	{
-		if (str[i] == '$')
+		if (str[*i] == '$')
 		{
-			s = ft_joinfree(s, ft_substr());
-			s = ft_joinfree(s, handle_dollar(str[i], &i));
+			s = ft_joinfree(s, ft_substr(str[], ));
+			s = ft_joinfree(s, handle_dollar(str[*i], i));
 			j = i;
 		}
 	}
-	if (j != i - 1)
-		s = ft_joinfree(s, ft_substr(str[], 0, i - 1 - j));
+	if (j != *i - 1)
+		s = ft_joinfree(s, ft_substr(str[], 0, *i - 1 - j));
 	return (s);
 }
 
