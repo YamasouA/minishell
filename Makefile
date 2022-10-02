@@ -12,6 +12,10 @@ PARCER_FILES = parse.c \
 	parse_utils.c
 PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 
+EXPAND_DIR = srcs/expander/
+EXPAND_FILES = expansion.c
+EXPAND_SRCS = $(addprefix $(EXPAND_DIR), $(EXPAND_FILES))
+
 LEXER_DIR = srcs/lexer/
 LEXER_FILES = lexer.c \
 	lexer_utils.c
@@ -28,8 +32,10 @@ LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)
 PARCER_OBJS = $(PARCER_SRCS:.c=.o)
+EXPAND_OBJS = $(EXPAND_SRCS:.c=.o)
 LEXER_OBJS = $(LEXER_SRCS:.c=.o)
 OBJS += $(PARCER_OBJS)
+OBJS += $(EXPAND_OBJS)
 OBJS += $(LEXER_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib

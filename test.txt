@@ -54,10 +54,19 @@ echo'abc def'
 echo 'abc'def
 '$$$'
 
+
 // mix quote
 abc'def'ghi"jkl"mno
 
+< filename
+< filename | grep
+< filename <filename2 | grepp hello
+< filename <filename2 <filename3| grepp hello
+exec > sample
+
+
 // ERROR case
+echo "abc
 filename >
 |"hello"
 cat main.c || grep hello

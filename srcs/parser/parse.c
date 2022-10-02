@@ -109,18 +109,16 @@ t_node	*new_node(t_node_kind kind)
 {
 	t_node	*node;
 
-	node = (t_node *)malloc(sizeof(t_node) * 1);
+	node = (t_node *)ft_calloc(sizeof(t_node), 1);
 	if (node == NULL)
 		perror("OUT2");
 	node->kind = kind;
-	node->cmd = (t_cmd *)malloc(sizeof(t_node) * 1);
-	node->cmd->cmd = NULL;
-	node->cmd->redirect_in = (t_redirect *)malloc(sizeof(t_cmd) * 1);
-	node->cmd->redirect_in->file_name = NULL;
-	node->cmd->redirect_in->delemiter= NULL;
-	node->cmd->redirect_out = (t_redirect *)malloc(sizeof(t_cmd) * 1);
-	node->cmd->redirect_out->file_name = NULL;
-	node->cmd->redirect_out->delemiter= NULL;
+	node->cmd = (t_cmd *)ft_calloc(sizeof(t_node), 1);
+//	node->cmd->cmd = NULL;
+	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_in->next = NULL;
+	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
 	return (node);
@@ -159,6 +157,30 @@ int	which_redir(t_token *tok)
 		
 }
 
+t_redirect	*new_redir(int redir_type, t_token *tok)
+{
+	t_redirect	*redirect;
+
+	redirect = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	redirect->type = redir_type;
+	if (redir_type == HEREDOC)
+		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
+	else
+		redirect->file_name = ft_substr(tok->str, 0, tok->len);
+	redirect->next = NULL;
+	return (redirect);
+}
+
+void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
+{
+	t_redirect	*tmp;
+
+	tmp = node->cmd->redirect_in;
+	while (tmp->next != NULL)
+		tmp = tmp->next;
+	tmp->next = new_redir(redir_type, tok);
+}
+
 void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 {
 		*tok = (*tok)->next;
@@ -171,17 +193,13 @@ void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
 		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
 		{
 			if (redir_type == HEREDOC)
-				node->cmd->redirect_in->delemiter = ft_substr((*tok)->str, 0, (*tok)->len);
+				add_tail_redir(node, redir_type, *tok);
 			else
-				node->cmd->redirect_in->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_in->type = redir_type;
-			node->cmd->redirect_in->next = NULL;
+				add_tail_redir(node, redir_type, *tok);
 		}
 		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
 		{
-			node->cmd->redirect_out->file_name = ft_substr((*tok)->str, 0, (*tok)->len);
-			node->cmd->redirect_out->type = redir_type;
-			node->cmd->redirect_out->next = NULL;
+			add_tail_redir(node, redir_type, *tok);
 		}
 		*tok = (*tok)->next;
 }
@@ -209,7 +227,7 @@ t_node	*cmd(t_token **tok, int *error_flag)
 		perror("OUT3!!");
 		return (NULL);
 	}
-	node->cmd->cmd = (char **)malloc(sizeof(char *) * (cmd_len(*tok) + 1));
+	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 	{
 		perror("OUT4!!");
@@ -248,6 +266,8 @@ t_node	*parse(t_token *tok)
 	error_flag = 0;
 	tok_head = tok;
 	node = cmd(&tok, &error_flag);
+	if (error_flag == 1)
+		return (syntax_error(node, tok, tok_head));
 	if (node == NULL)
 		return (NULL);
 	while (tok != NULL && consume(&tok, "|"))

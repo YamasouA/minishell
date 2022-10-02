@@ -97,6 +97,7 @@ void	print_node(t_node *node, int tab_n);
 
 // srcs/lexer
 t_token *lexer(char *line);
+bool	ft_isspace(char *str);
 
 // lexer_utils.c
 void ft_exit(char *msg);

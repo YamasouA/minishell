@@ -45,7 +45,8 @@ SRCS_FILES	=	ft_strlen.c \
 		ft_searchidx.c \
 		ft_hextoi.c \
 		ft_abs.c \
-		ft_max.c 
+		ft_max.c \
+		ft_joinfree.c
 B_SRCS_DIR = list/
 B_SRCS_FILES	=	ft_lstnew.c \
 	 		ft_lstadd_front.c \

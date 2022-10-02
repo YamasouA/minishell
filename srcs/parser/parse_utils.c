@@ -26,13 +26,18 @@ void	print_node(t_node *node, int tab_n)
 			print_indent(tab_n + 2);
 			printf("node: %s\n", node->cmd->cmd[i++]);
 		}
-		if (node->cmd->redirect_in->file_name)
+		while (node->cmd->redirect_in->next)
 		{
+			node->cmd->redirect_in = node->cmd->redirect_in->next;
 			print_indent(tab_n + 4);
-			printf("redirin: %s\n", node->cmd->redirect_in->file_name);
+			if (node->cmd->redirect_in->type == HEREDOC)
+				printf("redirin heredoc: %s\n", node->cmd->redirect_in->delemiter);
+			else
+				printf("redirin: %s\n", node->cmd->redirect_in->file_name);
 		}
-		if (node->cmd->redirect_out->file_name)
+		while (node->cmd->redirect_out->next)
 		{
+			node->cmd->redirect_out = node->cmd->redirect_out->next;
 			print_indent(tab_n + 4);
 			printf("redirout: %s\n", node->cmd->redirect_out->file_name);
 		}
