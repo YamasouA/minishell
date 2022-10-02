@@ -28,7 +28,7 @@ char	*handle_single_quote(char *str, int *i)
 	int	j;
 
 //	prev_str
-	tmp	= ft_substr(str, 0, i);
+//	tmp	= ft_substr(str, 0, i);
 	quote_head_index = i + 1;
 	j = 0;
 	while (str[++i] != '\'')
@@ -36,18 +36,33 @@ char	*handle_single_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
-	expanded_str = ft_strjoin(tmp, in_quote_str);
-	free(tmp);
-	free(in_quote_str);
-	if (str[i + 1])
-	{
-		tmp = expanded_str;
-		expanded_str = ft_strjoin(expanded_str, str + i + 1);
-		free(tmp);
-//		tmp = ft_strdup(str + i + 1);
-	}
+//	expanded_str = ft_joinfree(tmp, in_quote_str);
+//	free(tmp);
+//	free(in_quote_str);
+//	if (str[i + 1])
+//	{
+//		tmp = expanded_str;
+//		expanded_str = ft_strjoin(expanded_str, str + i + 1);
+//		free(tmp);
+////		tmp = ft_strdup(str + i + 1);
+//	}
 //	quote_next = ft_strchr(str + i, '\'');
-	return (expanded_str);
+	return (in_quote_str);
+//	return (expanded_str);
+}
+
+char	*handle_dollar(char *str, int *i)
+{
+
+	(*i)++;
+	if (str[*i] == '\'' || str[*i] == '\"')
+	{
+		return (ft_strdup(""));
+	}
+	while (str[*i] != '$' && str[*i] && !is_space(str[*i]))
+	{
+			
+	}
 }
 
 char	*handle_double_quote(char *str, int	*i)
@@ -57,7 +72,8 @@ char	*handle_double_quote(char *str, int	*i)
 	size_t	j;
 	char	*in_quote_str;
 	
-	s	= ft_substr(str, 0, i);
+//	s	= ft_substr(str, 0, i);
+	s = ft_strdup("");
 	j = i + 1;
 	while (str[++i] != '\"')
 	{
@@ -85,25 +101,33 @@ void	expansion()
 	char	*
 	int		i;
 
+	expanded_str = ft_strdup("");
 	while (str[i])
 	{
 		if (str[i] == '\'')
 		{
-			tmp = str;
-			str = handle_single_quote(str, i);
-			free(tmp);
+			//tmp = expanded_str;
+			expanded_str = ft_joinfree(expanded_str, handle_single_quote(str, &i));
+//			free(tmp);
 		}
 		if (str[i] == '\"')
 		{
-			tmp = str;
-			str = handle_double_quote();
-			free(tmp);
+//			tmp = str;
+			str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
+//			free(tmp);
 		}
-		if (str[i] == '&' && str[i + 1] && !is_space(str[i + 1]))
+		if (str[i] == '$' && str[i + 1] && !is_space(str[i + 1]))
 		{
 			tmp = str;
-			str = handle_dollar(str);
+			str = handle_dollar(str, &i);
 			free(tmp);
+		}
+		else
+		{
+			head_index = i
+			while (str[i] && str[i] != '\'' && str[i] != '\"' && str[i] != '$')
+				i++;
+			expanded_str = ft_joinfree(expanded_str, ft_substr(str, head_index, i - head_index));
 		}
 	}
 
