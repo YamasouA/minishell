@@ -5,6 +5,7 @@ ls -l | grep *.c
 .test
 vim ./libft.c
 
+
 // redirect
 cat << delimiter
 ls|>-l
