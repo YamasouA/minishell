@@ -5,30 +5,57 @@ ls -l | grep *.c
 .test
 vim ./libft.c
 
+// redirect
 cat << delimiter
 ls|>-l
+< filename
+< filename | grep
+exec > sample
+
+// expansion
+
+// simple doller
+$HOMEabcd
+$HOME abcd
+echo $$
+echo $HELLOWORLD
 echo $|>ABC
 echo $hello
 echo $ hello
 echo $
-echo "abc def"
-echo "abc"def
+
+//double quote
+abcd"ABCD efgh"
+"ABCD efgh"defg
+"$HOME abcd"
+"'"HOME"'"
+"abc$HOME $HOME xyz"abc
+echo "$HOME"
 "a\"''"
-echo'abc def'
-echo 'abc'def
-'a\'""'
-'$ABC'
-'$"Hell'
 "'abc"
 ">'"
 "<>'"
 $">>>>"
 abc"defg"
-abc'def'ghi"jkl"mno
+echo "abc def"
+echo "abc"def
+
+// single quote
+abcd'ABCD efgh'
+'ABCD efgh'defg
+'$HOME abcd'
+'"'$HOME'"'
+'abc$HOME $HOME xyz'abc
+echo '$HOME'
+'a\'""'
+'$ABC'
+'$"Hell'
+echo'abc def'
+echo 'abc'def
 '$$$'
-< filename
-< filename | grep
-exec > sample
+
+// mix quote
+abc'def'ghi"jkl"mno
 
 // ERROR case
 filename >
