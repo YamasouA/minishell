@@ -8,7 +8,8 @@ static void tester(void)
 	t_token	*tok;
 	t_node	*node;
 
-	file_name = "test.txt";
+	//file_name = "test.txt";
+	file_name = "test2.txt";
 	fd = open(file_name, O_RDONLY);
 	line = NULL;
 	do {

@@ -66,15 +66,19 @@ char	*find_env(char *var, size_t len)
 	char	**split;
 
 	i = 0;
+	printf("len: %zu\n", len);
+	printf("var: %s\n", var);
 	while (environ[i] != NULL)
 	{
+		//printf("env[%zu]: %s\n", i, environ[i]);
 		split = ft_split(environ[i], '=');
 		if (split == NULL)
 			return (NULL);
 		if (ft_strlen(split[0]) == len && ft_strncmp(var, split[0], len) == 0)
 		{
-			exp_var = split[1];
+			exp_var = ft_strdup(split[1]);
 			free_split(split);
+			printf("exp_var: %s\n", exp_var);
 			return (exp_var);
 		}
 		i++;
@@ -93,11 +97,15 @@ char	*handle_dollar(char *str, int *i)
 		return (ft_strdup(""));
 	}
 	j = *i;
-	while (str[*i] != '$' && str[*i] && !ft_isspace(str))
+	//write(1, "abc", 3);
+	printf("bef: %d\n", *i);
+	while (str[j] != '$' && str[j] && !ft_isspace(str))
 		j++;
-	//var = find_env(str[i], j - i);
-	var = ft_strdup("");
+	var = find_env(&str[*i], j - *i);
+	printf("var: %s\n", var);
+	//var = ft_strdup("");
 	*i = j;
+	printf("aft: %d\n", *i);
 	return (var);
 }
 
@@ -142,6 +150,7 @@ char	*expand(char *str)
 	i = 0;
 	while (str[i])
 	{
+		//printf("str[%d]: %c\n", i, str[i]);
 		if (str[i] == '\'')
 		{
 			//tmp = expanded_str;
@@ -156,8 +165,8 @@ char	*expand(char *str)
 		}
 		if (str[i] == '$' && str[i + 1] && !isspace(str[i + 1]))
 		{
-			tmp = str;
-			str = handle_dollar(str, &i);
+			tmp = expanded_str;
+			expanded_str = handle_dollar(str, &i);
 			free(tmp);
 		}
 		else
@@ -166,6 +175,7 @@ char	*expand(char *str)
 			while (str[i] && str[i] != '\'' && str[i] != '\"' && str[i] != '$')
 				i++;
 			expanded_str = ft_joinfree(expanded_str, ft_substr(str, head_index, i - head_index));
+			i++;
 		}
 	}
 	return (expanded_str);
@@ -246,5 +256,6 @@ t_node	*expansion(t_node *node)
 		if (node->rhs != NULL)
 			expansion(node->rhs);
 	}
+	print_node(node, 0);
 	return (node);
 }

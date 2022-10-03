@@ -1,0 +1,9 @@
+// simple doller
+$HOMEabcd
+$HOME abcd
+echo $$
+echo $HELLOWORLD
+echo $|>ABC
+echo $hello
+echo $ hello
+echo $
