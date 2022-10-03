@@ -13,6 +13,7 @@ void	print_node(t_node *node, int tab_n)
 {
 	int	i;
 	char	*node_type[2] = {"ND_PIPE", "ND_COMMAND"};
+	t_redirect	*tmp;
 
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
@@ -26,6 +27,8 @@ void	print_node(t_node *node, int tab_n)
 			print_indent(tab_n + 2);
 			printf("node: %s\n", node->cmd->cmd[i++]);
 		}
+		//while (node->cmd->redirect_in->next)
+		tmp = node->cmd->redirect_in;
 		while (node->cmd->redirect_in->next)
 		{
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
@@ -35,12 +38,15 @@ void	print_node(t_node *node, int tab_n)
 			else
 				printf("redirin: %s\n", node->cmd->redirect_in->file_name);
 		}
+		node->cmd->redirect_in = tmp;
+		tmp = node->cmd->redirect_out;
 		while (node->cmd->redirect_out->next)
 		{
 			node->cmd->redirect_out = node->cmd->redirect_out->next;
 			print_indent(tab_n + 4);
 			printf("redirout: %s\n", node->cmd->redirect_out->file_name);
 		}
+		node->cmd->redirect_out = tmp;
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
