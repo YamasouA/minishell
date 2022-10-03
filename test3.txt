@@ -1,0 +1,9 @@
+echo "abc"
+echo "'abc'"
+echo "abc|def"
+echo "$HOME"
+echo $"HOME"
+echo "'$HOME'"
+echo jkl"abc"def
+echo $HOME"abc"def
+echo "abc""def"

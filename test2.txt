@@ -1,4 +1,5 @@
 // simple doller
+echo $ > ABC
 $HOMEabcd
 $HOME abcd
 echo $$
@@ -11,3 +12,4 @@ echo $ hello
 echo $
 echo $$HOME
 echo $$$HOME
+echo $"HOME"

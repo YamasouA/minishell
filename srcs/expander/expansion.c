@@ -123,13 +123,16 @@ char	*handle_double_quote(char *str, int *i)
 	{
 		if (str[*i] == '$')
 		{
-			s = ft_joinfree(s, ft_substr(str, j, j - *i));
+			s = ft_joinfree(s, ft_substr(str, j, j -  *i));
+			printf("%s\n", s);
 			s = ft_joinfree(s, handle_dollar(str, i));
+			printf("%s\n", s);
 			j = *i;
 		}
 	}
 	if (j != *i - 1)
-		s = ft_joinfree(s, ft_substr(str, j, *i - 1 - j));
+		s = ft_joinfree(s, ft_substr(str, j, *i - j));
+	(*i)++;
 	return (s);
 }
 
@@ -160,6 +163,7 @@ char	*expand(char *str)
 		if (str[i] == '\"')
 		{
 //			tmp = str;
+			printf("ok2\n");
 			expanded_str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
 //			free(tmp);
 		}
@@ -169,6 +173,7 @@ char	*expand(char *str)
 			{
 //				tmp = expanded_str;
 				expanded_str = ft_joinfree(expanded_str, handle_dollar(str, &i));
+				printf("ok\n");
 //				free(tmp);
 			}
 			else
@@ -201,6 +206,8 @@ t_node	*expansion(t_node *node)
 {
 	char	*tmp;
 	int		i;
+	t_redirect	*head;
+//	t_redirect	*out_head;
 
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
@@ -218,6 +225,7 @@ t_node	*expansion(t_node *node)
 			}
 			i++;
 		}
+		head = node->cmd->redirect_in;
 		while (node->cmd->redirect_in->next)
 		{
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
@@ -228,7 +236,7 @@ t_node	*expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->delemiter;
 					node->cmd->redirect_in->delemiter = expand(node->cmd->redirect_in->delemiter);
-//					printf("%s\n", node->cmd->redirect_in->delemiter);
+					printf("%s\n", node->cmd->redirect_in->delemiter);
 					free(tmp);
 				}
 			}
@@ -239,11 +247,14 @@ t_node	*expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->file_name;
 					node->cmd->redirect_in->file_name = expand(node->cmd->redirect_in->file_name);
-//					printf("%s\n", node->cmd->redirect_in->file_name);
+					printf("%s\n", node->cmd->redirect_in->file_name);
 					free(tmp);
 				}
 			}
 		}
+		node->cmd->redirect_in = head;
+//		free(in_head);
+		head = node->cmd->redirect_out;
 		while (node->cmd->redirect_out->next)
 		{
 			node->cmd->redirect_out = node->cmd->redirect_out->next;
@@ -252,10 +263,12 @@ t_node	*expansion(t_node *node)
 			{
 				tmp = node->cmd->redirect_out->file_name;
 				node->cmd->redirect_out->file_name = expand(node->cmd->redirect_out->file_name);
-//				printf("%s\n", node->cmd->redirect_out->file_name);
+				printf("%s\n", node->cmd->redirect_out->file_name);
 				free(tmp);
 			}
 		}
+		node->cmd->redirect_out = head;
+//		free(out_head);
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
@@ -264,7 +277,5 @@ t_node	*expansion(t_node *node)
 		if (node->rhs != NULL)
 			expansion(node->rhs);
 	}
-	printf("==EXPANSION==\n");
-	print_node(node, 0);
 	return (node);
 }

@@ -9,7 +9,7 @@ static void tester(void)
 	t_node	*node;
 
 	//file_name = "test.txt";
-	file_name = "test2.txt";
+	file_name = "test3.txt";
 	fd = open(file_name, O_RDONLY);
 	line = NULL;
 	do {
@@ -24,7 +24,9 @@ static void tester(void)
 		line[ft_strlen(line) - 1] = '\0';
 		tok = lexer(line);
 		node = parse(tok);
-		expansion(node);
+		node = expansion(node);
+		printf("==EXPANSION==\n");
+		print_node(node, 0);
 	} while (1);
 	free(line);
 }
