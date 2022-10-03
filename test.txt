@@ -4,16 +4,13 @@ ls | cat | , | .test
 ls -l | grep *.c
 .test
 vim ./libft.c
-
 // redirect
 cat << delimiter
 ls|>-l
 < filename
 < filename | grep
 exec > sample
-
 // expansion
-
 // simple doller
 $HOMEabcd
 $HOME abcd
@@ -23,7 +20,6 @@ echo $|>ABC
 echo $hello
 echo $ hello
 echo $
-
 //double quote
 abcd"ABCD efgh"
 "ABCD efgh"defg
@@ -39,7 +35,6 @@ $">>>>"
 abc"defg"
 echo "abc def"
 echo "abc"def
-
 // single quote
 abcd'ABCD efgh'
 'ABCD efgh'defg
@@ -53,18 +48,13 @@ echo '$HOME'
 echo'abc def'
 echo 'abc'def
 '$$$'
-
-
 // mix quote
 abc'def'ghi"jkl"mno
-
 < filename
 < filename | grep
 < filename <filename2 | grepp hello
 < filename <filename2 <filename3| grepp hello
 exec > sample
-
-
 // ERROR case
 echo "abc
 filename >

@@ -87,9 +87,13 @@ struct s_node
 	t_cmd		*cmd;
 };
 
+extern	char **environ;
 
 void minishell(int argc, char **argv);
 char *read_line();
+
+// srcs/expander
+t_node	*expansion(t_node *node);
 
 // srcs/parser
 t_node *parse(t_token *tok);

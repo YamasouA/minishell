@@ -44,7 +44,7 @@ size_t	strptr_len(char **line)
 	return (cnt);
 }
 
-void	split_free(char **ptr_ptr)
+void	free_split(char **ptr_ptr)
 {
 	size_t	len;
 	size_t	i;
@@ -58,7 +58,7 @@ void	split_free(char **ptr_ptr)
 	free(ptr_ptr);
 }
 
-/*
+
 char	*find_env(char *var, size_t len)
 {
 	size_t	i;
@@ -66,12 +66,12 @@ char	*find_env(char *var, size_t len)
 	char	**split;
 
 	i = 0;
-	while (envp[i] != NULL)
+	while (environ[i] != NULL)
 	{
-		split = ft_split(envp[i], "=");
+		split = ft_split(environ[i], '=');
 		if (split == NULL)
 			return (NULL);
-		if (ft_strlen(split == len) && ft_strncmp(var, split[0], len) == 0)
+		if (ft_strlen(split[0]) == len && ft_strncmp(var, split[0], len) == 0)
 		{
 			exp_var = split[1];
 			free_split(split);
@@ -81,7 +81,7 @@ char	*find_env(char *var, size_t len)
 	}
 	return (ft_strdup(""));
 }
-*/
+
 char	*handle_dollar(char *str, int *i)
 {
 	char	*var;
@@ -177,33 +177,9 @@ char	*expand(char *str)
 	//	handle_single_quote
 	//else if $ && next != '\0' && next != isspace
 	//	handle_dollar	
-
-
-//	int	status;
-//
-//	status = GENERAL;
-//	while (str[i])
-//	{
-//		if (str[i] == '\"' && status == GENERAL)
-//		{
-//			handle_d_quote
-////			status = D_QUOTE;
-//		}
-////		else if (str[i] == '\"' && status == D_QUOTE)
-////			status = GENERAL;
-//		if (str[i] == "\'" && status == GENERAL)
-//			status = S_QUOTE;
-//		else if (str[i] == "\'" && status == S_QUOTE)
-//			status = GENERAL;
-//		if (str[i] == '$' && str[i + 1] != '\0' && ft_strchr(" \t\r\v", str[i + 1]) && status != S_QUOTE)
-//		{
-//			replace_dollar(str, i++);
-//			
-//		}
-//	}
 }
 
-void	expansion(t_node *node)
+t_node	*expansion(t_node *node)
 {
 	char	*tmp;
 	int		i;
@@ -212,15 +188,17 @@ void	expansion(t_node *node)
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (node->cmd->cmd == NULL)
-			return ;
+			return (NULL);
 		while (node->cmd->cmd[i] != NULL)
 		{
 			if (ft_strchr(node->cmd->cmd[i], '$') || ft_strchr(node->cmd->cmd[i], '\'') || ft_strchr(node->cmd->cmd[i], '\"'))
 			{
 				tmp = node->cmd->cmd[i];
 				node->cmd->cmd[i] = expand(node->cmd->cmd[i]);
+				printf("%s\n", node->cmd->cmd[i]);
 				free(tmp);
 			}
+			i++;
 		}
 		while (node->cmd->redirect_in->next)
 		{
@@ -232,6 +210,7 @@ void	expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->delemiter;
 					node->cmd->redirect_in->delemiter = expand(node->cmd->redirect_in->delemiter);
+					printf("%s\n", node->cmd->redirect_in->delemiter);
 					free(tmp);
 				}
 			}
@@ -242,6 +221,7 @@ void	expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->file_name;
 					node->cmd->redirect_in->file_name = expand(node->cmd->redirect_in->file_name);
+					printf("%s\n", node->cmd->redirect_in->file_name);
 					free(tmp);
 				}
 			}
@@ -254,6 +234,7 @@ void	expansion(t_node *node)
 			{
 				tmp = node->cmd->redirect_out->file_name;
 				node->cmd->redirect_out->file_name = expand(node->cmd->redirect_out->file_name);
+				printf("%s\n", node->cmd->redirect_out->file_name);
 				free(tmp);
 			}
 		}
@@ -265,4 +246,5 @@ void	expansion(t_node *node)
 		if (node->rhs != NULL)
 			expansion(node->rhs);
 	}
+	return (node);
 }

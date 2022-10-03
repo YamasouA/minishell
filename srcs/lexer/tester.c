@@ -6,6 +6,7 @@ static void tester(void)
 	char *file_name;
 	char *line;
 	t_token	*tok;
+	t_node	*node;
 
 	file_name = "test.txt";
 	fd = open(file_name, O_RDONLY);
@@ -21,7 +22,8 @@ static void tester(void)
 		printf("input line: %s\n", line);
 		line[ft_strlen(line) - 1] = '\0';
 		tok = lexer(line);
-		parse(tok);
+		node = parse(tok);
+		expansion(node);
 	} while (1);
 	free(line);
 }
