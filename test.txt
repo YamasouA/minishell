@@ -20,6 +20,8 @@ echo $|>ABC
 echo $hello
 echo $ hello
 echo $
+echo $$HOME
+echo $$$HOME
 //double quote
 abcd"ABCD efgh"
 "ABCD efgh"defg

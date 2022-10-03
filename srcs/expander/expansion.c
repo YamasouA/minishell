@@ -66,8 +66,8 @@ char	*find_env(char *var, size_t len)
 	char	**split;
 
 	i = 0;
-	printf("len: %zu\n", len);
-	printf("var: %s\n", var);
+//	printf("len: %zu\n", len);
+//	printf("var: %s\n", var);
 	while (environ[i] != NULL)
 	{
 		//printf("env[%zu]: %s\n", i, environ[i]);
@@ -78,7 +78,7 @@ char	*find_env(char *var, size_t len)
 		{
 			exp_var = ft_strdup(split[1]);
 			free_split(split);
-			printf("exp_var: %s\n", exp_var);
+//			printf("exp_var: %s\n", exp_var);
 			return (exp_var);
 		}
 		i++;
@@ -90,22 +90,22 @@ char	*handle_dollar(char *str, int *i)
 {
 	char	*var;
 	int	j;
-	(*i)++;
 	
+	(*i)++;
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
 		return (ft_strdup(""));
 	}
 	j = *i;
 	//write(1, "abc", 3);
-	printf("bef: %d\n", *i);
+//	printf("bef: %d\n", *i);
 	while (str[j] != '$' && str[j] && !ft_isspace(str))
 		j++;
 	var = find_env(&str[*i], j - *i);
-	printf("var: %s\n", var);
+//	printf("var: %s\n", var);
 	//var = ft_strdup("");
 	*i = j;
-	printf("aft: %d\n", *i);
+//	printf("aft: %d\n", *i);
 	return (var);
 }
 
@@ -142,7 +142,7 @@ char	*handle_double_quote(char *str, int *i)
 char	*expand(char *str)
 {
 	char	*expanded_str;
-	char	*tmp;
+//	char	*tmp;
 	int		i;
 	int		head_index;
 
@@ -160,14 +160,22 @@ char	*expand(char *str)
 		if (str[i] == '\"')
 		{
 //			tmp = str;
-			str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
+			expanded_str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
 //			free(tmp);
 		}
-		if (str[i] == '$' && str[i + 1] && !isspace(str[i + 1]))
+		if (str[i] == '$')
 		{
-			tmp = expanded_str;
-			expanded_str = handle_dollar(str, &i);
-			free(tmp);
+			if (str[i + 1] && !isspace(str[i + 1]) && str[i + 1] != '$')
+			{
+//				tmp = expanded_str;
+				expanded_str = ft_joinfree(expanded_str, handle_dollar(str, &i));
+//				free(tmp);
+			}
+			else
+			{
+				expanded_str = ft_joinfree(expanded_str, ft_strdup("$"));
+				i++;
+			}
 		}
 		else
 		{
@@ -175,7 +183,7 @@ char	*expand(char *str)
 			while (str[i] && str[i] != '\'' && str[i] != '\"' && str[i] != '$')
 				i++;
 			expanded_str = ft_joinfree(expanded_str, ft_substr(str, head_index, i - head_index));
-			i++;
+//			i++;
 		}
 	}
 	return (expanded_str);
@@ -205,7 +213,7 @@ t_node	*expansion(t_node *node)
 			{
 				tmp = node->cmd->cmd[i];
 				node->cmd->cmd[i] = expand(node->cmd->cmd[i]);
-				printf("%s\n", node->cmd->cmd[i]);
+//				printf("%s\n", node->cmd->cmd[i]);
 				free(tmp);
 			}
 			i++;
@@ -220,7 +228,7 @@ t_node	*expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->delemiter;
 					node->cmd->redirect_in->delemiter = expand(node->cmd->redirect_in->delemiter);
-					printf("%s\n", node->cmd->redirect_in->delemiter);
+//					printf("%s\n", node->cmd->redirect_in->delemiter);
 					free(tmp);
 				}
 			}
@@ -231,7 +239,7 @@ t_node	*expansion(t_node *node)
 				{
 					tmp = node->cmd->redirect_in->file_name;
 					node->cmd->redirect_in->file_name = expand(node->cmd->redirect_in->file_name);
-					printf("%s\n", node->cmd->redirect_in->file_name);
+//					printf("%s\n", node->cmd->redirect_in->file_name);
 					free(tmp);
 				}
 			}
@@ -244,7 +252,7 @@ t_node	*expansion(t_node *node)
 			{
 				tmp = node->cmd->redirect_out->file_name;
 				node->cmd->redirect_out->file_name = expand(node->cmd->redirect_out->file_name);
-				printf("%s\n", node->cmd->redirect_out->file_name);
+//				printf("%s\n", node->cmd->redirect_out->file_name);
 				free(tmp);
 			}
 		}
@@ -256,6 +264,7 @@ t_node	*expansion(t_node *node)
 		if (node->rhs != NULL)
 			expansion(node->rhs);
 	}
+	printf("==EXPANSION==\n");
 	print_node(node, 0);
 	return (node);
 }

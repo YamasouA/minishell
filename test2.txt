@@ -3,7 +3,11 @@ $HOMEabcd
 $HOME abcd
 echo $$
 echo $HELLOWORLD
+echo $ > ABC
+echo $|ABC
 echo $|>ABC
 echo $hello
 echo $ hello
 echo $
+echo $$HOME
+echo $$$HOME
