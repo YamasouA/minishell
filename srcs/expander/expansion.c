@@ -17,6 +17,7 @@ char	*handle_single_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
+//	printf("%s\n", in_quote_str);
 //	expanded_str = ft_joinfree(tmp, in_quote_str);
 //	free(tmp);
 //	free(in_quote_str);
@@ -28,6 +29,7 @@ char	*handle_single_quote(char *str, int *i)
 ////		tmp = ft_strdup(str + i + 1);
 //	}
 //	quote_next = ft_strchr(str + i, '\'');
+	(*i)++;
 	return (in_quote_str);
 //	return (expanded_str);
 }

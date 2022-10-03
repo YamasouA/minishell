@@ -13,3 +13,11 @@ echo "$HOME $HOME"
 echo "$HOME$HOME"
 echo "$HOME""$HOME"
 echo "abc$HOME def jkl$HOME str"
+//single_quote
+echo 'abc'
+echo '"abc"'
+echo 'abc''def'
+echo '$HOME'
+echo $'HOME'
+echo 'abc"def"ghi'jkl"mno"
+echo '$HOME"abc"def$""'
