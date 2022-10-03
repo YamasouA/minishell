@@ -86,6 +86,11 @@ char	*find_env(char *var, size_t len)
 	return (ft_strdup(""));
 }
 
+bool	ft_isspace2(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
+}
+
 char	*handle_dollar(char *str, int *i)
 {
 	char	*var;
@@ -99,7 +104,7 @@ char	*handle_dollar(char *str, int *i)
 	j = *i;
 	//write(1, "abc", 3);
 //	printf("bef: %d\n", *i);
-	while (str[j] != '$' && str[j] && !ft_isspace(str))
+	while (str[j] != '$' && str[j] && !ft_isspace2(str[j]) && str[j] != '\'' && str[j] != '\"')
 		j++;
 	var = find_env(&str[*i], j - *i);
 //	printf("var: %s\n", var);
@@ -108,6 +113,31 @@ char	*handle_dollar(char *str, int *i)
 //	printf("aft: %d\n", *i);
 	return (var);
 }
+
+//char	*ft_substr2(char const *s, unsigned int start, size_t len)
+//{
+//	size_t	i;
+//	char	*ret;
+//
+//	if (!s)
+//		return (NULL);
+//	if (start >= ft_strlen(s) || !len)
+//		return (ft_strdup(""));
+//	if (len > ft_strlen(s + start))
+//		ret = (char *)malloc((ft_strlen(s + start) + 1) * sizeof(char));
+//	else
+//		ret = (char *)malloc(len + 1);
+//	if (!ret)
+//		return (NULL);
+//	i = 0;
+//	while (i < len && s[start + i])
+//	{
+//		ret[i] = s[start + i];
+//		i++;
+//	}
+//	ret[i] = '\0';
+//	return (ret);
+//}
 
 char	*handle_double_quote(char *str, int *i)
 {
@@ -119,19 +149,27 @@ char	*handle_double_quote(char *str, int *i)
 //	s	= ft_substr(str, 0, i);
 	s = ft_strdup("");
 	j = *i + 1;
-	while (str[++(*i)] != '\"')
+	while (str[++(*i)] != '\"' && str[(*i)])
 	{
 		if (str[*i] == '$')
 		{
-			s = ft_joinfree(s, ft_substr(str, j, j -  *i));
-			printf("%s\n", s);
+//			printf("%s\n", str);
+//			printf("%s\n", ft_substr(str, *i, 4));
+			s = ft_joinfree(s, ft_substr(str, j, *i - j));
+//			printf("%s\n", s);
+//			printf("%s\n", handle_dollar(str, i));
 			s = ft_joinfree(s, handle_dollar(str, i));
-			printf("%s\n", s);
+//			printf("%s\n", s);
 			j = *i;
+			(*i)--;
 		}
 	}
-	if (j != *i - 1)
+//	printf("%s\n", ft_substr(str, j, *i - j));
+//	if (j != *i - 1)
+	if (str[*i])
 		s = ft_joinfree(s, ft_substr(str, j, *i - j));
+//	printf("ok\n");
+//	printf("%s\n", s);
 	(*i)++;
 	return (s);
 }
@@ -163,7 +201,7 @@ char	*expand(char *str)
 		if (str[i] == '\"')
 		{
 //			tmp = str;
-			printf("ok2\n");
+//			printf("ok2\n");
 			expanded_str = ft_joinfree(expanded_str, handle_double_quote(str, &i));
 //			free(tmp);
 		}
