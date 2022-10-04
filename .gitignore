@@ -5,3 +5,4 @@ a.out
 *.swp
 .DS_STORE
 *.a
+.test/libft
