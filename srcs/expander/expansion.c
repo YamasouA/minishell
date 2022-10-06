@@ -166,11 +166,46 @@ void expand_cmd_instance(char **cmd_data)
 	}
 }
 
+void	recursive_expansion(t_node *node)
+{
+	if (node->lhs != NULL)
+		expansion(node->lhs);
+	if (node->rhs != NULL)
+		expansion(node->rhs);
+}
+
+void	expand_redir_list(t_node *node)
+{
+	t_redirect *head;
+
+	head = node->cmd->redirect_in;
+	while (node->cmd->redirect_in->next)
+	{
+		node->cmd->redirect_in = node->cmd->redirect_in->next;
+		if (node->cmd->redirect_in->type == HEREDOC)
+		{
+			expand_cmd_instance(&(node->cmd->redirect_in->delemiter));
+		}
+		else
+		{
+			expand_cmd_instance(&(node->cmd->redirect_in->file_name));
+		}
+	}
+	node->cmd->redirect_in = head;
+	head = node->cmd->redirect_out;
+	while (node->cmd->redirect_out->next)
+	{
+		node->cmd->redirect_out = node->cmd->redirect_out->next;
+		expand_cmd_instance(&(node->cmd->redirect_out->file_name));
+	}
+	node->cmd->redirect_out = head;
+}
+
+
 t_node	*expansion(t_node *node)
 {
-//	char		*tmp;
 	int			i;
-	t_redirect	*head;
+//	t_redirect	*head;
 
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
@@ -179,73 +214,39 @@ t_node	*expansion(t_node *node)
 		i = 0;
 		while (node->cmd->cmd[i] != NULL)
 		{
-//			if (ft_strchr(node->cmd->cmd[i], '\'')
-//				|| ft_strchr(node->cmd->cmd[i], '\"')
-//				|| ft_strchr(node->cmd->cmd[i], '$'))
-//			{
-//				tmp = node->cmd->cmd[i];
 			expand_cmd_instance(&(node->cmd->cmd[i]));
-//				node->cmd->cmd[i] = expand(node->cmd->cmd[i]);
-//				free(tmp);
-//			}
 			i++;
 		}
-		head = node->cmd->redirect_in;
-		while (node->cmd->redirect_in->next)
-		{
-			node->cmd->redirect_in = node->cmd->redirect_in->next;
-			if (node->cmd->redirect_in->type == HEREDOC)
-			{
-				expand_cmd_instance(&(node->cmd->redirect_in->delemiter));
-				
-//				if (ft_strchr(node->cmd->redirect_in->delemiter, '$')
-//					|| ft_strchr(node->cmd->redirect_in->delemiter, '\'')
-//					|| ft_strchr(node->cmd->redirect_in->delemiter, '\"'))
-//				{
-//					tmp = node->cmd->redirect_in->delemiter;
-//					node->cmd->redirect_in->delemiter = expand(node->cmd->redirect_in->delemiter);
-////					printf("%s\n", node->cmd->redirect_in->delemiter);
-//					free(tmp);
-//				}
-			}
-			else
-			{
-				expand_cmd_instance(&(node->cmd->redirect_in->file_name));
-//				if (ft_strchr(node->cmd->redirect_in->file_name, '$')
-//					|| ft_strchr(node->cmd->redirect_in->file_name, '\'')
-//					|| ft_strchr(node->cmd->redirect_in->file_name, '\"'))
-//				{
-//					tmp = node->cmd->redirect_in->file_name;
-////					node->cmd->redirect_in->file_name = expand(node->cmd->redirect_in->file_name);
-////					printf("%s\n", node->cmd->redirect_in->file_name);
-//					free(tmp);
-//				}
-			}
-		}
-		node->cmd->redirect_in = head;
-		head = node->cmd->redirect_out;
-		while (node->cmd->redirect_out->next)
-		{
-			node->cmd->redirect_out = node->cmd->redirect_out->next;
-			expand_cmd_instance(&(node->cmd->redirect_out->file_name));
-//			if (ft_strchr(node->cmd->redirect_out->file_name, '$')
-//				|| ft_strchr(node->cmd->redirect_out->file_name, '\'')
-//				|| ft_strchr(node->cmd->redirect_out->file_name, '\"'))
+		expand_redir_list(node);
+//		head = node->cmd->redirect_in;
+//		while (node->cmd->redirect_in->next)
+//		{
+//			node->cmd->redirect_in = node->cmd->redirect_in->next;
+//			if (node->cmd->redirect_in->type == HEREDOC)
 //			{
-//				tmp = node->cmd->redirect_out->file_name;
-//				node->cmd->redirect_out->file_name = expand(node->cmd->redirect_out->file_name);
-////				printf("%s\n", node->cmd->redirect_out->file_name);
-//				free(tmp);
+//				expand_cmd_instance(&(node->cmd->redirect_in->delemiter));
 //			}
-		}
-		node->cmd->redirect_out = head;
+//			else
+//			{
+//				expand_cmd_instance(&(node->cmd->redirect_in->file_name));
+//			}
+//		}
+//		node->cmd->redirect_in = head;
+//		head = node->cmd->redirect_out;
+//		while (node->cmd->redirect_out->next)
+//		{
+//			node->cmd->redirect_out = node->cmd->redirect_out->next;
+//			expand_cmd_instance(&(node->cmd->redirect_out->file_name));
+//		}
+//		node->cmd->redirect_out = head;
 	}
-	if (node->lhs != NULL || node->rhs != NULL)
+	if (node->lhs != NULL || node->rhs != NULL) //begin cut func?
 	{
-		if (node->lhs != NULL)
-			expansion(node->lhs);
-		if (node->rhs != NULL)
-			expansion(node->rhs);
+		recursive_expansion(node);
+//		if (node->lhs != NULL)
+//			expansion(node->lhs);
+//		if (node->rhs != NULL)
+//			expansion(node->rhs);
 	}
 	return (node);
 }
