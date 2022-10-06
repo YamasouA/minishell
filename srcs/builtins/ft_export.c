@@ -1,10 +1,14 @@
 #include "minishell.h"
 
-bool	is_valid_var(char *str)
+#define EXPORT_NONE 0
+#define EXPORT_NEW 1
+#define EXPORT_APPEND 2
+#define EXPORT_ERROR 4
+
+bool	is_valid_var(char *str) // shareable unset func
 {
 	int	i;
 	
-//	printf("%s\n", str);
 	if (!str)
 		return (false);
 	if (!ft_isalpha(str[0]) && str[0] != '_')
@@ -19,11 +23,8 @@ bool	is_valid_var(char *str)
 	return (true);
 }
 
-
-//int	update_env_var(char *arg, t_env *envp, bool append_flag)
 int	update_env_var(char *arg, t_env *envp, int flag)
 {
-//	char	**split_env;
 	char	*equal_pos;
 	char	**split_args;
 	char	*value;
@@ -31,20 +32,15 @@ int	update_env_var(char *arg, t_env *envp, int flag)
 	char	*tmp;
 
 	split_args = ft_split(arg, '='); // must free
-//	i = -1;
-//	while (envp[i++])
-//	{
-//	split_env = ft_split(envp[j], '='); //must free
-//	if (ft_strlen(split_args[0]) == ft_strlen(split_env[0])
-//		&& ft_strncmp(split_args[0], split_env[0], ft_strlen(split_args[0])) == 0)
 	target_var = search_env(envp, split_args[0]);
+	//free split_args
 	if (target_var)
 	{
 		equal_pos = ft_strchr(arg, '=');
 		value = ft_substr(equal_pos, 1, ft_strlen(equal_pos + 1));
-		if (flag & 2)
+		if (flag & EXPORT_APPEND)
 			target_var->value = ft_joinfree(target_var->value, value);
-		else if (flag & 1)
+		else if (flag & EXPORT_NEW)
 		{
 			tmp = target_var->value;
 			target_var->value = value;
@@ -52,7 +48,6 @@ int	update_env_var(char *arg, t_env *envp, int flag)
 		}
 		return (1);
 	}
-//	}
 	return (0);
 }
 
@@ -96,21 +91,21 @@ int	which_update_flag(char **key)
 	char	*eq_pos;
 	int		flag;
 
-	flag = 0;//define EXPORT_NOME
+	flag = EXPORT_NONE;
 	eq_pos = ft_strchr(*key, '=');
 	if (eq_pos)
 	{
 		if (is_append_flag(key, eq_pos))
-			flag = 2; //define EXPORT_APPEND
+			flag = EXPORT_APPEND;
 		else
-			flag = 1; //define EXPORT_NEW
+			flag = EXPORT_NEW;
 	}
 	split_args = ft_split(*key, '=');
 	if (!is_valid_var(split_args[0]))
 	{
 		//free split_args
 		print_invalid_identifier(*key);
-		return (4); //define EXPORT_ERROR
+		return (EXPORT_ERROR);
 	}
 	//free split_args
 	return (flag); 
@@ -122,57 +117,22 @@ int	add_var_to_env(char **args, t_env *envp)
 	char	*eq_pos;
 	int	flag;
 	int	exit_status;
-//	bool	append_flag;
-//	char	**split_args;
+	
 	exit_status = 0;
 	i = 0;
 	while (args[++i])
 	{
-//		flag = -1;
-//		eq_pos = ft_strchr(args[i], '=');
 		flag = which_update_flag(&args[i]);
-		if (flag == 4)
+		if (flag == EXPORT_ERROR)
 			exit_status = 1;
-//		if (is_append_flag(&args[i], eq_pos))
-//			append_flag = 1;
-//		split_args = ft_split(args[i], '=');
-//		if (!is_valid_var(split_args[0]) || *eq_pos == args[i][0])
-//		{
-//			print_invalid_identifier(args[i]);
-//			continue ;	
-//		}
-//		if (eq_pos && is_valid_var(split_args[0]))
-		if (flag & 1 || flag & 2)
+		if (flag & EXPORT_NEW || flag & EXPORT_APPEND)
 		{
-//			if (!update_env_var(args[i], envp, append_flag))
 			if (!update_env_var(args[i], envp, flag))
 				push_new_env_var(args[i], envp);
 		}
-//		else
-//			print_invalid_identifier(args[i]);
 	}
 	return (exit_status);
 }
-
-//add_var_to_env
-//while args[idx]
-//	split delimi =
-//	if !is_valid_split[0]
-//		print error and set_error_status 1, but continue
-//	if exist =
-//		if = prev is +
-//			apeend = 1
-//		while env[i]
-//			if new_name == env[i]_name
-//				if apeend
-//					env[i] = env[i] + new_value
-//				else
-//					env[i] = new_name'='new_value
-//			i++
-//		if (env[i] == NULL)
-//			env[i] = new_name'='new_value
-//			env[i + 1] == NULL
-//	idx++
 
 void	print_prefix_env(t_env *envp)
 {
@@ -189,13 +149,9 @@ int	ft_export(char **args, t_env *envp)
 
 	exit_status = 0;
 	if (args[1])
-	{
 		exit_status = add_var_to_env(args, envp);
-	}
 	else
-	{
 		print_prefix_env(envp);
-	}
 	return (exit_status);
 }
 
