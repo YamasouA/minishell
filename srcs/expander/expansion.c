@@ -152,7 +152,7 @@ char	*expand(char *str)
 	return (expanded);
 }
 
-void expand_cmd_instance(char **cmd_data)
+void	expand_cmd_instance(char **cmd_data)
 {
 	char	*tmp;
 
@@ -176,7 +176,7 @@ void	recursive_expansion(t_node *node)
 
 void	expand_redir_list(t_node *node)
 {
-	t_redirect *head;
+	t_redirect	*head;
 
 	head = node->cmd->redirect_in;
 	while (node->cmd->redirect_in->next)
@@ -201,11 +201,9 @@ void	expand_redir_list(t_node *node)
 	node->cmd->redirect_out = head;
 }
 
-
 t_node	*expansion(t_node *node)
 {
 	int			i;
-//	t_redirect	*head;
 
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
@@ -218,35 +216,8 @@ t_node	*expansion(t_node *node)
 			i++;
 		}
 		expand_redir_list(node);
-//		head = node->cmd->redirect_in;
-//		while (node->cmd->redirect_in->next)
-//		{
-//			node->cmd->redirect_in = node->cmd->redirect_in->next;
-//			if (node->cmd->redirect_in->type == HEREDOC)
-//			{
-//				expand_cmd_instance(&(node->cmd->redirect_in->delemiter));
-//			}
-//			else
-//			{
-//				expand_cmd_instance(&(node->cmd->redirect_in->file_name));
-//			}
-//		}
-//		node->cmd->redirect_in = head;
-//		head = node->cmd->redirect_out;
-//		while (node->cmd->redirect_out->next)
-//		{
-//			node->cmd->redirect_out = node->cmd->redirect_out->next;
-//			expand_cmd_instance(&(node->cmd->redirect_out->file_name));
-//		}
-//		node->cmd->redirect_out = head;
 	}
-	if (node->lhs != NULL || node->rhs != NULL) //begin cut func?
-	{
+	if (node->lhs != NULL || node->rhs != NULL)
 		recursive_expansion(node);
-//		if (node->lhs != NULL)
-//			expansion(node->lhs);
-//		if (node->rhs != NULL)
-//			expansion(node->rhs);
-	}
 	return (node);
 }
