@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "libft.h"
@@ -96,7 +97,15 @@ struct s_node
 	t_cmd		*cmd;
 };
 
-extern	char **environ;
+//extern	char **environ;
+
+t_env	*create_env();
+char	*search_key(t_env *env, char *key);
+t_env	*search_env(t_env *env, char *key);
+void	set_data(char *environ, t_env *new);
+void	add_env(t_env **env, t_env *new);
+t_env	*env_last(t_env *env);
+void	update_or_add_value(t_env *env, char *key, char *value);
 
 void minishell(int argc, char **argv);
 char *read_line();

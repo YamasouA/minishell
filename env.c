@@ -11,6 +11,7 @@ t_env	*env_last(t_env *env)
 		env = env->next;
 	return (env);
 }
+
 void	add_env(t_env **env, t_env *new)
 {
 	t_env	*last;
@@ -24,6 +25,28 @@ void	add_env(t_env **env, t_env *new)
 	last->next = new;
 }
 
+void	update_or_add_value(t_env *env, char *key, char *value)
+{
+	t_env	*new;
+
+	while (env)
+	{
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			break;
+		env = env->next;
+	}
+	if (env != NULL)
+		env->value = value;
+	else
+	{
+		new = (t_env *)malloc(sizeof(t_env) * 1);
+		if (new == NULL)
+			return ;
+		new->key = key;
+		new->value = value;
+		env = new;
+	}
+}
 
 void	set_data(char *environ, t_env *new)
 {
@@ -106,6 +129,7 @@ void	print_env(t_env *env)
 	}
 }
 
+/*
 int main()
 {
 	t_env	*env;
@@ -118,4 +142,6 @@ int main()
 	printf("value: %s\n", value);
 	value = search_key(env, "HOME");
 	printf("value: %s\n", value);
-}
+	update_or_add_value(env, "_", "HELLO");
+	print_env(env);
+}*/
