@@ -16,7 +16,10 @@ int main(void)
 	t_env *environ;
 
 	environ	= create_env();
+	printf("\n\e[1;33m==ft_env==\e[0m\n");
 	ft_env(strs, environ);
+	printf("\n\e[1;33m==env(originator)==\e[0m\n");
+	system("env");
 	printf("\n\n");
 	{
 	char	*strs[3] = {"env", "abc"};
