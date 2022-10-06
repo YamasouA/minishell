@@ -31,6 +31,15 @@ struct s_token
 	size_t	len;
 };
 
+typedef struct s_env t_env;
+struct s_env
+{
+	bool	is_env;
+	char	*key;
+	char	*value;
+	t_env	*next;
+};
+
 typedef enum e_node_kind t_node_kind;
 enum e_node_kind
 {
