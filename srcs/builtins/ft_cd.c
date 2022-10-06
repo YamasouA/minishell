@@ -1,12 +1,45 @@
 #include "minishell.h"
 
-char	*no_current_dir(char *pwd, char *path)
+char	*join_slash(char *s1, char *s2)
 {
+	size_t	len1;
+	size_t	len2;
+	char	*s;
+	int	i;
+
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
+	i = 0;
+	while (i < len1)
+	{
+		s[i] = s1[i];
+		i++;
+	}
+	s[i++] = '/';
+	while (i < len1 + len2 + 1)
+	{
+		s[i] = s2[i - len1 - 1];
+		i++;
+	}
+	s[i] = '\0';
+	return (s);
+}
+
+char	*no_current_dir(t_env *env, char *path)
+{
+	char	*pwd;
+	char	*newpwd;
+
 	ft_putendl_fd("cd: error retrieving current directory: \
 		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
-	free(pwd);
-	pwd = ft_strjoin(pwd, path);
-	return (pwd);
+	
+	pwd = search_key(env, "PWD");
+	//newpwd = ft_strjoin(pwd, "/");
+	//newpwd = ft_strjoin(pwd, path);
+	newpwd = join_slash(pwd, path);
+	printf("pwd:: %s\n", newpwd);
+	return (newpwd);
 }
 
 void	set_pwd(t_env *env, char *path)
@@ -20,9 +53,9 @@ void	set_pwd(t_env *env, char *path)
 	char *tmp;
 	// getcwdでセットされたerrnoを見ると、cdやcd -のケースの時にセットされている
 	tmp = getcwd(NULL, 0); 
-	printf("pwd: %s\n", tmp);
 	if (tmp == NULL)
-		tmp = no_current_dir(tmp, path);
+		tmp = no_current_dir(env, path);
+	printf("pwd: %s\n", tmp);
 	update_or_add_value(env, "OLDPWD", search_key(env, "PWD"));
 	pwd = ft_strdup(tmp);
 	free(tmp);
@@ -102,6 +135,7 @@ void	print_cmds(char **strs)
 	printf("]\n");
 }
 
+/*
 int main(void)
 {
 	t_env	*env;
@@ -114,7 +148,11 @@ int main(void)
 	char *strs7[3] = {"cd", ".test/libft"}; // symbolic link
 	char *strs8[3] = {"cd", "/Users/akiyama/code/42/minishell/sample"};
 	char *strs9[3] = {"cd", "./"};
+	char *strs10[3] = {"cd", "$HOME"};
 	char *tmp;
+
+	system("export $HOME=/Users/akiyama");
+
 
 	env = create_env();
 	print_cmds(strs);
@@ -180,15 +218,37 @@ int main(void)
 	printf("%s\n\n\n", tmp);
 	free(tmp);
 
+	print_cmds(strs10);
+	tmp = getcwd(NULL, 0);
+	printf("%s\n", tmp);
+	free(tmp);
+	system("unset HOME");
+	ft_cd(env, strs10);
+	tmp = getcwd(NULL, 0);
+	printf("%s\n\n\n", tmp);
+	free(tmp);
 	print_cmds(strs8);
 	tmp = getcwd(NULL, 0);
 	printf("%s\n", tmp);
 	free(tmp);
+
+	system("mkdir /Users/akiyama/code/42/minishell/sample");
 	ft_cd(env, strs8);
-	system("rm -r sample");
+	system("rm -r /Users/akiyama/code/42/minishell/sample");
 	ft_cd(env, strs9);
 	tmp = getcwd(NULL, 0);
 	printf("%s\n\n\n", tmp);
 	free(tmp);
+
+	print_cmds(strs3);
+	tmp = getcwd(NULL, 0);
+	printf("%s\n", tmp);
+	free(tmp);
+	ft_cd(env, strs3);
+	tmp = getcwd(NULL, 0);
+	printf("%s\n\n\n", tmp);
+	free(tmp);
+
 	return (0);
 }
+*/
