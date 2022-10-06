@@ -16,54 +16,79 @@ bool	is_valid_unset_args(char *str)
 	return (true);
 }
 
-void	ft_unset(char **strs, char *envp[])
+void	free_env(t_env **env)
 {
-	int	i;
-	int	j;
-	char	**split_env;
-
-	i = 1;
-	while (strs[i])
-	{
-		if (!is_valid_unset_args(strs[i]))
-		{
-			ft_putstr_fd("minishell: unset: `", 2);
-			ft_putstr_fd(strs[i++], 2);
-			ft_putstr_fd("': not a valid identifier\n", 2);
-			continue ;
-		}
-		j = 0;
-		while (envp[j])
-		{
-			split_env = ft_split(envp[j], '=');
-			if (ft_strlen(strs[i]) == ft_strlen(split_env[0])
-				&& ft_strncmp(strs[i], split_env[0], ft_strlen(strs[i] + 1)) == 0)
-			{
-				while (envp[j])
-				{
-					envp[j] = envp[j + 1];
-					j++;
-				}
-				free(split_env);
-				break ;
-			}
-			free(split_env);
-			j++;
-		}
-		i++;
-	}
+	free((*env)->key);
+	free((*env)->value);
+	free(*env);
 }
 
-int	main(int argc, char **argv, char *envp[])
+void	print_unset_error(char *msg)
+{
+	ft_putstr_fd("minishell: unset: `", 2);
+	ft_putstr_fd(msg, 2);
+	ft_putstr_fd("': not a valid identifier\n", 2);	
+}
+
+void	del_and_free_env(char *key, t_env *envp)
+{
+	t_env	*prev_env;
+	t_env	*cur;
+
+	prev_env = NULL;
+	cur = envp;
+	while (cur)
+	{
+		if (ft_strncmp(cur->key, key, ft_strlen(key)+1) == 0)
+		{
+			if (prev_env)
+				prev_env->next = cur->next;
+			else if (cur == envp)
+				envp = cur->next;
+			free_env(&cur);
+		}
+		prev_env = cur;
+		cur = cur->next;
+	}	
+}
+
+int	ft_unset(char **keys, t_env *envp)
 {
 	int	i;
-
-	ft_unset(argv, envp);
-	i = 0;
-	printf("\n==env_list==\n%s\n", envp[i++]);
-	while (envp[i])
+	int	exit_status;
+	
+	exit_status = 0;
+	i = 1;
+	while (keys[i])
 	{
-		printf("%s\n", envp[i++]);
+		if (!is_valid_unset_args(keys[i]))
+		{
+			print_unset_error(keys[i++]);
+			exit_status = 1;
+			continue ;
+		}
+		del_and_free_env(keys[i], envp);
+		i++;
 	}
+	return (exit_status);
+}
+
+t_env	*search_env(t_env *env, char *key);
+
+int	main(int argc, char **argv)
+{
+	t_env	*env;
+	int		status;
+
+	env = create_env();
+	printf("\n\e[1;33m==prev unset env_list==\e[0m\n");
+	print_env(env);
+	printf("\n");
+	ft_putstr_fd("\e[1;31m===unset error msg===\e[0m\n", 2);
+	status = ft_unset(argv, env);
+	printf("\n\e[1;33m==after unset env_list==\e[0m\n");
+	print_env(env);
+	printf("\n");
+	printf("exit_status: %d\n", status);
 	return (0);
 }
