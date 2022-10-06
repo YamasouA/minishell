@@ -2,7 +2,15 @@
 
 void ft_pwd()
 {
-	ft_putendl_fd(getenv("PWD"), STDOUT_FILENO);
+	char	*pwd;
+
+	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
+	{
+		ft_putstr_fd("error pwd", 2);
+		return ;
+	}
+	ft_putendl_fd(pwd, STDOUT_FILENO);
 }
 
 int main()
