@@ -55,7 +55,8 @@ t_node	*syntax_error(t_node *node, t_token *tok, t_token *head)
 	size_t	i;
 
 	i = 0;
-	ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
+	ft_putstr_fd("minishell: syntax error near unexpected token `",
+		STDERR_FILENO);
 	if (tok == NULL)
 		ft_putstr_fd("newline", STDERR_FILENO);
 	else
@@ -96,13 +97,13 @@ bool	peek(t_token *tok, char *op)
 
 bool	consume(t_token **tok, char *op)
 {
-	t_token *t;
+	t_token	*t;
 
 	if (!peek(*tok, op))
-		return false;
+		return (false);
 	t = *tok;
 	*tok = (*tok)->next;
-	return true;
+	return (true);
 }
 
 t_node	*new_node(t_node_kind kind)
@@ -140,21 +141,20 @@ size_t	cmd_len(t_token *tok)
 bool	is_redir(t_token *tok)
 {
 	return (peek(tok, "<") || peek(tok, ">")
-			|| (peek(tok, "<<") || peek(tok, ">>")));
+		|| (peek(tok, "<<") || peek(tok, ">>")));
 }
 
 int	which_redir(t_token *tok)
 {
 	if (peek(tok, "<"))
-		return REDIRECT_IN;
+		return (REDIRECT_IN);
 	else if (peek(tok, ">"))
-		return REDIRECT_OUT;
+		return (REDIRECT_OUT);
 	else if (peek(tok, "<<"))
-		return HEREDOC;
+		return (HEREDOC);
 	else if (peek(tok, ">>"))
-		return APPEND;
+		return (APPEND);
 	return (-1);
-		
 }
 
 t_redirect	*new_redir(int redir_type, t_token *tok)
@@ -181,58 +181,34 @@ void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
 	tmp->next = new_redir(redir_type, tok);
 }
 
-void	parse_redir(t_token **tok, t_node *node, int redir_type, int *error_flag)
+void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag)
 {
-		*tok = (*tok)->next;
-		if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
-		{
-			*error_flag = 1;
-			//perror("OUT!!");
-			return ;
-		}
-		if (redir_type == REDIRECT_IN || redir_type == HEREDOC)
-		{
-			if (redir_type == HEREDOC)
-				add_tail_redir(node, redir_type, *tok);
-			else
-				add_tail_redir(node, redir_type, *tok);
-		}
-		else if (redir_type == REDIRECT_OUT || redir_type == APPEND)
-		{
-			add_tail_redir(node, redir_type, *tok);
-		}
-		*tok = (*tok)->next;
+	*tok = (*tok)->next;
+	if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
+	{
+		*error_flag = 1;
+		//perror("OUT!!");
+		return ;
+	}
+	if (type == REDIRECT_IN || type == HEREDOC)
+	{
+		if (type == HEREDOC)
+			add_tail_redir(node, type, *tok);
+		else
+			add_tail_redir(node, type, *tok);
+	}
+	else if (type == REDIRECT_OUT || type == APPEND)
+	{
+		add_tail_redir(node, type, *tok);
+	}
+	*tok = (*tok)->next;
 }
 
-t_node	*cmd(t_token **tok, int *error_flag)
+t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag)
 {
-	t_node	*node;
-	t_token	*t;
-	size_t	i;
 	int		redir_type;
+	size_t	i;
 
-	if (*tok == NULL)
-		//return node;
-		return (NULL);
-
-	/* parseの中で確認してるからいらない
-	if (peek(*tok, "|"))
-		//return (syntax_error(node));
-		return (NULL);
-	*/
-	t = *tok;
-	node = new_node(ND_COMMAND);
-	if (node == NULL)
-	{
-		perror("OUT3!!");
-		return (NULL);
-	}
-	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
-	if (node->cmd->cmd == NULL)
-	{
-		perror("OUT4!!");
-		return (NULL);
-	}
 	i = 0;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
@@ -246,7 +222,8 @@ t_node	*cmd(t_token **tok, int *error_flag)
 		else
 		{
 			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
-			if (node->cmd->cmd[i++] == NULL) {
+			if (node->cmd->cmd[i++] == NULL)
+			{
 				perror("OUT4!!");
 				return (NULL);
 			}
@@ -257,15 +234,40 @@ t_node	*cmd(t_token **tok, int *error_flag)
 	return (node);
 }
 
+t_node	*parse_cmd(t_token **tok, int *error_flag)
+{
+	t_node	*node;
+	t_token	*t;
+
+	if (*tok == NULL)
+		return (NULL);
+	t = *tok;
+	node = new_node(ND_COMMAND);
+	if (node == NULL)
+	{
+		perror("OUT3!!");
+		return (NULL);
+	}
+	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
+	if (node->cmd->cmd == NULL)
+	{
+		perror("OUT4!!");
+		return (NULL);
+	}
+	if (!parse_simple_cmd(tok, node, error_flag))
+		return (NULL);
+	return (node);
+}
+
 t_node	*parse(t_token *tok)
 {
 	t_node	*node;
-	int	error_flag;
+	int		error_flag;
 	t_token	*tok_head;
 
 	error_flag = 0;
 	tok_head = tok;
-	node = cmd(&tok, &error_flag);
+	node = parse_cmd(&tok, &error_flag);
 	if (error_flag == 1)
 		return (syntax_error(node, tok, tok_head));
 	if (node == NULL)
@@ -274,7 +276,7 @@ t_node	*parse(t_token *tok)
 	{
 		if (tok == NULL || peek(tok, "|"))
 			return (syntax_error(node, tok, tok_head));
-		node = new_binary(ND_PIPE, node, cmd(&tok, &error_flag));
+		node = new_binary(ND_PIPE, node, parse_cmd(&tok, &error_flag));
 		if (error_flag == 1)
 			return (syntax_error(node, tok, tok_head));
 		/*
