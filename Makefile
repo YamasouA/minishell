@@ -28,7 +28,8 @@ LEXER_TEST_SRCS = srcs/lexer/tester.c \
 	srcs/lexer/lexer_utils.c \
 	srcs/parser/parse.c \
 	srcs/parser/parse_utils.c \
-	srcs/expander/expansion.c
+	srcs/expander/expansion.c \
+	env.c
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)
