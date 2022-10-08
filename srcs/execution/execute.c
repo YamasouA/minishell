@@ -15,16 +15,25 @@ bool	which_builtin(char **cmd)
 	i = 0;
 	while (builtins[i] != NULL)
 	{
-		if (ft_strncmp(builtins[i], cmd[0], ft_strlen(builtins[i]) + 1))
+		if (ft_strncmp(builtins[i], cmd[0], ft_strlen(builtins[i]) + 1) == 0)
 			return (true);
 		i++;
 	}
 	return (false);
 }
 
-void	exec_builtin(t_cmd->cmd)
+void	exec_builtin(t_cmd *cmd)
 {
 	static char	*builtins[] = {"cd", "echo", "unset", "export", "exit", "pwd", "env"};
+	static int (*builtin_func[])(char **) = {&ft_cd, &ft_echo, &ft_unset, &ft_export, &ft_exit, &ft_pwd, &ft_env};
+	int			i;
+
+	i = 0;
+	while (i < sizeof(builtin_str / sizeof(char *)))
+	{
+		if (ft_strncmp(cmd->cmd[0], builtin_str[i], ft_strlen(builtin_str[i]) == 0))
+			return (*builtin_func[i](cmd->cmd);
+	}
 }
 
 void	exe_process(t_cmd *cmd)
