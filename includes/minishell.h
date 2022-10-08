@@ -98,7 +98,6 @@ struct s_node
 };
 
 //extern	char **environ;
-extern t_env	*g_environ;
 
 t_env	*create_env();
 char	*search_key(t_env *env, char *key);
