@@ -22,6 +22,37 @@ bool	which_builtin(char **cmd)
 	return (false);
 }
 
+
+char	**envlist_to_str(t_env *env)
+{
+	t_env	*head;
+	t_env	*head2;
+	size_t	cnt;
+	size_t	i;
+	char	**envstr;
+
+	cnt = 0;
+	head = env;
+	head2 = env;
+	while (head2 != NULL)
+	{
+		cnt++;
+		head2 = head2->next;
+	}
+	envstr = (char **)malloc(sizeof(char *) * (cnt + 1));
+	if (envstr == NULL)
+		perror("OUT");
+	i = 0;
+	while (head != NULL)
+	{
+		envstr[i] = join_slash(head->key, head->value);
+		if (envstr[i] == NULL)
+			perror("OUT");
+		i++;
+	}
+	return (envstr);
+}
+
 void	exec_builtin(t_cmd *cmd)
 {
 	static char	*builtins[] = {"cd", "echo", "unset", "export", "exit", "pwd", "env"};
@@ -33,6 +64,50 @@ void	exec_builtin(t_cmd *cmd)
 	{
 		if (ft_strncmp(cmd->cmd[0], builtin_str[i], ft_strlen(builtin_str[i]) == 0))
 			return (*builtin_func[i](cmd->cmd);
+	}
+}
+
+char	*check_path(char *path)
+{
+	char	*env_path;
+	char	*join_path;
+	char	**split;
+	size_t	i;
+
+	env_path = search_key("PATH");
+	if (env_path == NULL)
+		return (NULL);
+	split = ft_split(env_path, ':');
+	i = 0;
+	while (split[i] != NULL)
+	{
+		join_path = slash_join(split[i], path);
+		if (join_path == NULL)
+			return (NULL);
+		if (!access(join_path, X_OK))
+			return (join_path);
+		i++;
+	}
+
+	return (NULL);
+}
+
+void	exec_others(t_cmd *cmd)
+{
+	char	**envstr;
+	char	*path;
+
+	envstr = envlist_to_str(env);
+	if (is_path(cmd->cmd) && !access(cmd->cmd, X_OK))
+	{
+		execve(cmd->cmd[0], cmd->cmd, envstr);
+	}
+	else
+	{
+		path = check_path(cmd->cmd[0]);
+		if (path == NULL)
+			perror("OUT");
+		execve(path, cmd->cmd, envstr);
 	}
 }
 

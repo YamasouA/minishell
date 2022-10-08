@@ -123,3 +123,6 @@ bool	ft_isspace(char *str);
 
 // lexer_utils.c
 void ft_exit(char *msg);
+
+// builtins
+char	*join_slash(char *s1, char *s2);
