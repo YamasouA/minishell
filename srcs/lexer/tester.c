@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+t_env	*g_environ;
+
 static void tester(void)
 {
 	int fd;
@@ -7,9 +9,11 @@ static void tester(void)
 	char *line;
 	t_token	*tok;
 	t_node	*node;
-
-	//file_name = "test.txt";
-	file_name = "test3.txt";
+//	t_env	*environ;
+	
+	g_environ = create_env();
+	file_name = "test.txt";
+//	file_name = "test3.txt";
 	fd = open(file_name, O_RDONLY);
 	line = NULL;
 	do {

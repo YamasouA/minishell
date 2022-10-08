@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+t_env	*g_environ;
+
 char	*handle_single_quote(char *str, int *i)
 {
 	char	*in_quote_str;
@@ -45,25 +47,38 @@ void	free_split(char **ptr_ptr)
 
 char	*find_env(char *var, size_t len)
 {
-	size_t	i;
-	char	*exp_var;
-	char	**split;
-
-	i = 0;
-	while (environ[i] != NULL)
+	t_env	*tmp;
+	tmp = g_environ;
+	while (tmp)
 	{
-		split = ft_split(environ[i], '=');
-		if (split == NULL)
-			return (NULL);
-		if (ft_strlen(split[0]) == len && ft_strncmp(var, split[0], len) == 0)
+		if (ft_strlen(tmp->key) == len
+			&& ft_strncmp(tmp->key, var, len) == 0)
 		{
-			exp_var = ft_strdup(split[1]);
-			free_split(split);
-			return (exp_var);
+			return (ft_strdup(tmp->value));
 		}
-		i++;
+		tmp = tmp->next;
 	}
 	return (ft_strdup(""));
+
+//	size_t	i;
+//	char	*exp_var;
+//	char	**split;
+//
+//	i = 0;
+//	while (environ[i] != NULL)
+//	{
+//		split = ft_split(environ[i], '=');
+//		if (split == NULL)
+//			return (NULL);
+//		if (ft_strlen(split[0]) == len && ft_strncmp(var, split[0], len) == 0)
+//		{
+//			exp_var = ft_strdup(split[1]);
+//			free_split(split);
+//			return (exp_var);
+//		}
+//		i++;
+//	}
+//	return (ft_strdup(""));
 }
 
 bool	ft_isspace2(char c)
@@ -90,7 +105,7 @@ char	*handle_dollar(char *str, int *i)
 	return (var);
 }
 
-char	*handle_double_quote(char *str, int *i)
+char	*handle_double_quote(char *str, int *i, bool here_doc)
 {
 	char	*s;
 	ssize_t	j;
@@ -99,7 +114,7 @@ char	*handle_double_quote(char *str, int *i)
 	j = *i + 1;
 	while (str[++(*i)] != '\"' && str[(*i)])
 	{
-		if (str[*i] == '$')
+		if (str[*i] == '$' && !here_doc)
 		{
 			s = ft_joinfree(s, ft_substr(str, j, *i - j));
 			s = ft_joinfree(s, handle_dollar(str, i));
@@ -125,7 +140,7 @@ char	*expand_dollar(char *str, char *expanded, int *i)
 	return (expanded);
 }
 
-char	*expand(char *str)
+char	*expand(char *str, bool here_doc)
 {
 	char	*expanded;
 	int		i;
@@ -138,13 +153,14 @@ char	*expand(char *str)
 		if (str[i] == '\'')
 			expanded = ft_joinfree(expanded, handle_single_quote(str, &i));
 		else if (str[i] == '\"')
-			expanded = ft_joinfree(expanded, handle_double_quote(str, &i));
-		else if (str[i] == '$')
+			expanded = ft_joinfree(expanded, handle_double_quote(str, &i, here_doc));
+		else if (str[i] == '$' && !here_doc)
 			expanded = expand_dollar(str, expanded, &i);
 		else
-		{
-			head = i;
-			while (str[i] && str[i] != '\'' && str[i] != '\"' && str[i] != '$')
+		{// cut func handle_general
+			head = i; 
+			while (str[i] && str[i] != '\'' && str[i] != '\"'
+				&& (str[i] != '$' || here_doc))
 				i++;
 			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
@@ -152,7 +168,7 @@ char	*expand(char *str)
 	return (expanded);
 }
 
-void	expand_cmd_instance(char **cmd_data)
+void	expand_cmd_instance(char **cmd_data, bool here_doc)
 {
 	char	*tmp;
 
@@ -161,7 +177,7 @@ void	expand_cmd_instance(char **cmd_data)
 		|| ft_strchr(*cmd_data, '$'))
 	{
 		tmp = *cmd_data;
-		*cmd_data = expand(*cmd_data);
+		*cmd_data = expand(*cmd_data, here_doc);
 		free(tmp);
 	}
 }
@@ -184,11 +200,11 @@ void	expand_redir_list(t_node *node)
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
-			expand_cmd_instance(&(node->cmd->redirect_in->delemiter));
+			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
 		}
 		else
 		{
-			expand_cmd_instance(&(node->cmd->redirect_in->file_name));
+			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
 		}
 	}
 	node->cmd->redirect_in = head;
@@ -196,7 +212,7 @@ void	expand_redir_list(t_node *node)
 	while (node->cmd->redirect_out->next)
 	{
 		node->cmd->redirect_out = node->cmd->redirect_out->next;
-		expand_cmd_instance(&(node->cmd->redirect_out->file_name));
+		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
 	}
 	node->cmd->redirect_out = head;
 }
@@ -210,9 +226,9 @@ t_node	*expansion(t_node *node)
 		if (node->cmd->cmd == NULL)
 			return (NULL);
 		i = 0;
-		while (node->cmd->cmd[i] != NULL)
+		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
 		{
-			expand_cmd_instance(&(node->cmd->cmd[i]));
+			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
 			i++;
 		}
 		expand_redir_list(node);

@@ -44,7 +44,6 @@ abcd'ABCD efgh'
 '"'$HOME'"'
 'abc$HOME $HOME xyz'abc
 echo '$HOME'
-'a\'""'
 '$ABC'
 '$"Hell'
 echo'abc def'
@@ -57,6 +56,10 @@ abc'def'ghi"jkl"mno
 < filename <filename2 | grepp hello
 < filename <filename2 <filename3| grepp hello
 exec > sample
+<<$cat
+<<$HOME
+<<"$HOME"
+<<'"$HOME"'
 // ERROR case
 echo "abc
 filename >
@@ -73,3 +76,4 @@ cat >>> filename
 '
 "
 $"><<"|>
+'a\'""'
