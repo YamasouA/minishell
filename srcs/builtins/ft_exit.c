@@ -83,5 +83,7 @@ int main()
 	//char *strs[] = {"exit", "12a"};
 	char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
 	//char *strs[] = {"exit", "x", "y", "z"};
+	//char *strs[] = {"exit", "5", "y", "z"};
+	//char *strs[] = {"exit", "x", "3", "z"};
 	my_exit(strs);
 }
