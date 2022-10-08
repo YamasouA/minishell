@@ -50,8 +50,8 @@ void	update_or_add_value(t_env *env, char *key, char *value)
 
 void	set_data(char *environ, t_env *new)
 {
-	char	key;
-	char	value;
+//	char	key;
+//	char	value;
 	char	*eq_pos;
 
 	if (new == NULL)

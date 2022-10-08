@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+
 void	exit_with_number(char **strs, size_t cnt)
 {
 	int	n;
