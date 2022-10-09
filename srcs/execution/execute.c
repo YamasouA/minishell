@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 bool	is_redirect(t_cmd *cmd)
 {
@@ -82,8 +82,10 @@ char	*check_path(char *path)
 	size_t	i;
 
 	env_path = search_key(g_environ, "PATH");
+//	printf("ok1\n");
 	if (env_path == NULL)
 		return (NULL);
+	printf("ok2\n");
 	split = ft_split(env_path, ':');
 	i = 0;
 	while (split[i] != NULL)
@@ -96,6 +98,7 @@ char	*check_path(char *path)
 			return (join_path);
 		i++;
 	}
+	printf("ok3\n");
 	return (NULL);
 }
 
@@ -120,7 +123,7 @@ void	exec_others(t_cmd *cmd)
 	{
 		path = check_path(cmd->cmd[0]);
 		if (path == NULL)
-			perror("OUT");
+			perror("OUT1");
 		execve(path, cmd->cmd, envstr);
 	}
 }
@@ -164,7 +167,7 @@ void	exe_process(t_cmd *cmd)
 		exec_others(cmd);
 }
 
-void	exe_cmd(t_cmd *cmd)
+void	exe_cmd(t_cmd *cmd)//, int pipe_flag)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -176,6 +179,8 @@ void	exe_cmd(t_cmd *cmd)
 		perror("OUT!");
 	if (pid == 0)
 	{
+//		if (pipe_flag == 0)
+//			exe_process(cmd);
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
@@ -192,7 +197,9 @@ void	exe_cmd(t_cmd *cmd)
 void	exec(t_node *node, int pipe_flag)
 {
 	int	status;
+	pid_t	pid;
 
+//	printf("env: %s\n", g_environ->key);
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (!pipe_flag && which_builtin(node->cmd->cmd))
@@ -201,7 +208,7 @@ void	exec(t_node *node, int pipe_flag)
 		}
 		else if (node->cmd->cmd[0] != NULL)
 		{
-			exe_cmd(node->cmd);
+			exe_cmd(node->cmd);//, pipe_flag);
 		}
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
@@ -211,5 +218,8 @@ void	exec(t_node *node, int pipe_flag)
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
-	waitpid(-1, &status, 0);
+	sleep(10);
+	pid = waitpid(-1, &status, 0);
+//	sleep(1);
+//	printf("pid%d\n", pid);
 }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 bool	is_valid_unset_args(char *str)
 {

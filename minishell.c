@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+t_env *g_environ;
+
 void minishell(int argc, char **argv)
 {
 	char *line;
@@ -16,7 +18,7 @@ void minishell(int argc, char **argv)
 		}
 		g_environ = create_env();
 		add_history(line);
-		printf("line: %s\n", line);
+//		printf("line: %s\n", line);
 		tok = lexer(line);
 		node = parse(tok);
 		node = expansion(node);

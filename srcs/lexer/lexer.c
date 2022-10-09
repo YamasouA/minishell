@@ -162,6 +162,6 @@ t_token	*lexer(char *line)
 			printf("error");
 		cur = cur->next;
 	}*/
-	print_list(head);
+//	print_list(head);
 	return (head->next);
 }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 int	ft_env(char **strs)//, t_env *envp)
 {

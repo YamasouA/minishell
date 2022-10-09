@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 char	*join_with_connector(char *s1, char *s2, char connector)
 {

@@ -286,7 +286,7 @@ t_node	*parse(t_token *tok)
 		if (node == NULL)
 			return (NULL);
 	}
-	printf("==PARSE==\n");
-	print_node(node, 0);
+//	printf("==PARSE==\n");
+//	print_node(node, 0);
 	return (node);
 }

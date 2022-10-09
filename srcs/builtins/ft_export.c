@@ -5,7 +5,7 @@
 #define EXPORT_APPEND 2
 #define EXPORT_ERROR 4
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 bool	is_valid_var(char *str) // shareable unset func
 {

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-t_env	*g_environ;
+//t_env	*g_environ;
 
 char	*handle_single_quote(char *str, int *i)
 {
