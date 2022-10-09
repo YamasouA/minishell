@@ -195,7 +195,8 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 		//backup[STDOUT_FILENO] = dup(STDOUT_FILENO);
 		if (pipe_flag != 0)
 		{
-			dup2(fd[0], 0); close(fd[0]);
+			dup2(fd[0], 0);
+			close(fd[0]);
 			close(fd[1]);
 		}
 	}
@@ -205,10 +206,12 @@ void	exec(t_node *node, int pipe_flag)
 {
 	int	status;
 	pid_t	pid;
-
+	int	backup_fd;
+	
+	backup_fd = dup(0);
 //	printf("env: %s\n", g_environ->key);
 	if (node->cmd != NULL)
-		printf("cmd: %s\n", node->cmd->cmd[0]);
+//		printf("cmd: %s\n", node->cmd->cmd[0]);
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (!pipe_flag && which_builtin(node->cmd->cmd))
@@ -224,9 +227,15 @@ void	exec(t_node *node, int pipe_flag)
 	{
 		if (node->lhs != NULL)
 			exec(node->lhs, 1);
+//		if (node->lhs != NULL && node->lhs->kind != ND_PIPE)
+//			exec(node->lhs, 0);
+		if (node->rhs != NULL && pipe_flag == 0)
+			exec(node->rhs, 0);
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
+	if (pipe_flag == 0)
+		dup2(backup_fd, 0);
 	pid = waitpid(-1, &status, 0);
 	//pid = 1;
 	//while (pid > 0)
