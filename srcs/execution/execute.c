@@ -118,6 +118,7 @@ void	exec_others(t_cmd *cmd)
 	envstr = envlist_to_str(g_environ);
 	if (is_path(cmd->cmd[0]) && !access(cmd->cmd[0], X_OK)) //needs only access?
 	{
+		ft_putstr_fd("ok3\n", 2);
 		execve(cmd->cmd[0], cmd->cmd, envstr);
 	}
 	else
@@ -125,6 +126,7 @@ void	exec_others(t_cmd *cmd)
 		path = check_path(cmd->cmd[0]);
 		if (path == NULL)
 			perror("OUT1");
+		ft_putstr_fd("ok4\n", 2);
 		execve(path, cmd->cmd, envstr);
 	}
 }
@@ -186,8 +188,11 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 	//printf("cmd: %s\n", cmd->cmd[0]);
 	if (pid == 0)
 	{
-		if (pipe_flag == 2)
+		printf("ok1\n");
+		printf("flag: %d\n", pipe_flag);
+		if (pipe_flag != 1)
 			exe_process(cmd);
+		printf("ok2\n");
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
@@ -207,7 +212,7 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 void	exec(t_node *node, int pipe_flag)
 {
 	int	status;
-	pid_t	pid;
+//	pid_t	pid;
 	int	backup_fd;
 	
 	backup_fd = dup(0);
@@ -233,9 +238,15 @@ void	exec(t_node *node, int pipe_flag)
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
-	if (pipe_flag == 0)
+	if (pipe_flag == 0 || pipe_flag == 2)
+	{
 		dup2(backup_fd, 0);
-	pid = waitpid(-1, &status, 0);
+		while (waitpid(-1, &status, 0) != -1)
+			;
+	}
+//	waitpid(-1, &status, 0);
+	
+
 	//pid = 1;
 	//while (pid > 0)
 	//{
