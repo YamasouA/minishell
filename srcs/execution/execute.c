@@ -61,14 +61,14 @@ char	**envlist_to_str(t_env *env)
 int	exec_builtin(t_cmd *cmd)
 {
 	static char	*builtins[] = {"cd", "echo", "unset", "export", "exit", "pwd", "env"};
-	static int (*builtin_func[])(char **, t_env *) = {&ft_cd, &ft_echo, &ft_unset, &ft_export, &ft_exit, &ft_pwd, &ft_env};
+	static int (*builtin_func[])(char **) = {&ft_cd, &ft_echo, &ft_unset, &ft_export, &ft_exit, &ft_pwd, &ft_env};
 	int			i;
 
 	i = 0;
 	while (i < 7)//(int)(sizeof(builtins / sizeof(char *))))
 	{
 		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i]) == 0))
-			return (*builtin_func[i])(cmd->cmd, g_environ);
+			return (*builtin_func[i])(cmd->cmd);//, g_environ);
 		i++;
 	}
 	return (1);
