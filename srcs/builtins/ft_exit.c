@@ -13,12 +13,15 @@ void	exit_with_number(char **strs, size_t cnt)
 	else
 	{
 		n = ft_atoi(strs[1]);
+		exit(n);
+		/*
 		if (n < 0)
 			exit(256 + n);
 		else if (n <= 255)
 			exit(n);
 		else
 			exit(n - 256);
+		*/
 	}
 }
 
@@ -71,7 +74,7 @@ int ft_exit(char **strs)//, t_env *envp)
 	{
 		exit_with_arg(strs, cnt);
 	}
-	return (0);
+	return (1);
 }
 
 //int main()
@@ -82,9 +85,11 @@ int ft_exit(char **strs)//, t_env *envp)
 //	//char *strs[] = {"exit", "-10"};
 //	//char *strs[] = {"exit", "-257"};
 //	//char *strs[] = {"exit", "-1000"};
+//	//char *strs[] = {"exit", "1000"};
 //	//char *strs[] = {"exit", "a"};
 //	//char *strs[] = {"exit", "12a"};
-//	char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
+//	char *strs[] = {"exit", "a12"};
+//	//char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
 //	//char *strs[] = {"exit", "x", "y", "z"};
 //	//char *strs[] = {"exit", "5", "y", "z"};
 //	//char *strs[] = {"exit", "x", "3", "z"};
