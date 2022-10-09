@@ -158,14 +158,18 @@ void	do_redirect(t_cmd *cmd)
 	}
 }
 
-void	exe_process(t_cmd *cmd)
+int	exe_process(t_cmd *cmd)
 {
+	int	status;
+
+	status = 0;
 	if (is_redirect(cmd))
 		do_redirect(cmd);
 	if (which_builtin(cmd->cmd))
-		exec_builtin(cmd);
+		status = exec_builtin(cmd);
 	else
 		exec_others(cmd);
+	return (status);
 }
 
 void	exe_cmd(t_cmd *cmd, int pipe_flag)
@@ -182,18 +186,16 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 	//printf("cmd: %s\n", cmd->cmd[0]);
 	if (pid == 0)
 	{
-		if (pipe_flag == 0)
+		if (pipe_flag == 2)
 			exe_process(cmd);
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
-		exe_process(cmd);
+		exit(exe_process(cmd));
 	}
 	else
 	{
-		//backup[STDIN_FILENO] = dup(STDIN_FILENO);
-		//backup[STDOUT_FILENO] = dup(STDOUT_FILENO);
-		if (pipe_flag != 0)
+		if (pipe_flag == 1)
 		{
 			dup2(fd[0], 0);
 			close(fd[0]);
@@ -209,9 +211,6 @@ void	exec(t_node *node, int pipe_flag)
 	int	backup_fd;
 	
 	backup_fd = dup(0);
-//	printf("env: %s\n", g_environ->key);
-	if (node->cmd != NULL)
-//		printf("cmd: %s\n", node->cmd->cmd[0]);
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (!pipe_flag && which_builtin(node->cmd->cmd))
@@ -230,7 +229,7 @@ void	exec(t_node *node, int pipe_flag)
 //		if (node->lhs != NULL && node->lhs->kind != ND_PIPE)
 //			exec(node->lhs, 0);
 		if (node->rhs != NULL && pipe_flag == 0)
-			exec(node->rhs, 0);
+			exec(node->rhs, 2);
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
