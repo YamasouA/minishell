@@ -67,7 +67,7 @@ int	exec_builtin(t_cmd *cmd)
 	i = 0;
 	while (i < 7)//(int)(sizeof(builtins / sizeof(char *))))
 	{
-		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i]) == 0))
+		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i])+1) == 0)
 			return (*builtin_func[i])(cmd->cmd);//, g_environ);
 		i++;
 	}
@@ -82,10 +82,11 @@ char	*check_path(char *path)
 	size_t	i;
 
 	env_path = search_key(g_environ, "PATH");
+	//printf("env: %s\n", env_path);
 //	printf("ok1\n");
 	if (env_path == NULL)
 		return (NULL);
-	printf("ok2\n");
+	//printf("ok2\n");
 	split = ft_split(env_path, ':');
 	i = 0;
 	while (split[i] != NULL)
@@ -167,20 +168,22 @@ void	exe_process(t_cmd *cmd)
 		exec_others(cmd);
 }
 
-void	exe_cmd(t_cmd *cmd)//, int pipe_flag)
+void	exe_cmd(t_cmd *cmd, int pipe_flag)
 {
 	int		fd[2];
 	pid_t	pid;
+	//int backup[2];
 
 	if (pipe(fd) < 0)
 		perror("OUT!");
 	pid = fork();
 	if (pid < 0)
 		perror("OUT!");
+	//printf("cmd: %s\n", cmd->cmd[0]);
 	if (pid == 0)
 	{
-//		if (pipe_flag == 0)
-//			exe_process(cmd);
+		if (pipe_flag == 0)
+			exe_process(cmd);
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
@@ -188,9 +191,13 @@ void	exe_cmd(t_cmd *cmd)//, int pipe_flag)
 	}
 	else
 	{
-		dup2(fd[0], 0);
-		close(fd[0]);
-		close(fd[1]);
+		//backup[STDIN_FILENO] = dup(STDIN_FILENO);
+		//backup[STDOUT_FILENO] = dup(STDOUT_FILENO);
+		if (pipe_flag != 0)
+		{
+			dup2(fd[0], 0); close(fd[0]);
+			close(fd[1]);
+		}
 	}
 }
 
@@ -200,6 +207,8 @@ void	exec(t_node *node, int pipe_flag)
 	pid_t	pid;
 
 //	printf("env: %s\n", g_environ->key);
+	if (node->cmd != NULL)
+		printf("cmd: %s\n", node->cmd->cmd[0]);
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (!pipe_flag && which_builtin(node->cmd->cmd))
@@ -208,7 +217,7 @@ void	exec(t_node *node, int pipe_flag)
 		}
 		else if (node->cmd->cmd[0] != NULL)
 		{
-			exe_cmd(node->cmd);//, pipe_flag);
+			exe_cmd(node->cmd, pipe_flag);
 		}
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
@@ -218,8 +227,12 @@ void	exec(t_node *node, int pipe_flag)
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
-	sleep(10);
 	pid = waitpid(-1, &status, 0);
+	//pid = 1;
+	//while (pid > 0)
+	//{
+	//	pid = waitpid(-1, &status, 0);
+	//	printf("pid%d\n", pid);
+	//}
 //	sleep(1);
-//	printf("pid%d\n", pid);
 }
