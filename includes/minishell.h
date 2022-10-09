@@ -11,6 +11,7 @@
 #include "libft.h"
 #include "get_next_line.h"
 
+
 typedef enum e_token_kind t_kind;
 enum e_token_kind
 {
@@ -40,6 +41,9 @@ struct s_env
 	char	*value;
 	t_env	*next;
 };
+
+extern t_env *g_environ;
+
 
 typedef enum e_node_kind t_node_kind;
 enum e_node_kind

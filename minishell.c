@@ -3,6 +3,8 @@
 void minishell(int argc, char **argv)
 {
 	char *line;
+	t_token	*tok;
+	t_node	*node;
 
 	while (1)
 	{
@@ -10,13 +12,17 @@ void minishell(int argc, char **argv)
 		if (line == NULL || strlen(line) == 0)
 		{
 			// free(line);
-			break;
+			continue;
 		}
+		g_environ = create_env();
 		add_history(line);
 		printf("line: %s\n", line);
-		lexer(line);
-		// parse();
-		// exec();
+		tok = lexer(line);
+		node = parse(tok);
+		node = expansion(node);
+		//printf("==EXPANSION==\n");
+		//print_node(node, 0);
+		exec(node, 0);
 		free(line);
 	}
 	argc = 0;

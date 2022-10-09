@@ -7,7 +7,7 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	size_t	len1;
 	size_t	len2;
 	char	*s;
-	int	i;
+	size_t	i;
 
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
@@ -28,13 +28,13 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	s[i] = '\0';
 	return (s);
 }
-
+/*
 char	*join_slash(char *s1, char *s2)
 {
 	size_t	len1;
 	size_t	len2;
 	char	*s;
-	int	i;
+	size_t	i;
 
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
@@ -54,7 +54,7 @@ char	*join_slash(char *s1, char *s2)
 	s[i] = '\0';
 	return (s);
 }
-
+*/
 
 char	*no_current_dir(t_env *env, char *path)
 {
@@ -67,7 +67,8 @@ char	*no_current_dir(t_env *env, char *path)
 	pwd = search_key(env, "PWD");
 	//newpwd = ft_strjoin(pwd, "/");
 	//newpwd = ft_strjoin(pwd, path);
-	newpwd = join_slash(pwd, path);
+	//newpwd = join_slash(pwd, path);
+	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
 }
@@ -75,25 +76,25 @@ char	*no_current_dir(t_env *env, char *path)
 void	set_pwd(t_env *env, char *path)
 {
 	char	*pwd;
-	char	*oldpwd;
+	//char	*oldpwd;
 
-	printf("[bef]pwd: %s\n", search_key(env, "PWD"));
-	printf("[bef]oldpwd: %s\n", search_key(env, "OLDPWD"));
+	//printf("[bef]pwd: %s\n", search_key(env, "PWD"));
+	//printf("[bef]oldpwd: %s\n", search_key(env, "OLDPWD"));
 
 	char *tmp;
 	// getcwdでセットされたerrnoを見ると、cdやcd -のケースの時にセットされている
 	tmp = getcwd(NULL, 0); 
 	if (tmp == NULL)
 		tmp = no_current_dir(env, path);
-	printf("pwd: %s\n", tmp);
+	//printf("pwd: %s\n", tmp);
 	update_or_add_value(env, "OLDPWD", search_key(env, "PWD"));
 	pwd = ft_strdup(tmp);
 	free(tmp);
 	if (pwd == NULL)
 		return ;
 	update_or_add_value(env, "PWD", pwd);
-	printf("[aft]pwd: %s\n", search_key(env, "PWD"));
-	printf("[aft]oldpwd: %s\n", search_key(env, "OLDPWD"));
+	//printf("[aft]pwd: %s\n", search_key(env, "PWD"));
+	//printf("[aft]oldpwd: %s\n", search_key(env, "OLDPWD"));
 }
 
 int	get_path(t_env *env, char *s, char **path)

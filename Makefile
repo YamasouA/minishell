@@ -5,7 +5,8 @@ NAME = test
 SRCS = main.c \
 		minishell.c \
 		get_next_line.c \
-		get_next_line_utils.c
+		get_next_line_utils.c \
+		env.c
 
 PARCER_DIR = srcs/parser/
 PARCER_FILES = parse.c \
@@ -15,6 +16,20 @@ PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 EXPAND_DIR = srcs/expander/
 EXPAND_FILES = expansion.c
 EXPAND_SRCS = $(addprefix $(EXPAND_DIR), $(EXPAND_FILES))
+
+BUILTIN_DIR = srcs/builtins/
+BUILTIN_FILES = ft_cd.c \
+	ft_echo.c \
+	ft_env.c \
+	ft_exit.c \
+	ft_export.c \
+	ft_pwd.c \
+	ft_unset.c
+BUILTIN_SRCS = $(addprefix $(BUILTIN_DIR), $(BUILTIN_FILES))
+
+EXEC_DIR = srcs/execution/
+EXEC_FILES = execute.c
+EXEC_SRCS = $(addprefix $(EXEC_DIR), $(EXEC_FILES))
 
 LEXER_DIR = srcs/lexer/
 LEXER_FILES = lexer.c \
@@ -44,9 +59,13 @@ OBJS = $(SRCS:.c=.o)
 PARCER_OBJS = $(PARCER_SRCS:.c=.o)
 EXPAND_OBJS = $(EXPAND_SRCS:.c=.o)
 LEXER_OBJS = $(LEXER_SRCS:.c=.o)
+BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
+EXEC_OBJS = $(EXEC_SRCS:.c=.o)
 OBJS += $(PARCER_OBJS)
 OBJS += $(EXPAND_OBJS)
 OBJS += $(LEXER_OBJS)
+OBJS += $(BUILTIN_OBJS)
+OBJS += $(EXEC_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 INCLUDE = -I includes -I ./libft/includes 
