@@ -29,7 +29,15 @@ LEXER_TEST_SRCS = srcs/lexer/tester.c \
 	srcs/parser/parse.c \
 	srcs/parser/parse_utils.c \
 	srcs/expander/expansion.c \
-	env.c
+	env.c \
+	srcs/execution/execute.c \
+	srcs/builtins/ft_echo.c \
+	srcs/builtins/ft_env.c \
+	srcs/builtins/ft_exit.c \
+	srcs/builtins/ft_export.c \
+	srcs/builtins/ft_unset.c \
+	srcs/builtins/ft_cd.c \
+	srcs/builtins/ft_pwd.c
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)

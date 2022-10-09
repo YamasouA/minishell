@@ -1,5 +1,34 @@
 #include "minishell.h"
 
+t_env	*g_environ;
+
+char	*join_with_connector(char *s1, char *s2, char connector)
+{
+	size_t	len1;
+	size_t	len2;
+	char	*s;
+	int	i;
+
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
+	i = 0;
+	while (i < len1)
+	{
+		s[i] = s1[i];
+		i++;
+	}
+//	s[i++] = '/';
+	s[i++] = connector;
+	while (i < len1 + len2 + 1)
+	{
+		s[i] = s2[i - len1 - 1];
+		i++;
+	}
+	s[i] = '\0';
+	return (s);
+}
+
 char	*join_slash(char *s1, char *s2)
 {
 	size_t	len1;
@@ -25,6 +54,7 @@ char	*join_slash(char *s1, char *s2)
 	s[i] = '\0';
 	return (s);
 }
+
 
 char	*no_current_dir(t_env *env, char *path)
 {
@@ -105,12 +135,12 @@ int	do_cd(char *path)
 	return (0);
 }
 
-int	ft_cd(t_env *env, char **strs)
+int	ft_cd(char **strs)//, t_env *env)
 {
 	int	status;
 	char	*path;
 
-	status = get_path(env, strs[1], &path);
+	status = get_path(g_environ, strs[1], &path);
 	if (status == -1)
 	{
 		print_error("", "not set");
@@ -120,7 +150,7 @@ int	ft_cd(t_env *env, char **strs)
 	status = do_cd(path);
 	printf("status: %d\n", status);
 	if (!status)
-		set_pwd(env, strs[1]);
+		set_pwd(g_environ, strs[1]);
 	return (1);
 }
 

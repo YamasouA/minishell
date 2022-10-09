@@ -55,7 +55,7 @@ void	exit_with_arg(char **strs, size_t cnt)
 		exit_with_str(strs);
 }
 
-void my_exit(char **strs)
+int ft_exit(char **strs)//, t_env *envp)
 {
 	size_t	cnt;
 
@@ -71,20 +71,23 @@ void my_exit(char **strs)
 	{
 		exit_with_arg(strs, cnt);
 	}
+	return (0);
 }
 
-int main()
-{
-	//char *strs[] = {"exit", "10"};
-	//char *strs[] = {"exit", "257"};
-	//char *strs[] = {"exit", "-10"};
-	//char *strs[] = {"exit", "-257"};
-	//char *strs[] = {"exit", "-1000"};
-	//char *strs[] = {"exit", "a"};
-	//char *strs[] = {"exit", "12a"};
-	char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
-	//char *strs[] = {"exit", "x", "y", "z"};
-	//char *strs[] = {"exit", "5", "y", "z"};
-	//char *strs[] = {"exit", "x", "3", "z"};
-	my_exit(strs);
-}
+//int main()
+//{
+//	t_env	*envp;
+//	//char *strs[] = {"exit", "10"};
+//	//char *strs[] = {"exit", "257"};
+//	//char *strs[] = {"exit", "-10"};
+//	//char *strs[] = {"exit", "-257"};
+//	//char *strs[] = {"exit", "-1000"};
+//	//char *strs[] = {"exit", "a"};
+//	//char *strs[] = {"exit", "12a"};
+//	char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
+//	//char *strs[] = {"exit", "x", "y", "z"};
+//	//char *strs[] = {"exit", "5", "y", "z"};
+//	//char *strs[] = {"exit", "x", "3", "z"};
+//	envp = create_env();
+//	ft_exit(strs, envp);
+//}

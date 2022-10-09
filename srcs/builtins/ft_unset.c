@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+t_env	*g_environ;
+
 bool	is_valid_unset_args(char *str)
 {
 	int	i;
@@ -52,7 +54,7 @@ void	del_and_free_env(char *key, t_env *envp)
 	}	
 }
 
-int	ft_unset(char **keys, t_env *envp)
+int	ft_unset(char **keys)//, t_env *envp)
 {
 	int	i;
 	int	exit_status;
@@ -67,28 +69,28 @@ int	ft_unset(char **keys, t_env *envp)
 			exit_status = 1;
 			continue ;
 		}
-		del_and_free_env(keys[i], envp);
+		del_and_free_env(keys[i], g_environ);
 		i++;
 	}
 	return (exit_status);
 }
 
-t_env	*search_env(t_env *env, char *key);
+//t_env	*search_env(t_env *env, char *key);
 
-int	main(int argc, char **argv)
-{
-	t_env	*env;
-	int		status;
-
-	env = create_env();
-	printf("\n\e[1;33m==prev unset env_list==\e[0m\n");
-	print_env(env);
-	printf("\n");
-	ft_putstr_fd("\e[1;31m===unset error msg===\e[0m\n", 2);
-	status = ft_unset(argv, env);
-	printf("\n\e[1;33m==after unset env_list==\e[0m\n");
-	print_env(env);
-	printf("\n");
-	printf("exit_status: %d\n", status);
-	return (0);
-}
+//int	main(int argc, char **argv)
+//{
+//	t_env	*env;
+//	int		status;
+//
+//	env = create_env();
+//	printf("\n\e[1;33m==prev unset env_list==\e[0m\n");
+//	print_env(env);
+//	printf("\n");
+//	ft_putstr_fd("\e[1;31m===unset error msg===\e[0m\n", 2);
+//	status = ft_unset(argv, env);
+//	printf("\n\e[1;33m==after unset env_list==\e[0m\n");
+//	print_env(env);
+//	printf("\n");
+//	printf("exit_status: %d\n", status);
+//	return (0);
+//}

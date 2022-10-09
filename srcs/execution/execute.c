@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+t_env	*g_environ;
+
 bool	is_redirect(t_cmd *cmd)
 {
 	if (cmd->redirect_in->next == NULL && cmd->redirect_out->next == NULL)
@@ -45,26 +47,31 @@ char	**envlist_to_str(t_env *env)
 	i = 0;
 	while (head != NULL)
 	{
-		envstr[i] = join_slash(head->key, head->value);
+//		envstr[i] = join_slash(head->key, head->value);
+		envstr[i] = join_with_connector(head->key, head->value, '=');
 		if (envstr[i] == NULL)
 			perror("OUT");
+		head = head->next;
 		i++;
 	}
+	envstr[i] = NULL;
 	return (envstr);
 }
 
-void	exec_builtin(t_cmd *cmd)
+int	exec_builtin(t_cmd *cmd)
 {
 	static char	*builtins[] = {"cd", "echo", "unset", "export", "exit", "pwd", "env"};
-	static int (*builtin_func[])(char **) = {&ft_cd, &ft_echo, &ft_unset, &ft_export, &ft_exit, &ft_pwd, &ft_env};
+	static int (*builtin_func[])(char **, t_env *) = {&ft_cd, &ft_echo, &ft_unset, &ft_export, &ft_exit, &ft_pwd, &ft_env};
 	int			i;
 
 	i = 0;
-	while (i < sizeof(builtin_str / sizeof(char *)))
+	while (i < 7)//(int)(sizeof(builtins / sizeof(char *))))
 	{
-		if (ft_strncmp(cmd->cmd[0], builtin_str[i], ft_strlen(builtin_str[i]) == 0))
-			return (*builtin_func[i](cmd->cmd);
+		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i]) == 0))
+			return (*builtin_func[i])(cmd->cmd, g_environ);
+		i++;
 	}
+	return (1);
 }
 
 char	*check_path(char *path)
@@ -74,22 +81,29 @@ char	*check_path(char *path)
 	char	**split;
 	size_t	i;
 
-	env_path = search_key("PATH");
+	env_path = search_key(g_environ, "PATH");
 	if (env_path == NULL)
 		return (NULL);
 	split = ft_split(env_path, ':');
 	i = 0;
 	while (split[i] != NULL)
 	{
-		join_path = slash_join(split[i], path);
+//		join_path = slash_join(split[i], path);
+		join_path = join_with_connector(split[i], path, '/');
 		if (join_path == NULL)
 			return (NULL);
 		if (!access(join_path, X_OK))
 			return (join_path);
 		i++;
 	}
-
 	return (NULL);
+}
+
+bool	is_path(char *cmd_name)
+{
+	if (ft_strchr(cmd_name, '/'))
+		return (true);
+	return (false);
 }
 
 void	exec_others(t_cmd *cmd)
@@ -97,8 +111,8 @@ void	exec_others(t_cmd *cmd)
 	char	**envstr;
 	char	*path;
 
-	envstr = envlist_to_str(env);
-	if (is_path(cmd->cmd) && !access(cmd->cmd, X_OK))
+	envstr = envlist_to_str(g_environ);
+	if (is_path(cmd->cmd[0]) && !access(cmd->cmd[0], X_OK)) //needs only access?
 	{
 		execve(cmd->cmd[0], cmd->cmd, envstr);
 	}
@@ -111,11 +125,40 @@ void	exec_others(t_cmd *cmd)
 	}
 }
 
+void	do_redirect(t_cmd *cmd)
+{
+	t_redirect	*redirect_in;
+	t_redirect	*redirect_out;
+	int	fd;
+	
+	fd = -1;
+	redirect_in = cmd->redirect_in;
+	while (redirect_in->next)
+	{
+		redirect_in = redirect_in->next;
+		fd = open(redirect_in->file_name, O_RDONLY);
+		dup2(fd, 0);
+		close(fd);
+		unlink("here_doc_tmp_file");
+	}
+	redirect_out = cmd->redirect_out;
+	while (redirect_out->next)
+	{
+		redirect_out = redirect_out->next;
+		if (redirect_out->type == APPEND)
+			fd = open(redirect_out->file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		else
+			fd = open(redirect_out->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		dup2(fd, 1);
+		close(fd);
+	}
+}
+
 void	exe_process(t_cmd *cmd)
 {
 	if (is_redirect(cmd))
 		do_redirect(cmd);
-	if (is_builtins(cmd->cmd))
+	if (which_builtin(cmd->cmd))
 		exec_builtin(cmd);
 	else
 		exec_others(cmd);
@@ -123,7 +166,7 @@ void	exe_process(t_cmd *cmd)
 
 void	exe_cmd(t_cmd *cmd)
 {
-	int	fd[2];
+	int		fd[2];
 	pid_t	pid;
 
 	if (pipe(fd) < 0)
@@ -143,15 +186,16 @@ void	exe_cmd(t_cmd *cmd)
 		dup2(fd[0], 0);
 		close(fd[0]);
 		close(fd[1]);
-		return ;
 	}
 }
 
 void	exec(t_node *node, int pipe_flag)
 {
+	int	status;
+
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		if (!pipe_flag && is_builtins(node->cmd->cmd))
+		if (!pipe_flag && which_builtin(node->cmd->cmd))
 		{
 			exe_process(node->cmd);
 		}
@@ -167,5 +211,5 @@ void	exec(t_node *node, int pipe_flag)
 		if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
-	waitpid(-1, &WEXITSTATUS, 0);
+	waitpid(-1, &status, 0);
 }

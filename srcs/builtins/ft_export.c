@@ -5,6 +5,8 @@
 #define EXPORT_APPEND 2
 #define EXPORT_ERROR 4
 
+t_env	*g_environ;
+
 bool	is_valid_var(char *str) // shareable unset func
 {
 	int	i;
@@ -114,7 +116,7 @@ int	which_update_flag(char **key)
 int	add_var_to_env(char **args, t_env *envp)
 {
 	int	i;
-	char	*eq_pos;
+//	char	*eq_pos;
 	int	flag;
 	int	exit_status;
 	
@@ -143,28 +145,28 @@ void	print_prefix_env(t_env *envp)
 	}
 }
 
-int	ft_export(char **args, t_env *envp)
+int	ft_export(char **args)//, t_env *envp)
 {
 	int	exit_status;
 
 	exit_status = 0;
 	if (args[1])
-		exit_status = add_var_to_env(args, envp);
+		exit_status = add_var_to_env(args, g_environ);
 	else
-		print_prefix_env(envp);
+		print_prefix_env(g_environ);
 	return (exit_status);
 }
 
-int	main(int argc, char **argv)
-{
-	t_env	*env;
-	int	exit_status;
-	
-	env = create_env();
-	exit_status = ft_export(argv, env);
-	if (argv[1])
-		print_env(env);
-	printf("\n");
-	printf("exit_status: %d\n", exit_status);
-	return (0);
-}
+//int	main(int argc, char **argv)
+//{
+//	t_env	*env;
+//	int	exit_status;
+//	
+//	env = create_env();
+//	exit_status = ft_export(argv, env);
+//	if (argv[1])
+//		print_env(env);
+//	printf("\n");
+//	printf("exit_status: %d\n", exit_status);
+//	return (0);
+//}

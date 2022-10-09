@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	ft_echo(char **strs)
+int	ft_echo(char **strs)//, t_env *envp)
 {
 	int	i;
 
@@ -21,13 +21,16 @@ void	ft_echo(char **strs)
 		}
 		ft_putstr_fd("\n", 1);
 	}
-}
-
-int main(void)
-{
-//	char *strs[5] = {"echo", "-n", "abc", NULL};
-	char *strs[4] = {"echo", "abc", NULL};
-
-	ft_echo(strs);
 	return (0);
 }
+
+//int main(void)
+//{
+////	char *strs[5] = {"echo", "-n", "abc", NULL};
+//	char *strs[4] = {"echo", "abc", NULL};
+//	t_env	*envp;
+//
+//	envp = create_env();
+//	ft_echo(strs, envp);
+//	return (0);
+//}

@@ -33,15 +33,15 @@ size_t	len_keyword(char *c)
 	i = 0;
 	while (i < 5)
 	{
-		if (strncmp(kw[i], c, strlen(kw[i])) == 0)
+		if (ft_strncmp(kw[i], c, ft_strlen(kw[i])) == 0)
 			return (ft_strlen(kw[i]));
 		i++;
 	}
 	i = 0;
 	while (i < 1)
 	{
-		if (strncmp(kw2[i], c, strlen(kw2[i])) == 0 \
-			&& !isalnum(c[strlen(kw2[i])]))
+		if (ft_strncmp(kw2[i], c, ft_strlen(kw2[i])) == 0 \
+			&& !ft_isalnum(c[ft_strlen(kw2[i])]))
 			return (ft_strlen(kw2[i]));
 		i++;
 	}
@@ -117,12 +117,12 @@ void	tokenize(t_token *cur, char *line)
 		{
 			len = len_word(line);
 			if (len == -1)
-				ft_exit("error");
+				ft_exit2("error");
 			cur->next = create_token(TK_STR, line, len);
 		}
 		line += len;
 		if (cur->next == NULL)
-			ft_exit("error");
+			ft_exit2("error");
 		cur = cur->next;
 	}
 }

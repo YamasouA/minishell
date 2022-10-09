@@ -31,6 +31,7 @@ static void tester(void)
 		node = expansion(node);
 		printf("==EXPANSION==\n");
 		print_node(node, 0);
+//		exec(node);
 	} while (1);
 	free(line);
 }
