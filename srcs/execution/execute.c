@@ -82,16 +82,12 @@ char	*check_path(char *path)
 	size_t	i;
 
 	env_path = search_key(g_environ, "PATH");
-	//printf("env: %s\n", env_path);
-//	printf("ok1\n");
 	if (env_path == NULL)
 		return (NULL);
-	//printf("ok2\n");
 	split = ft_split(env_path, ':');
 	i = 0;
 	while (split[i] != NULL)
 	{
-//		join_path = slash_join(split[i], path);
 		join_path = join_with_connector(split[i], path, '/');
 		if (join_path == NULL)
 			return (NULL);
@@ -99,7 +95,6 @@ char	*check_path(char *path)
 			return (join_path);
 		i++;
 	}
-	printf("ok3\n");
 	return (NULL);
 }
 
@@ -126,8 +121,8 @@ void	exec_others(t_cmd *cmd)
 		path = check_path(cmd->cmd[0]);
 		if (path == NULL)
 			perror("OUT1");
-		ft_putstr_fd("ok4\n", 2);
-		execve(path, cmd->cmd, envstr);
+		exit(execve(path, cmd->cmd, envstr));
+		
 	}
 }
 
@@ -178,44 +173,36 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 {
 	int		fd[2];
 	pid_t	pid;
-	//int backup[2];
 
 	if (pipe(fd) < 0)
 		perror("OUT!");
 	pid = fork();
 	if (pid < 0)
 		perror("OUT!");
-	//printf("cmd: %s\n", cmd->cmd[0]);
 	if (pid == 0)
 	{
-		printf("ok1\n");
-		printf("flag: %d\n", pipe_flag);
 		if (pipe_flag != 1)
 			exe_process(cmd);
-		printf("ok2\n");
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
 		exit(exe_process(cmd));
 	}
-	else
-	{
-		if (pipe_flag == 1)
-		{
-			dup2(fd[0], 0);
-			close(fd[0]);
-			close(fd[1]);
-		}
-	}
+	dup2(fd[0], 0);
+	close(fd[1]);
+	close(fd[0]);
 }
 
 void	exec(t_node *node, int pipe_flag)
 {
 	int	status;
-//	pid_t	pid;
 	int	backup_fd;
-	
-	backup_fd = dup(0);
+	int	backup_fd2;
+	if (pipe_flag == 0)
+	{
+		backup_fd = dup(0);
+		backup_fd2 = dup(1);
+	}
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (!pipe_flag && which_builtin(node->cmd->cmd))
@@ -231,27 +218,16 @@ void	exec(t_node *node, int pipe_flag)
 	{
 		if (node->lhs != NULL)
 			exec(node->lhs, 1);
-//		if (node->lhs != NULL && node->lhs->kind != ND_PIPE)
-//			exec(node->lhs, 0);
 		if (node->rhs != NULL && pipe_flag == 0)
 			exec(node->rhs, 2);
-		if (node->rhs != NULL)
+		else if (node->rhs != NULL)
 			exec(node->rhs, 1);
 	}
-	if (pipe_flag == 0 || pipe_flag == 2)
+	if (pipe_flag == 0)
 	{
 		dup2(backup_fd, 0);
+		dup2(backup_fd2, 1);
 		while (waitpid(-1, &status, 0) != -1)
 			;
 	}
-//	waitpid(-1, &status, 0);
-	
-
-	//pid = 1;
-	//while (pid > 0)
-	//{
-	//	pid = waitpid(-1, &status, 0);
-	//	printf("pid%d\n", pid);
-	//}
-//	sleep(1);
 }
