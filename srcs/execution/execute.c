@@ -111,16 +111,27 @@ void	exec_others(t_cmd *cmd)
 	char	*path;
 
 	envstr = envlist_to_str(g_environ);
-	if (is_path(cmd->cmd[0]) && !access(cmd->cmd[0], X_OK)) //needs only access?
+	if (is_path(cmd->cmd[0]))
 	{
-		ft_putstr_fd("ok3\n", 2);
-		execve(cmd->cmd[0], cmd->cmd, envstr);
+		if (!access(cmd->cmd[0], X_OK))
+			execve(cmd->cmd[0], cmd->cmd, envstr);
+		else
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->cmd[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+		}
 	}
 	else
 	{
 		path = check_path(cmd->cmd[0]);
 		if (path == NULL)
-			perror("OUT1");
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->cmd[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+//			perror("OUT1");
+		}
 		exit(execve(path, cmd->cmd, envstr));
 		
 	}
