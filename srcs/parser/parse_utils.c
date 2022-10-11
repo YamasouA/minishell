@@ -34,7 +34,11 @@ void	print_node(t_node *node, int tab_n)
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
 			print_indent(tab_n + 4);
 			if (node->cmd->redirect_in->type == HEREDOC)
+			{
 				printf("redirin heredoc: %s\n", node->cmd->redirect_in->delemiter);
+				if (node->cmd->redirect_in->documents)
+					printf("documets: %s\n", node->cmd->redirect_in->documents);
+			}
 			else
 				printf("redirin: %s\n", node->cmd->redirect_in->file_name);
 		}

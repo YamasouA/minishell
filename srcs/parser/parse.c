@@ -272,20 +272,29 @@ char	*read_heredoc(char *deli)
 {
 	char	*documents;
 	char 	*line;
+	char	*exp_deli;
+	int		doc_len;
 
+	exp_deli = expand(deli, 1);
 	documents = "";
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || strlen(line) == 0)
-			documents = ft_strjoin(documents, "\n");
-		if (ft_strncmp(line, deli, ft_strlen(deli) + 1) == 0)
+		if (line == NULL)// || strlen(line) == 0)
+			break ;
+//		{
+//			documents = ft_strjoin(documents, "\n");
+//		}
+		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{
 			break;
 		}
 		documents = ft_strjoin(documents, line);
 		documents = ft_strjoin(documents, "\n");
 	}
+	doc_len = ft_strlen(documents);
+	if (doc_len)
+		documents[doc_len - 1] = '\0';
 	return (documents);
 }
 

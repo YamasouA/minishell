@@ -198,14 +198,14 @@ void	expand_redir_list(t_node *node)
 	while (node->cmd->redirect_in->next)
 	{
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
-		if (node->cmd->redirect_in->type == HEREDOC)
-		{
-			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
-		}
-		else
-		{
-			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
-		}
+//		if (node->cmd->redirect_in->type == HEREDOC)
+//		{
+//			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
+//		}
+//		else
+//		{
+		expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
+//		}
 	}
 	node->cmd->redirect_in = head;
 	head = node->cmd->redirect_out;

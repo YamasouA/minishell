@@ -1,3 +1,7 @@
+cat << "delimiter"
+cat << $HOME
+cat << "$HOME"
+cat << '$HOME'
 ls | cat main.c
 ls | asf |,.ma:
 ls | cat | , | .test
