@@ -76,6 +76,7 @@ struct s_redirect
 	t_redirect_type	type;
 	char			*file_name;
 	t_redirect		*next;
+	char			*documents;
 };
 
 typedef struct s_cmd	t_cmd;
