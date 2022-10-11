@@ -174,10 +174,18 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
 {
 	t_redirect	*tmp;
-
-	tmp = node->cmd->redirect_in;
-	while (tmp->next != NULL)
-		tmp = tmp->next;
+	if (redir_type == HEREDOC || redir_type == REDIRECT_IN)
+	{
+		tmp = node->cmd->redirect_in;
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+	}
+	else
+	{
+		tmp = node->cmd->redirect_out;
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+	}
 	tmp->next = new_redir(redir_type, tok);
 }
 
