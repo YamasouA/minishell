@@ -147,18 +147,62 @@ char	*expand(char *str, bool heredoc)
 	return (expanded);
 }
 
+char	*exp_dollar(char *str, int *i)
+{
+	char	*var;
+	int		j;
+
+	*(i) += 1;
+	if (!isspace(str[*i + 1]) && str[*i + 1] != '\'' && str[*i + 1] != '\"')
+		return ft_strdup("$");
+	j = 0;
+	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+		&& str[j] != '\'' && str[j] != '\"')
+		j++;
+	var = find_env(&str[*i], j - *i);
+	*i = j;
+	return (var);
+}
+
+char	*expand_documents(char *str)
+{
+	int	i;
+	int	head;
+	char	*expanded;
+
+	expanded = ft_strdup("");
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')// !isspace(str[i + 1]))// str[i + 1] != '\'' && str[i + 1] != '\"')
+			expanded = exp_dollar(str, &i);
+		else
+		{
+			head = i;
+			while (str[i] && str[i] != '$')
+				i++;
+			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));	
+		}
+
+	}
+	return (expanded);
+}
+
 void	expand_cmd_instance(char **cmd_data, bool here_doc)
 {
 	char	*tmp;
 
-	if (ft_strchr(*cmd_data, '\'')
+	if ((ft_strchr(*cmd_data, '\'')
 		|| ft_strchr(*cmd_data, '\"')
 		|| ft_strchr(*cmd_data, '$'))
+		&& !here_doc)
 	{
 		tmp = *cmd_data;
 		*cmd_data = expand(*cmd_data, here_doc);
 		free(tmp);
 	}
+	else
+		expand_documents(*cmd_data);
 }
 
 void	recursive_expansion(t_node *node)
@@ -179,7 +223,10 @@ void	expand_redir_list(t_node *node)
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
-			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
+			if (node->cmd->redirect_in->delemiter[0] != '\'' || node->cmd->redirect_in->delemiter[0] != '\"')
+				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
+//			else
+//				expand_cmd_instance(&(node->cmd->redirect_in->documents), 0);
 		}
 		else
 		{
