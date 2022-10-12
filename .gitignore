@@ -6,3 +6,4 @@ a.out
 .DS_STORE
 *.a
 .test/libft
+.vimrc.local

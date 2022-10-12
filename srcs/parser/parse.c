@@ -114,11 +114,11 @@ t_node	*new_node(t_node_kind kind)
 	if (node == NULL)
 		perror("OUT2");
 	node->kind = kind;
-	node->cmd = (t_cmd *)ft_calloc(sizeof(t_node), 1);
+	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
 //	node->cmd->cmd = NULL;
-	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	node->cmd->redirect_in->next = NULL;
-	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
@@ -161,7 +161,7 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 {
 	t_redirect	*redirect;
 
-	redirect = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	redirect = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	redirect->type = redir_type;
 	if (redir_type == HEREDOC)
 		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
@@ -174,10 +174,18 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
 {
 	t_redirect	*tmp;
-
-	tmp = node->cmd->redirect_in;
-	while (tmp->next != NULL)
-		tmp = tmp->next;
+	if (redir_type == HEREDOC || redir_type == REDIRECT_IN)
+	{
+		tmp = node->cmd->redirect_in;
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+	}
+	else
+	{
+		tmp = node->cmd->redirect_out;
+		while (tmp->next != NULL)
+			tmp = tmp->next;
+	}
 	tmp->next = new_redir(redir_type, tok);
 }
 
@@ -204,7 +212,7 @@ void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag)
 	*tok = (*tok)->next;
 }
 
-t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag)
+t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag, int *heredoc_flag)
 {
 	int		redir_type;
 	size_t	i;
@@ -216,6 +224,7 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag)
 		if (redir_type >= 0)
 		{
 			parse_redir(tok, node, redir_type, error_flag);
+			*heredoc_flag = 1;
 			if (*error_flag == 1)
 				return (node);
 		}
@@ -234,7 +243,7 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag)
 	return (node);
 }
 
-t_node	*parse_cmd(t_token **tok, int *error_flag)
+t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 {
 	t_node	*node;
 	t_token	*t;
@@ -254,9 +263,66 @@ t_node	*parse_cmd(t_token **tok, int *error_flag)
 		perror("OUT4!!");
 		return (NULL);
 	}
-	if (!parse_simple_cmd(tok, node, error_flag))
+	if (!parse_simple_cmd(tok, node, error_flag, heredoc_flag))
 		return (NULL);
 	return (node);
+}
+
+char	*read_heredoc(char *deli)
+{
+	char	*documents;
+	char 	*line;
+	char	*exp_deli;
+	int		doc_len;
+
+	exp_deli = expand(deli, 1);
+	documents = ft_strdup("");
+	while (1)
+	{
+		line = readline("> ");
+		if (line == NULL)// || strlen(line) == 0)
+			break ;
+//		{
+//			documents = ft_strjoin(documents, "\n");
+//		}
+		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
+		{
+			//documents = check_quote(documents, deli);
+			break;
+		}
+		documents = ft_strjoin(documents, line);
+		documents = ft_strjoin(documents, "\n");
+	}
+	doc_len = ft_strlen(documents);
+	if (doc_len)
+		documents[doc_len - 1] = '\0';
+	return (documents);
+}
+
+void	heredoc(t_node *node)
+{
+	int	i;
+	t_redirect	*tmp;
+	
+	i = 0;
+	if (node->lhs == NULL && node->rhs == NULL)
+	{
+		tmp = node->cmd->redirect_in;
+		while (node->cmd->redirect_in->next)
+		{
+			node->cmd->redirect_in = node->cmd->redirect_in->next;
+			if (node->cmd->redirect_in->type == HEREDOC)
+				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter);
+		}
+		node->cmd->redirect_in = tmp;
+	}
+	if (node->lhs != NULL || node->rhs != NULL)
+	{
+		if (node->lhs != NULL)
+			heredoc(node->lhs);
+		if (node->rhs != NULL)
+			heredoc(node->rhs);
+	}
 }
 
 t_node	*parse(t_token *tok)
@@ -264,10 +330,12 @@ t_node	*parse(t_token *tok)
 	t_node	*node;
 	int		error_flag;
 	t_token	*tok_head;
+	int	heredoc_flag;
 
 	error_flag = 0;
+	heredoc_flag = 0;
 	tok_head = tok;
-	node = parse_cmd(&tok, &error_flag);
+	node = parse_cmd(&tok, &error_flag, &heredoc_flag);
 	if (error_flag == 1)
 		return (syntax_error(node, tok, tok_head));
 	if (node == NULL)
@@ -276,7 +344,7 @@ t_node	*parse(t_token *tok)
 	{
 		if (tok == NULL || peek(tok, "|"))
 			return (syntax_error(node, tok, tok_head));
-		node = new_binary(ND_PIPE, node, parse_cmd(&tok, &error_flag));
+		node = new_binary(ND_PIPE, node, parse_cmd(&tok, &error_flag, &heredoc_flag));
 		if (error_flag == 1)
 			return (syntax_error(node, tok, tok_head));
 		/*
@@ -286,7 +354,9 @@ t_node	*parse(t_token *tok)
 		if (node == NULL)
 			return (NULL);
 	}
-//	printf("==PARSE==\n");
-//	print_node(node, 0);
+	if (heredoc_flag == 1)
+		heredoc(node);
+	printf("==PARSE==\n");
+	print_node(node, 0);
 	return (node);
 }
