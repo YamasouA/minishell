@@ -118,7 +118,7 @@ char *read_line();
 
 // srcs/expander
 t_node	*expansion(t_node *node);
-char	*expand(char *str, bool here_doc);
+char	*expand(char *str, bool heredoc);
 
 // srcs/parser
 t_node *parse(t_token *tok);

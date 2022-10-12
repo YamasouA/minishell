@@ -1,8 +1,6 @@
 #include "minishell.h"
 
-//t_env	*g_environ;
-
-char	*handle_single_quote(char *str, int *i)
+char	*handle_s_quote(char *str, int *i)
 {
 	char	*in_quote_str;
 	int		quote_head_index;
@@ -48,6 +46,7 @@ void	free_split(char **ptr_ptr)
 char	*find_env(char *var, size_t len)
 {
 	t_env	*tmp;
+
 	tmp = g_environ;
 	while (tmp)
 	{
@@ -59,26 +58,6 @@ char	*find_env(char *var, size_t len)
 		tmp = tmp->next;
 	}
 	return (ft_strdup(""));
-
-//	size_t	i;
-//	char	*exp_var;
-//	char	**split;
-//
-//	i = 0;
-//	while (environ[i] != NULL)
-//	{
-//		split = ft_split(environ[i], '=');
-//		if (split == NULL)
-//			return (NULL);
-//		if (ft_strlen(split[0]) == len && ft_strncmp(var, split[0], len) == 0)
-//		{
-//			exp_var = ft_strdup(split[1]);
-//			free_split(split);
-//			return (exp_var);
-//		}
-//		i++;
-//	}
-//	return (ft_strdup(""));
 }
 
 bool	ft_isspace2(char c)
@@ -105,7 +84,7 @@ char	*handle_dollar(char *str, int *i)
 	return (var);
 }
 
-char	*handle_double_quote(char *str, int *i, bool here_doc)
+char	*handle_d_quote(char *str, int *i, bool here_doc)
 {
 	char	*s;
 	ssize_t	j;
@@ -140,7 +119,7 @@ char	*expand_dollar(char *str, char *expanded, int *i)
 	return (expanded);
 }
 
-char	*expand(char *str, bool here_doc)
+char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
 	int		i;
@@ -151,16 +130,16 @@ char	*expand(char *str, bool here_doc)
 	while (str[i])
 	{
 		if (str[i] == '\'')
-			expanded = ft_joinfree(expanded, handle_single_quote(str, &i));
+			expanded = ft_joinfree(expanded, handle_s_quote(str, &i));
 		else if (str[i] == '\"')
-			expanded = ft_joinfree(expanded, handle_double_quote(str, &i, here_doc));
-		else if (str[i] == '$' && !here_doc)
+			expanded = ft_joinfree(expanded, handle_d_quote(str, &i, heredoc));
+		else if (str[i] == '$' && !heredoc)
 			expanded = expand_dollar(str, expanded, &i);
 		else
 		{// cut func handle_general
-			head = i; 
+			head = i;
 			while (str[i] && str[i] != '\'' && str[i] != '\"'
-				&& (str[i] != '$' || here_doc))
+				&& (str[i] != '$' || heredoc))
 				i++;
 			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
@@ -198,14 +177,14 @@ void	expand_redir_list(t_node *node)
 	while (node->cmd->redirect_in->next)
 	{
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
-//		if (node->cmd->redirect_in->type == HEREDOC)
-//		{
-//			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
-//		}
-//		else
-//		{
-		expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
-//		}
+		if (node->cmd->redirect_in->type == HEREDOC)
+		{
+			expand_cmd_instance(&(node->cmd->redirect_in->delemiter), 1);
+		}
+		else
+		{
+			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
+		}
 	}
 	node->cmd->redirect_in = head;
 	head = node->cmd->redirect_out;
