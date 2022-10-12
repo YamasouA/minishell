@@ -114,11 +114,11 @@ t_node	*new_node(t_node_kind kind)
 	if (node == NULL)
 		perror("OUT2");
 	node->kind = kind;
-	node->cmd = (t_cmd *)ft_calloc(sizeof(t_node), 1);
+	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
 //	node->cmd->cmd = NULL;
-	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	node->cmd->redirect_in->next = NULL;
-	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
@@ -161,7 +161,7 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 {
 	t_redirect	*redirect;
 
-	redirect = (t_redirect *)ft_calloc(sizeof(t_cmd), 1);
+	redirect = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	redirect->type = redir_type;
 	if (redir_type == HEREDOC)
 		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
@@ -276,7 +276,7 @@ char	*read_heredoc(char *deli)
 	int		doc_len;
 
 	exp_deli = expand(deli, 1);
-	documents = "";
+	documents = ft_strdup("");
 	while (1)
 	{
 		line = readline("> ");
@@ -287,6 +287,7 @@ char	*read_heredoc(char *deli)
 //		}
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{
+			//documents = check_quote(documents, deli);
 			break;
 		}
 		documents = ft_strjoin(documents, line);
