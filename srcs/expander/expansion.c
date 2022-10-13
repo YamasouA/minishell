@@ -153,11 +153,11 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"' || str[*i] == '$')
+	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"' || str[*i] == '\n' || str[*i] == '$')
 		return ft_strdup("$");
 	j = *i;
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"')
+		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
 		j++;
 	var = find_env(&str[*i], j - *i);
 	*i = j;
