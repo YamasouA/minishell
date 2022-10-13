@@ -118,6 +118,7 @@ void	print_cmd_not_found_error(char *cmd)
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": command not found\n", 2);
+	exit(127);
 }
 
 void	exec_others(t_cmd *cmd)
@@ -226,7 +227,7 @@ int	exe_process(t_cmd *cmd)
 	return (status);
 }
 
-void	exe_cmd(t_cmd *cmd, int pipe_flag)
+pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -248,18 +249,23 @@ void	exe_cmd(t_cmd *cmd, int pipe_flag)
 	dup2(fd[0], 0);
 	close(fd[1]);
 	close(fd[0]);
+	return pid;
 }
 
-void	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
+pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
 {
+	pid_t	pid;
+
+	pid = 0;
 	if (!pipe_flag && which_builtin(node->cmd->cmd))
 	{
 		exe_process(node->cmd);
 	}
 	else if (node->cmd->cmd[0] != NULL)
 	{
-		exe_cmd(node->cmd, pipe_flag);
-	}	
+		pid = exe_cmd(node->cmd, pipe_flag);
+	}
+	return (pid);
 }
 
 void	go_through_tree(t_node *node, int pipe_flag)
@@ -277,7 +283,11 @@ void	exec(t_node *node, int pipe_flag)
 	int	status;
 	int	backup_stdin;
 	int	backup_stdout;
+	static pid_t	pid;
+	pid_t	pid2;
+	int	exit_status;
 
+	exit_status = 0;
 	if (pipe_flag == 0)
 	{
 		backup_stdin = dup(0);
@@ -285,17 +295,28 @@ void	exec(t_node *node, int pipe_flag)
 	}
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		exe_terminal_node(node, pipe_flag);
+		pid = exe_terminal_node(node, pipe_flag);
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
-		go_through_tree(node, pipe_flag);
+	//	go_through_tree(node, pipe_flag);
+		if (node->lhs != NULL)
+			exec(node->lhs, 1);
+		if (node->rhs != NULL && pipe_flag == 0)
+			exec(node->rhs, 2);
+		else if (node->rhs != NULL)
+			exec(node->rhs, 1);
 	}
 	if (pipe_flag == 0)
 	{
 		dup2(backup_stdin, 0);
 		dup2(backup_stdout, 1);
-		while (waitpid(-1, &status, 0) != -1)
-			;
+		while ((pid2 = waitpid(-1, &status, 0)) != -1)
+		{
+			if (pid == pid2 && WIFEXITED(status))
+			{
+				exit_status = WEXITSTATUS(status);
+			}
+		}
 	}
 }
