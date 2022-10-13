@@ -153,9 +153,9 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	if (!isspace(str[*i + 1]) && str[*i + 1] != '\'' && str[*i + 1] != '\"')
+	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"' || str[*i] == '$')
 		return ft_strdup("$");
-	j = 0;
+	j = *i;
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 		&& str[j] != '\'' && str[j] != '\"')
 		j++;
@@ -175,7 +175,9 @@ char	*expand_documents(char *str)
 	while (str[i])
 	{
 		if (str[i] == '$')// !isspace(str[i + 1]))// str[i + 1] != '\'' && str[i + 1] != '\"')
-			expanded = exp_dollar(str, &i);
+		{
+			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
+		}
 		else
 		{
 			head = i;
@@ -202,7 +204,11 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 		free(tmp);
 	}
 	else
-		expand_documents(*cmd_data);
+	{
+		tmp = *cmd_data;
+		*cmd_data = expand_documents(*cmd_data);
+		free(tmp);
+	}
 }
 
 void	recursive_expansion(t_node *node)
