@@ -223,11 +223,25 @@ void	open_and_dup2(t_redirect *redirect)
 	close(fd);
 }
 
+void	create_heredoc_tmpfile(t_redirect *redirect_in)
+{
+	int		fd;
+	char	*numstr;
+	
+	numstr = ft_ultoa(xorshift());
+	redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+	free(numstr);
+	fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644); //O_APPEND
+	ft_putstr_fd(redirect_in->documents, fd);
+	free(redirect_in->documents);
+	redirect_in->documents = NULL;
+	close(fd);
+}
+
 void	do_redirect(t_cmd *cmd)
 {
 	t_redirect	*redirect_in;
 	t_redirect	*redirect_out;
-	int			fd;
 
 	redirect_in = cmd->redirect_in;
 	while (redirect_in->next)
@@ -235,12 +249,7 @@ void	do_redirect(t_cmd *cmd)
 		redirect_in = redirect_in->next;
 		if (redirect_in->type == HEREDOC)
 		{
-			redirect_in->file_name = ft_strjoin(TMPFILE, ft_ultoa(xorshift()));
-			fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644); //O_APPEND
-			ft_putstr_fd(redirect_in->documents, fd);
-			free(redirect_in->documents);
-			redirect_in->documents = NULL;
-			close(fd);
+			create_heredoc_tmpfile(redirect_in);
 		}
 		open_and_dup2(redirect_in);
 	}
