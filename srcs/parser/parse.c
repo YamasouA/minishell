@@ -269,6 +269,62 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	return (node);
 }
 
+#define TMPFILE "tmp/tempfile"
+
+static int	count_digit(unsigned long n)
+{
+	int				count;
+	unsigned long	num;
+
+	count = 1;
+	num = n;
+	while (num > 9)
+	{
+		num = num / 10;
+		count++;
+	}
+	return (count);
+}
+
+char	*ft_ultoa(unsigned long n)
+{
+	int				figure_len;
+	char			*numstr;
+	unsigned long	num;
+
+	figure_len = count_digit(n);
+	numstr = (char *)malloc(sizeof(char) * (figure_len + 1));
+	if (!numstr)
+		return (NULL);
+	numstr[figure_len] = '\0';
+	if (n == 0)
+		numstr[0] = '0';
+	num = n;
+	while (num)
+	{
+		numstr[--figure_len] = (num % 10) + '0';
+		num = num / 10;
+	}
+	return (numstr);
+}
+
+
+unsigned long	xorshift(void)
+{
+	static unsigned long	x = 123456789;
+	static unsigned long	y = 362436069;
+	static unsigned long	z = 521288629;
+	static unsigned long	w = 88675123;
+	unsigned long			t;
+
+	t = (x ^ (x << 11));
+	x = y;
+	y = z;
+	z = w;
+	w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+	return (w);
+}
+
 char	*read_heredoc(char *deli)
 {
 	char	*documents;
@@ -281,6 +337,7 @@ char	*read_heredoc(char *deli)
 	while (1)
 	{
 		line = readline("> ");
+//		printf("line:%s;", line);
 		if (line == NULL)// || strlen(line) == 0)
 			break ;
 //		{
@@ -297,12 +354,14 @@ char	*read_heredoc(char *deli)
 //	doc_len = ft_strlen(documents);
 //	if (doc_len)
 //		documents[doc_len - 1] = '\0';
+//	printf("%s", documents);
 	return (documents);
 }
 
 void	heredoc(t_node *node)
 {
 	int	i;
+	char	*numstr;
 	t_redirect	*tmp;
 	
 	i = 0;
@@ -313,7 +372,14 @@ void	heredoc(t_node *node)
 		{
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
 			if (node->cmd->redirect_in->type == HEREDOC)
+			{
 				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter);
+				numstr = ft_ultoa(xorshift());
+//				printf("%s\n", numstr);
+				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+//				printf("%s\n", node->cmd->redirect_in->file_name);
+				free(numstr);
+			}
 		}
 		node->cmd->redirect_in = tmp;
 	}
