@@ -10,7 +10,7 @@ void minishell(int argc, char **argv)
 
 	while (1)
 	{
-		line = readline("> ");
+		line = readline("minishell> ");
 		if (line == NULL || strlen(line) == 0)
 		{
 			// free(line);

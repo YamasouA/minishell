@@ -1,12 +1,65 @@
 #include "minishell.h"
 
-//t_env	*g_environ;
+#define TMPFILE "tmp/tempfile"
+
+static int	count_digit(unsigned long n)
+{
+	int				count;
+	unsigned long	num;
+
+	count = 1;
+	num = n;
+	while (num > 9)
+	{
+		num = num / 10;
+		count++;
+	}
+	return (count);
+}
+
+char	*ft_ultoa(unsigned long n)
+{
+	int				figure_len;
+	char			*numstr;
+	unsigned long	num;
+
+	figure_len = count_digit(n);
+	numstr = (char *)malloc(sizeof(char) * (figure_len + 1));
+	if (!numstr)
+		return (NULL);
+	numstr[figure_len] = '\0';
+	if (n == 0)
+		numstr[0] = '0';
+	num = n;
+	while (num)
+	{
+		numstr[--figure_len] = (num % 10) + '0';
+		num = num / 10;
+	}
+	return (numstr);
+}
 
 bool	is_redirect(t_cmd *cmd)
 {
 	if (cmd->redirect_in->next == NULL && cmd->redirect_out->next == NULL)
 		return (false);
 	return (true);
+}
+
+unsigned long	xorshift(void)
+{
+	static unsigned long	x = 123456789;
+	static unsigned long	y = 362436069;
+	static unsigned long	z = 521288629;
+	static unsigned long	w = 88675123;
+	unsigned long			t;
+
+	t = (x ^ (x << 11));
+	x = y;
+	y = z;
+	z = w;
+	w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+	return (w);
 }
 
 bool	which_builtin(char **cmd)
@@ -164,7 +217,24 @@ void	open_and_dup2(t_redirect *redirect)
 	{
 		fd = open(redirect->file_name, O_RDONLY);
 		dup2(fd, 0);
+		if (redirect->type == HEREDOC)
+			unlink(redirect->file_name);
 	}
+	close(fd);
+}
+
+void	create_heredoc_tmpfile(t_redirect *redirect_in)
+{
+	int		fd;
+	char	*numstr;
+	
+	numstr = ft_ultoa(xorshift());
+	redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+	free(numstr);
+	fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644); //O_APPEND
+	ft_putstr_fd(redirect_in->documents, fd);
+	free(redirect_in->documents);
+	redirect_in->documents = NULL;
 	close(fd);
 }
 
@@ -177,8 +247,11 @@ void	do_redirect(t_cmd *cmd)
 	while (redirect_in->next)
 	{
 		redirect_in = redirect_in->next;
+		if (redirect_in->type == HEREDOC)
+		{
+			create_heredoc_tmpfile(redirect_in);
+		}
 		open_and_dup2(redirect_in);
-		unlink("here_doc_tmp_file");
 	}
 	redirect_out = cmd->redirect_out;
 	while (redirect_out->next)
