@@ -224,7 +224,8 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag, int *here
 		if (redir_type >= 0)
 		{
 			parse_redir(tok, node, redir_type, error_flag);
-			*heredoc_flag = 1;
+			if (redir_type == HEREDOC)
+				*heredoc_flag += 1;
 			if (*error_flag == 1)
 				return (node);
 		}
@@ -273,7 +274,7 @@ char	*read_heredoc(char *deli)
 	char	*documents;
 	char 	*line;
 	char	*exp_deli;
-	int		doc_len;
+//	int		doc_len;
 
 	exp_deli = expand(deli, 1);
 	documents = ft_strdup("");
@@ -293,9 +294,9 @@ char	*read_heredoc(char *deli)
 		documents = ft_strjoin(documents, line);
 		documents = ft_strjoin(documents, "\n");
 	}
-	doc_len = ft_strlen(documents);
-	if (doc_len)
-		documents[doc_len - 1] = '\0';
+//	doc_len = ft_strlen(documents);
+//	if (doc_len)
+//		documents[doc_len - 1] = '\0';
 	return (documents);
 }
 
@@ -354,9 +355,14 @@ t_node	*parse(t_token *tok)
 		if (node == NULL)
 			return (NULL);
 	}
-	if (heredoc_flag == 1)
+	if (1 <= heredoc_flag && heredoc_flag <= 16)
 		heredoc(node);
-	printf("==PARSE==\n");
-	print_node(node, 0);
+	else if (heredoc_flag > 16)
+	{
+		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);
+		exit(2);
+	}
+//	printf("==PARSE==\n");
+//	print_node(node, 0);
 	return (node);
 }
