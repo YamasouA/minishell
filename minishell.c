@@ -4,7 +4,6 @@ t_env *g_environ;
 
 static void	signal_handler(int sig)
 {
-	printf("%d\n", sig);
 	if (sig == SIGINT)
 	{
 		printf("\n");
@@ -30,10 +29,11 @@ void minishell(int argc, char **argv)
 	{
 		
 		line = readline("minishell> ");
-		if (line == NULL || strlen(line) == 0)
+		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
-			continue;
+			printf("\e[1A\e[11Cexit\n");
+			exit(0);
 		}
 		g_environ = create_env();
 		add_history(line);
