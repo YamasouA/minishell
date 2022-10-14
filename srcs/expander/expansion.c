@@ -76,6 +76,11 @@ char	*handle_dollar(char *str, int *i)
 		return (ft_strdup(""));
 	}
 	j = *i;
+	if (str[j] == '?')
+	{
+		(*i)++;
+		return (ft_strdup(ft_itoa(g_exit_status)));
+	}
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 		&& str[j] != '\'' && str[j] != '\"')
 		j++;

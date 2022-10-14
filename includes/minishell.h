@@ -42,7 +42,8 @@ struct s_env
 	t_env	*next;
 };
 
-extern t_env *g_environ;
+extern t_env	*g_environ;
+extern int	g_exit_status;
 
 
 typedef enum e_node_kind t_node_kind;
