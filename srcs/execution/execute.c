@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+int	g_exit_status;
 
 bool	is_redirect(t_cmd *cmd)
 {
@@ -88,7 +89,10 @@ char	*check_path(char *path)
 	char	*join_path;
 	char	**split;
 	size_t	i;
+	int		save_errno;
+	char	*save_error_path;
 
+	save_errno = ENOENT;
 	env_path = search_key(g_environ, "PATH");
 	if (env_path == NULL)
 		return (NULL);
@@ -100,10 +104,21 @@ char	*check_path(char *path)
 		if (join_path == NULL)
 			return (NULL);
 		if (!access(join_path, X_OK))
+		{
+			errno = 0;
 			return (join_path);
+		}
+		else if (errno == EACCES)
+		{
+			save_error_path = join_path;
+			save_errno = errno;
+		}
 		i++;
 	}
-	return (NULL);
+	free(join_path);
+	errno = save_errno;
+	return (save_error_path);
+//	return (NULL);
 }
 
 bool	is_path(char *cmd_name)
@@ -113,12 +128,34 @@ bool	is_path(char *cmd_name)
 	return (false);
 }
 
-void	print_cmd_not_found_error(char *cmd)
-{	
+//void	print_cmd_not_found_error(char *cmd)
+//{	
+//	ft_putstr_fd("minishell: ", 2);
+//	ft_putstr_fd(cmd, 2);
+//	ft_putstr_fd(": command not found\n", 2);
+////	exit(errno);
+//	exit(127);
+//}
+//
+//void	print_permission_denied_error(char *cmd)
+//{	
+//	ft_putstr_fd("minishell: ", 2);
+//	ft_putstr_fd(cmd, 2);
+//	ft_putstr_fd(": Permission denied\n", 2);
+////	exit(errno);
+//	exit(126);
+//}
+
+void	print_exec_process_error(char *cmd, char *msg, int status)
+{
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": command not found\n", 2);
-	exit(127);
+	ft_putstr_fd(msg, 2);
+	ft_putstr_fd("\n", 2);
+	if (status == EACCES)
+		exit(126);
+	else if (status == ENOENT)
+		exit(127);
 }
 
 void	exec_others(t_cmd *cmd)
@@ -132,15 +169,30 @@ void	exec_others(t_cmd *cmd)
 		if (!access(cmd->cmd[0], X_OK))
 			execve(cmd->cmd[0], cmd->cmd, envstr);
 		else
-			print_cmd_not_found_error(cmd->cmd[0]);
+		{
+			if (errno == EACCES)
+				print_exec_process_error(cmd->cmd[0], ": Permission_denied", EACCES);
+//				print_permission_denied_error(cmd->cmd[0]);
+			else if (errno == ENOENT)
+				print_exec_process_error(cmd->cmd[0], ": command not found", ENOENT);
+//				print_cmd_not_found_error(cmd->cmd[0]);
+		}
 	}
 	else
 	{
 		path = check_path(cmd->cmd[0]);
-		if (path == NULL)
+		if (path == NULL || errno != 0)
 		{
-			print_cmd_not_found_error(cmd->cmd[0]);
-//			perror("OUT1");
+			if (errno == EACCES)
+				print_exec_process_error(path, ": Permission_denied", EACCES);
+//				print_exec_process_error(cmd->cmd[0], ": Permission_denied", EACCES);
+//			if (errno == EACCES)
+//				print_permission_denied_error(cmd->cmd[0]);
+			else if (errno == ENOENT)
+				print_exec_process_error(cmd->cmd[0], ": command not found", ENOENT);
+//			else if (errno == ENOENT)
+//				print_cmd_not_found_error(cmd->cmd[0]);
+			perror("OUT1");
 		}
 		exit(execve(path, cmd->cmd, envstr));
 	}
@@ -215,6 +267,8 @@ int	exe_process(t_cmd *cmd)
 {
 	int	status;
 
+//	ft_putstr_fd("ok\n", 1);
+	errno = 0;
 	status = 0;
 	if (is_redirect(cmd))
 	{
@@ -240,7 +294,7 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	if (pid == 0)
 	{
 		if (pipe_flag != 1)
-			exe_process(cmd);
+			exit(exe_process(cmd));
 		dup2(fd[1], 1);
 		close(fd[1]);
 		close(fd[0]);
@@ -259,7 +313,7 @@ pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
 	pid = 0;
 	if (!pipe_flag && which_builtin(node->cmd->cmd))
 	{
-		exe_process(node->cmd);
+		g_exit_status = exe_process(node->cmd);
 	}
 	else if (node->cmd->cmd[0] != NULL)
 	{
@@ -285,9 +339,10 @@ void	exec(t_node *node, int pipe_flag)
 	int	backup_stdout;
 	static pid_t	pid;
 	pid_t	pid2;
-	int	exit_status;
+//	int	exit_status;
 
-	exit_status = 0;
+	errno = 0;
+	g_exit_status = 0;
 	if (pipe_flag == 0)
 	{
 		backup_stdin = dup(0);
@@ -315,8 +370,9 @@ void	exec(t_node *node, int pipe_flag)
 		{
 			if (pid == pid2 && WIFEXITED(status))
 			{
-				exit_status = WEXITSTATUS(status);
+				g_exit_status = WEXITSTATUS(status);
 			}
 		}
+		printf("ex_st: %d\n", g_exit_status);
 	}
 }
