@@ -2,14 +2,33 @@
 
 t_env *g_environ;
 
+static void	signal_handler(int sig)
+{
+	printf("%d\n", sig);
+	if (sig == SIGINT)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		
+	}
+	else if (sig == SIGQUIT)
+	{
+	}
+}
+
 void minishell(int argc, char **argv)
 {
 	char *line;
 	t_token	*tok;
 	t_node	*node;
 
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
+		
 		line = readline("minishell> ");
 		if (line == NULL || strlen(line) == 0)
 		{
