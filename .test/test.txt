@@ -49,6 +49,8 @@ echo '$HOME'
 echo'abc def'
 echo 'abc'def
 '$$$'
+"$$$"
+"$$$$"
 // mix quote
 abc'def'ghi"jkl"mno
 < filename

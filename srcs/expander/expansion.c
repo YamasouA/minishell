@@ -73,7 +73,10 @@ char	*handle_dollar(char *str, int *i)
 	(*i)++;
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
-		return (ft_strdup(""));
+		if (ft_strchr(str + *i + 1, '\"'))
+			return (ft_strdup(""));
+		else
+			return (ft_strdup("$"));
 	}
 	j = *i;
 	if (str[j] == '?')
@@ -89,6 +92,19 @@ char	*handle_dollar(char *str, int *i)
 	return (var);
 }
 
+
+char	*expand_dollar(char *str, char *expanded, int *i)
+{
+	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
+		expanded = ft_joinfree(expanded, handle_dollar(str, i));
+	else
+	{
+		expanded = ft_joinfree(expanded, ft_strdup("$"));
+		*i += 1;
+	}
+	return (expanded);
+}
+
 char	*handle_d_quote(char *str, int *i, bool here_doc)
 {
 	char	*s;
@@ -101,7 +117,8 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 		if (str[*i] == '$' && !here_doc)
 		{
 			s = ft_joinfree(s, ft_substr(str, j, *i - j));
-			s = ft_joinfree(s, handle_dollar(str, i));
+			s = expand_dollar(str, s, i);//handle_dollar(str, i));
+//			s = ft_joinfree(s, handle_dollar(str, i));
 			j = *i;
 			(*i)--;
 		}
@@ -110,18 +127,6 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 		s = ft_joinfree(s, ft_substr(str, j, *i - j));
 	(*i)++;
 	return (s);
-}
-
-char	*expand_dollar(char *str, char *expanded, int *i)
-{
-	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
-		expanded = ft_joinfree(expanded, handle_dollar(str, i));
-	else
-	{
-		expanded = ft_joinfree(expanded, ft_strdup("$"));
-		*i += 1;
-	}
-	return (expanded);
 }
 
 char	*expand(char *str, bool heredoc)
