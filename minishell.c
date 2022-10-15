@@ -23,12 +23,14 @@ void minishell(int argc, char **argv)
 	bool	heredoc_err;
 	g_signal = 0;
 
-	signal(SIGINT, signal_handler);
+//	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		heredoc_err = 0;
+		signal(SIGINT, signal_handler);
 		line = readline("minishell> ");
+		signal(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);

@@ -325,7 +325,7 @@ unsigned long	xorshift(void)
 	return (w);
 }
 
-static void	signal_handler(int sig)
+static void	heredoc_signal_handler(int sig)
 {
 	g_signal = sig;
 }
@@ -348,10 +348,11 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 //	int		doc_len;
 
 	//signal(SIGINT, SIG_IGN);
-	signal(SIGINT, signal_handler);
+//	signal(SIGINT, heredoc_signal_handler);
 	exp_deli = expand(deli, 1);
 	documents = ft_strdup("");
 	rl_event_hook = check_state;
+	signal(SIGINT, heredoc_signal_handler);
 	while (1)
 	{
 		line = readline("> ");
@@ -362,12 +363,13 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			//rl_on_new_line();
 			//rl_replace_line("", 0);
 			//rl_redisplay();
+			signal(SIGINT, SIG_IGN);
 			return (NULL);
 		}
 		//printf("line:%s;", line);
 		if (line == NULL)// || strlen(line) == 0)
 		{
-			printf("\e[1A\e[2C");
+//			printf("\e[1A\e[2C");
 			break ;
 		}
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
@@ -382,6 +384,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 //	if (doc_len)
 //		documents[doc_len - 1] = '\0';
 //	printf("%s", documents);
+	signal(SIGINT, SIG_IGN);
 	return (documents);
 }
 
