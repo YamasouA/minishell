@@ -122,7 +122,7 @@ t_node	*expansion(t_node *node);
 char	*expand(char *str, bool heredoc);
 
 // srcs/parser
-t_node *parse(t_token *tok);
+t_node *parse(t_token *tok, bool *heredoc_err);
 void	print_node(t_node *node, int tab_n);
 
 // srcs/lexer

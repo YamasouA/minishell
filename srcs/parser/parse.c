@@ -325,31 +325,46 @@ unsigned long	xorshift(void)
 	return (w);
 }
 
-char	*read_heredoc(char *deli)
+char	*read_heredoc(char *deli, bool *heredoc_err)
 {
 	char	*documents;
 	char 	*line;
 	char	*exp_deli;
+	pid_t	pid;
+	int		status;
 //	int		doc_len;
 
-	exp_deli = expand(deli, 1);
-	documents = ft_strdup("");
-	while (1)
+	//signal(SIGINT, SIG_IGN);
+	pid = fork();
+	if (pid == 0)
 	{
-		line = readline("> ");
-//		printf("line:%s;", line);
-		if (line == NULL)// || strlen(line) == 0)
-			break ;
-//		{
-//			documents = ft_strjoin(documents, "\n");
-//		}
-		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
+		signal(SIGINT, SIG_DFL);
+		exp_deli = expand(deli, 1);
+		documents = ft_strdup("");
+		while (1)
 		{
-			//documents = check_quote(documents, deli);
-			break;
+			line = readline("> ");
+	//		printf("line:%s;", line);
+			if (line == NULL)// || strlen(line) == 0)
+				break ;
+	//		{
+	//			documents = ft_strjoin(documents, "\n");
+	//		}
+			if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
+			{
+				//documents = check_quote(documents, deli);
+				break;
+			}
+			documents = ft_strjoin(documents, line);
+			documents = ft_strjoin(documents, "\n");
 		}
-		documents = ft_strjoin(documents, line);
-		documents = ft_strjoin(documents, "\n");
+	}
+	waitpid(pid, &status, 0);
+	//signal(SIGINT, signal_handler);
+	if (WSTOPSIG(status) == SIGINT)
+	{
+		*heredoc_err = 1;
+		return (NULL);
 	}
 //	doc_len = ft_strlen(documents);
 //	if (doc_len)
@@ -358,7 +373,7 @@ char	*read_heredoc(char *deli)
 	return (documents);
 }
 
-void	heredoc(t_node *node)
+void	heredoc(t_node *node, bool *heredoc_err)
 {
 	int	i;
 	char	*numstr;
@@ -373,7 +388,7 @@ void	heredoc(t_node *node)
 			node->cmd->redirect_in = node->cmd->redirect_in->next;
 			if (node->cmd->redirect_in->type == HEREDOC)
 			{
-				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter);
+				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter, heredoc_err);
 				numstr = ft_ultoa(xorshift());
 //				printf("%s\n", numstr);
 				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
@@ -386,13 +401,13 @@ void	heredoc(t_node *node)
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
 		if (node->lhs != NULL)
-			heredoc(node->lhs);
+			heredoc(node->lhs, heredoc_err);
 		if (node->rhs != NULL)
-			heredoc(node->rhs);
+			heredoc(node->rhs, heredoc_err);
 	}
 }
 
-t_node	*parse(t_token *tok)
+t_node	*parse(t_token *tok, bool *heredoc_err)
 {
 	t_node	*node;
 	int		error_flag;
@@ -422,7 +437,7 @@ t_node	*parse(t_token *tok)
 			return (NULL);
 	}
 	if (1 <= heredoc_flag && heredoc_flag <= 16)
-		heredoc(node);
+		heredoc(node, heredoc_err);
 	else if (heredoc_flag > 16)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);

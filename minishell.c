@@ -22,12 +22,13 @@ void minishell(int argc, char **argv)
 	char *line;
 	t_token	*tok;
 	t_node	*node;
+	bool	heredoc_err;
 
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
-		
+		heredoc_err = 0;
 		line = readline("minishell> ");
 		if (line == NULL)// || strlen(line) == 0)
 		{
@@ -39,7 +40,9 @@ void minishell(int argc, char **argv)
 		add_history(line);
 //		printf("line: %s\n", line);
 		tok = lexer(line);
-		node = parse(tok);
+		node = parse(tok, &heredoc_err);
+		if (!node || heredoc_err)
+			continue ;
 		node = expansion(node);
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
