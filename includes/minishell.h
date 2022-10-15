@@ -44,6 +44,7 @@ struct s_env
 
 extern t_env	*g_environ;
 extern int	g_exit_status;
+extern bool	g_signal;
 
 
 typedef enum e_node_kind t_node_kind;

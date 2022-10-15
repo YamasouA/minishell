@@ -325,46 +325,49 @@ unsigned long	xorshift(void)
 	return (w);
 }
 
+static void	signal_handler(int sig)
+{
+	g_signal = sig;
+}
+
 char	*read_heredoc(char *deli, bool *heredoc_err)
 {
 	char	*documents;
 	char 	*line;
 	char	*exp_deli;
-	pid_t	pid;
-	int		status;
+	//pid_t	pid;
+	//int		status;
 //	int		doc_len;
 
 	//signal(SIGINT, SIG_IGN);
-	pid = fork();
-	if (pid == 0)
+	signal(SIGINT, signal_handler);
+	exp_deli = expand(deli, 1);
+	documents = ft_strdup("");
+	while (1)
 	{
-		signal(SIGINT, SIG_DFL);
-		exp_deli = expand(deli, 1);
-		documents = ft_strdup("");
-		while (1)
+		line = readline("> ");
+		if (g_signal != 0)
 		{
-			line = readline("> ");
-	//		printf("line:%s;", line);
-			if (line == NULL)// || strlen(line) == 0)
-				break ;
-	//		{
-	//			documents = ft_strjoin(documents, "\n");
-	//		}
-			if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
-			{
-				//documents = check_quote(documents, deli);
-				break;
-			}
-			documents = ft_strjoin(documents, line);
+			*heredoc_err = 1;
+			//printf("\n");
+			//rl_on_new_line();
+			//rl_replace_line("", 0);
+			//rl_redisplay();
+			return (NULL);
+		}
+		//printf("line:%s;", line);
+		if (line == NULL)// || strlen(line) == 0)
+			break ;
+		{
 			documents = ft_strjoin(documents, "\n");
 		}
-	}
-	waitpid(pid, &status, 0);
-	//signal(SIGINT, signal_handler);
-	if (WSTOPSIG(status) == SIGINT)
-	{
-		*heredoc_err = 1;
-		return (NULL);
+		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
+		{
+			//documents = check_quote(documents, deli);
+			break;
+		}
+		documents = ft_strjoin(documents, line);
+		documents = ft_strjoin(documents, "\n");
 	}
 //	doc_len = ft_strlen(documents);
 //	if (doc_len)
@@ -389,6 +392,7 @@ void	heredoc(t_node *node, bool *heredoc_err)
 			if (node->cmd->redirect_in->type == HEREDOC)
 			{
 				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter, heredoc_err);
+				//printf("heredoc: %d\n", heredoc_err);
 				numstr = ft_ultoa(xorshift());
 //				printf("%s\n", numstr);
 				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);

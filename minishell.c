@@ -1,6 +1,7 @@
 #include "minishell.h"
 
 t_env *g_environ;
+bool	g_signal;
 
 static void	signal_handler(int sig)
 {
@@ -12,9 +13,6 @@ static void	signal_handler(int sig)
 		rl_redisplay();
 		
 	}
-	else if (sig == SIGQUIT)
-	{
-	}
 }
 
 void minishell(int argc, char **argv)
@@ -23,6 +21,7 @@ void minishell(int argc, char **argv)
 	t_token	*tok;
 	t_node	*node;
 	bool	heredoc_err;
+	g_signal = 0;
 
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
@@ -41,8 +40,11 @@ void minishell(int argc, char **argv)
 //		printf("line: %s\n", line);
 		tok = lexer(line);
 		node = parse(tok, &heredoc_err);
-		if (!node || heredoc_err)
+		if (g_signal != 0)
+		{
+			g_signal = 0;
 			continue ;
+		}
 		node = expansion(node);
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
