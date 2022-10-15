@@ -373,6 +373,6 @@ void	exec(t_node *node, int pipe_flag)
 				g_exit_status = WEXITSTATUS(status);
 			}
 		}
-		printf("ex_st: %d\n", g_exit_status);
+//		printf("ex_st: %d\n", g_exit_status);
 	}
 }

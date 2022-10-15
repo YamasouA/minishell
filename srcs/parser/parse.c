@@ -330,6 +330,14 @@ static void	signal_handler(int sig)
 	g_signal = sig;
 }
 
+static int	check_state() {
+	if (g_signal != 0) {
+		//g_signal = 0;
+		rl_done = 1;
+	}
+	return 0;
+}
+
 char	*read_heredoc(char *deli, bool *heredoc_err)
 {
 	char	*documents;
@@ -343,6 +351,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 	signal(SIGINT, signal_handler);
 	exp_deli = expand(deli, 1);
 	documents = ft_strdup("");
+	rl_event_hook = check_state;
 	while (1)
 	{
 		line = readline("> ");
@@ -357,9 +366,9 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 		}
 		//printf("line:%s;", line);
 		if (line == NULL)// || strlen(line) == 0)
-			break ;
 		{
-			documents = ft_strjoin(documents, "\n");
+			printf("\e[1A\e[2C");
+			break ;
 		}
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{

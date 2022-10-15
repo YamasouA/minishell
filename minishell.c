@@ -35,6 +35,8 @@ void minishell(int argc, char **argv)
 			printf("\e[1A\e[11Cexit\n");
 			exit(0);
 		}
+		if (strlen(line) == 0)
+			continue;
 		g_environ = create_env();
 		add_history(line);
 //		printf("line: %s\n", line);
