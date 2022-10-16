@@ -92,7 +92,6 @@ char	*handle_dollar(char *str, int *i)
 	return (var);
 }
 
-
 char	*expand_dollar(char *str, char *expanded, int *i)
 {
 	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
@@ -146,7 +145,7 @@ char	*expand(char *str, bool heredoc)
 		else if (str[i] == '$' && !heredoc)
 			expanded = expand_dollar(str, expanded, &i);
 		else
-		{// cut func handle_general
+		{	// cut func handle_general
 			head = i;
 			while (str[i] && str[i] != '\'' && str[i] != '\"'
 				&& (str[i] != '$' || heredoc))
@@ -163,7 +162,8 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"' || str[*i] == '\n' || str[*i] == '$')
+	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
+		|| str[*i] == '\n' || str[*i] == '$')
 		return ft_strdup("$");
 	j = *i;
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
@@ -193,7 +193,7 @@ char	*expand_documents(char *str)
 			head = i;
 			while (str[i] && str[i] != '$')
 				i++;
-			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));	
+			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
 
 	}
@@ -205,8 +205,8 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 	char	*tmp;
 
 	if ((ft_strchr(*cmd_data, '\'')
-		|| ft_strchr(*cmd_data, '\"')
-		|| ft_strchr(*cmd_data, '$'))
+			|| ft_strchr(*cmd_data, '\"')
+			|| ft_strchr(*cmd_data, '$'))
 		&& !here_doc)
 	{
 		tmp = *cmd_data;

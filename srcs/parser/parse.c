@@ -174,6 +174,7 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
 {
 	t_redirect	*tmp;
+
 	if (redir_type == HEREDOC || redir_type == REDIRECT_IN)
 	{
 		tmp = node->cmd->redirect_in;
@@ -308,7 +309,6 @@ char	*ft_ultoa(unsigned long n)
 	return (numstr);
 }
 
-
 unsigned long	xorshift(void)
 {
 	static unsigned long	x = 123456789;
@@ -330,18 +330,20 @@ static void	heredoc_signal_handler(int sig)
 	g_signal = sig;
 }
 
-static int	check_state() {
-	if (g_signal != 0) {
+static int	check_state(void)
+{
+	if (g_signal != 0)
+	{
 		//g_signal = 0;
 		rl_done = 1;
 	}
-	return 0;
+	return (0);
 }
 
 char	*read_heredoc(char *deli, bool *heredoc_err)
 {
 	char	*documents;
-	char 	*line;
+	char	*line;
 	char	*exp_deli;
 	//pid_t	pid;
 	//int		status;
@@ -375,7 +377,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{
 			//documents = check_quote(documents, deli);
-			break;
+			break ;
 		}
 		documents = ft_strjoin(documents, line);
 		documents = ft_strjoin(documents, "\n");
@@ -390,10 +392,10 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 
 void	heredoc(t_node *node, bool *heredoc_err)
 {
-	int	i;
-	char	*numstr;
+	int			i;
+	char		*numstr;
 	t_redirect	*tmp;
-	
+
 	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
@@ -428,7 +430,7 @@ t_node	*parse(t_token *tok, bool *heredoc_err)
 	t_node	*node;
 	int		error_flag;
 	t_token	*tok_head;
-	int	heredoc_flag;
+	int		heredoc_flag;
 
 	error_flag = 0;
 	heredoc_flag = 0;

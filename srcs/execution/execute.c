@@ -73,7 +73,7 @@ int	exec_builtin(t_cmd *cmd)
 	int			i;
 
 	i = 0;
-	while (i < 7)//(int)(sizeof(builtins / sizeof(char *))))
+	while (i < 7) //(int)(sizeof(builtins / sizeof(char *))))
 	{
 		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i]) + 1)
 			== 0)
@@ -226,7 +226,7 @@ void	create_heredoc_tmpfile(t_redirect *redirect_in)
 {
 	int		fd;
 //	char	*numstr;
-	
+
 //	numstr = ft_ultoa(xorshift());
 //	ft_putstr_fd(numstr, 2);
 //	redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
@@ -303,7 +303,7 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	dup2(fd[0], 0);
 	close(fd[1]);
 	close(fd[0]);
-	return pid;
+	return (pid);
 }
 
 pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
@@ -334,12 +334,11 @@ void	go_through_tree(t_node *node, int pipe_flag)
 
 void	exec(t_node *node, int pipe_flag)
 {
-	int	status;
-	int	backup_stdin;
-	int	backup_stdout;
+	int				status;
+	int				backup_stdin;
+	int				backup_stdout;
 	static pid_t	pid;
-	pid_t	pid2;
-//	int	exit_status;
+	pid_t			pid2;
 
 	errno = 0;
 	g_exit_status = 0;
