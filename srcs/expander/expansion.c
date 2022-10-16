@@ -145,7 +145,7 @@ char	*expand(char *str, bool heredoc)
 		else if (str[i] == '$' && !heredoc)
 			expanded = expand_dollar(str, expanded, &i);
 		else
-		{	// cut func handle_general
+		{
 			head = i;
 			while (str[i] && str[i] != '\'' && str[i] != '\"'
 				&& (str[i] != '$' || heredoc))
@@ -164,7 +164,7 @@ char	*exp_dollar(char *str, int *i)
 	*(i) += 1;
 	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
 		|| str[*i] == '\n' || str[*i] == '$')
-		return ft_strdup("$");
+		return (ft_strdup("$"));
 	j = *i;
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
@@ -176,15 +176,15 @@ char	*exp_dollar(char *str, int *i)
 
 char	*expand_documents(char *str)
 {
-	int	i;
-	int	head;
+	int		i;
+	int		head;
 	char	*expanded;
 
 	expanded = ft_strdup("");
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$')// !isspace(str[i + 1]))// str[i + 1] != '\'' && str[i + 1] != '\"')
+		if (str[i] == '$')
 		{
 			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
 		}
@@ -195,7 +195,6 @@ char	*expand_documents(char *str)
 				i++;
 			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
-
 	}
 	return (expanded);
 }
@@ -239,10 +238,9 @@ void	expand_redir_list(t_node *node)
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
-			if (node->cmd->redirect_in->delemiter[0] != '\'' || node->cmd->redirect_in->delemiter[0] != '\"')
+			if (node->cmd->redirect_in->delemiter[0] != '\''
+				|| node->cmd->redirect_in->delemiter[0] != '\"')
 				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
-//			else
-//				expand_cmd_instance(&(node->cmd->redirect_in->documents), 0);
 		}
 		else
 		{

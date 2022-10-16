@@ -83,42 +83,61 @@ int	exec_builtin(t_cmd *cmd)
 	return (1);
 }
 
-char	*check_path(char *path)
+char	*create_and_check_path(char *env_path, char *cmd_name)
 {
-	char	*env_path;
 	char	*join_path;
-	char	**split;
-	size_t	i;
-	int		save_errno;
+	
+	join_path = join_with_connector(env_path, cmd_name, '/');
+	if (join_path == NULL)
+		return (NULL);
+	if (!access(join_path, X_OK))
+		errno = 0;
+	return (join_path);
+}
+
+char	*check_path_list(char **env_path, char *cmd)
+{
+	int		i;
+	char	*join_path;
 	char	*save_error_path;
 
-	save_errno = ENOENT;
-	env_path = search_key(g_environ, "PATH");
-	if (env_path == NULL)
-		return (NULL);
-	split = ft_split(env_path, ':');
-	i = 0;
-	while (split[i] != NULL)
+	save_error_path = NULL;
+	i = -1;
+	while (env_path[++i] != NULL)
 	{
-		join_path = join_with_connector(split[i], path, '/');
-		if (join_path == NULL)
-			return (NULL);
-		if (!access(join_path, X_OK))
+		join_path = create_and_check_path(env_path[i], cmd);
+		if (errno == 0)
 		{
-			errno = 0;
+			free(save_error_path);
 			return (join_path);
 		}
 		else if (errno == EACCES)
 		{
+			free(save_error_path);
 			save_error_path = join_path;
-			save_errno = errno;
 		}
-		i++;
+		free(join_path);
 	}
-	free(join_path);
-	errno = save_errno;
 	return (save_error_path);
-//	return (NULL);
+}
+
+char	*check_path(char *path)
+{
+	char	*env_path;
+	char	*join_path;
+	char	**split_path;
+
+	env_path = search_key(g_environ, "PATH");
+	if (env_path == NULL)
+		return (NULL);
+	split_path = ft_split(env_path, ':');
+	join_path = check_path_list(split_path, path);
+	if (errno == 0)
+		return (join_path);
+	errno = ENOENT;
+	if (join_path)
+		errno = EACCES;
+	return (join_path);
 }
 
 bool	is_path(char *cmd_name)
@@ -158,6 +177,14 @@ void	print_exec_process_error(char *cmd, char *msg, int status)
 		exit(127);
 }
 
+void	print_access_err(char *msg)
+{
+	if (errno == EACCES)
+		print_exec_process_error(msg, ": Permission_denied", EACCES);
+	else if (errno == ENOENT)
+		print_exec_process_error(msg, ": command not found", ENOENT);
+}
+
 void	exec_others(t_cmd *cmd)
 {
 	char	**envstr;
@@ -169,14 +196,7 @@ void	exec_others(t_cmd *cmd)
 		if (!access(cmd->cmd[0], X_OK))
 			execve(cmd->cmd[0], cmd->cmd, envstr);
 		else
-		{
-			if (errno == EACCES)
-				print_exec_process_error(cmd->cmd[0], ": Permission_denied", EACCES);
-//				print_permission_denied_error(cmd->cmd[0]);
-			else if (errno == ENOENT)
-				print_exec_process_error(cmd->cmd[0], ": command not found", ENOENT);
-//				print_cmd_not_found_error(cmd->cmd[0]);
-		}
+			print_access_err(cmd->cmd[0]);
 	}
 	else
 	{
@@ -184,15 +204,10 @@ void	exec_others(t_cmd *cmd)
 		if (path == NULL || errno != 0)
 		{
 			if (errno == EACCES)
-				print_exec_process_error(path, ": Permission_denied", EACCES);
-//				print_exec_process_error(cmd->cmd[0], ": Permission_denied", EACCES);
-//			if (errno == EACCES)
-//				print_permission_denied_error(cmd->cmd[0]);
+				print_access_err(path);
 			else if (errno == ENOENT)
-				print_exec_process_error(cmd->cmd[0], ": command not found", ENOENT);
-//			else if (errno == ENOENT)
-//				print_cmd_not_found_error(cmd->cmd[0]);
-			perror("OUT1");
+				print_access_err(cmd->cmd[0]);
+//			perror("OUT1");
 		}
 		exit(execve(path, cmd->cmd, envstr));
 	}
@@ -225,13 +240,15 @@ void	open_and_dup2(t_redirect *redirect)
 void	create_heredoc_tmpfile(t_redirect *redirect_in)
 {
 	int		fd;
+//	int		flag;
 //	char	*numstr;
 
 //	numstr = ft_ultoa(xorshift());
 //	ft_putstr_fd(numstr, 2);
 //	redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
 //	free(numstr);
-	fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644); //O_APPEND
+//	flag = O_CREAT | O_WRONLY | O_TRUNC;
+	fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644);
 //	usleep(500);
 //	printf("doc:%s\n", redirect_in->documents);
 	ft_putstr_fd(redirect_in->documents, fd);
@@ -332,13 +349,28 @@ void	go_through_tree(t_node *node, int pipe_flag)
 		exec(node->rhs, 1);
 }
 
+void	get_exit_status(pid_t pid)
+{
+	int		status;
+	pid_t	pid2;
+
+	pid2 = 0;
+	while (pid2 != -1)
+	{
+		pid2 = waitpid(-1, &status, 0);
+		if (pid == pid2 && WIFEXITED(status))
+		{
+			g_exit_status = WEXITSTATUS(status);
+		}
+	}
+	
+}
+
 void	exec(t_node *node, int pipe_flag)
 {
-	int				status;
 	int				backup_stdin;
 	int				backup_stdout;
 	static pid_t	pid;
-	pid_t			pid2;
 
 	errno = 0;
 	g_exit_status = 0;
@@ -353,25 +385,19 @@ void	exec(t_node *node, int pipe_flag)
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
-	//	go_through_tree(node, pipe_flag);
-		if (node->lhs != NULL)
-			exec(node->lhs, 1);
-		if (node->rhs != NULL && pipe_flag == 0)
-			exec(node->rhs, 2);
-		else if (node->rhs != NULL)
-			exec(node->rhs, 1);
+		go_through_tree(node, pipe_flag);
+//		if (node->lhs != NULL)
+//			exec(node->lhs, 1);
+//		if (node->rhs != NULL && pipe_flag == 0)
+//			exec(node->rhs, 2);
+//		else if (node->rhs != NULL)
+//			exec(node->rhs, 1);
 	}
 	if (pipe_flag == 0)
 	{
 		dup2(backup_stdin, 0);
 		dup2(backup_stdout, 1);
-		while ((pid2 = waitpid(-1, &status, 0)) != -1)
-		{
-			if (pid == pid2 && WIFEXITED(status))
-			{
-				g_exit_status = WEXITSTATUS(status);
-			}
-		}
+		get_exit_status(pid);
 //		printf("ex_st: %d\n", g_exit_status);
 	}
 }
