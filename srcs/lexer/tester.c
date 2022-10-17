@@ -2,6 +2,7 @@
 #include <dirent.h>
 
 t_env	*g_environ;
+bool	g_signal;
 
 static void tester(char *file_name)
 {
@@ -11,6 +12,7 @@ static void tester(char *file_name)
 	t_token	*tok;
 	t_node	*node;
 	int	line_n;
+	bool	heredoc_err;
 //	t_env	*environ;
 	
 	printf("file_name: %s\n", file_name);
@@ -37,7 +39,7 @@ static void tester(char *file_name)
 		printf("input line: %s\n", line);
 		line[ft_strlen(line) - 1] = '\0';
 		tok = lexer(line);
-		node = parse(tok);
+		node = parse(tok, &heredoc_err);
 		//printf("==PARSE==\n");
 		//print_node(node, 0);
 		node = expansion(node);

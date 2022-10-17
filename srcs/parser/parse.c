@@ -213,7 +213,7 @@ void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag)
 	*tok = (*tok)->next;
 }
 
-t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag, int *heredoc_flag)
+t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 {
 	int		redir_type;
 	size_t	i;
@@ -224,10 +224,10 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *error_flag, int *here
 		redir_type = which_redir(*tok);
 		if (redir_type >= 0)
 		{
-			parse_redir(tok, node, redir_type, error_flag);
+			parse_redir(tok, node, redir_type, err);
 			if (redir_type == HEREDOC)
-				*heredoc_flag += 1;
-			if (*error_flag == 1)
+				*heredoc += 1;
+			if (*err == 1)
 				return (node);
 		}
 		else
@@ -390,31 +390,55 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 	return (documents);
 }
 
+void	get_documents(t_redirect *redirect_in, bool *err)
+{
+	t_redirect	*tmp;
+	char		*numstr;
+
+	tmp = redirect_in;
+	while (redirect_in->next)
+	{
+		redirect_in = redirect_in->next;
+		if (redirect_in->type == HEREDOC)
+		{
+			redirect_in->documents = read_heredoc(redirect_in->delemiter, err);
+			//printf("heredoc: %d\n", heredoc_err);
+			numstr = ft_ultoa(xorshift());
+//				printf("%s\n", numstr);
+			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+//				printf("%s\n", node->cmd->redirect_in->file_name);
+			free(numstr);
+		}
+	}
+//	node->cmd->redirect_in = tmp;	
+}
+
 void	heredoc(t_node *node, bool *heredoc_err)
 {
-	int			i;
-	char		*numstr;
-	t_redirect	*tmp;
+//	int			i;
+//	char		*numstr;
+//	t_redirect	*tmp;
 
-	i = 0;
+//	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		tmp = node->cmd->redirect_in;
-		while (node->cmd->redirect_in->next)
-		{
-			node->cmd->redirect_in = node->cmd->redirect_in->next;
-			if (node->cmd->redirect_in->type == HEREDOC)
-			{
-				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter, heredoc_err);
-				//printf("heredoc: %d\n", heredoc_err);
-				numstr = ft_ultoa(xorshift());
-//				printf("%s\n", numstr);
-				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
-//				printf("%s\n", node->cmd->redirect_in->file_name);
-				free(numstr);
-			}
-		}
-		node->cmd->redirect_in = tmp;
+		get_documents(node->cmd->redirect_in, heredoc_err);
+//		tmp = node->cmd->redirect_in;
+//		while (node->cmd->redirect_in->next)
+//		{
+//			node->cmd->redirect_in = node->cmd->redirect_in->next;
+//			if (node->cmd->redirect_in->type == HEREDOC)
+//			{
+//				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter, heredoc_err);
+//				//printf("heredoc: %d\n", heredoc_err);
+//				numstr = ft_ultoa(xorshift());
+////				printf("%s\n", numstr);
+//				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+////				printf("%s\n", node->cmd->redirect_in->file_name);
+//				free(numstr);
+//			}
+//		}
+//		node->cmd->redirect_in = tmp;
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
