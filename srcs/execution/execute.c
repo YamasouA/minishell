@@ -298,6 +298,14 @@ int	exe_process(t_cmd *cmd)
 	return (status);
 }
 
+static void	sig_handler(int sig)
+{
+	(void)sig;
+	printf("\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+}
+
 pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 {
 	int		fd[2];
@@ -305,11 +313,13 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 
 	if (pipe(fd) < 0)
 		perror("OUT!");
+	signal(SIGINT, sig_handler);
 	pid = fork();
 	if (pid < 0)
 		perror("OUT!");
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		if (pipe_flag != 1)
 			exit(exe_process(cmd));
 		dup2(fd[1], 1);
