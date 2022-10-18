@@ -29,12 +29,16 @@ void minishell(int argc, char **argv)
 	{
 		heredoc_err = 0;
 		signal(SIGINT, signal_handler);
+//		ft_putstr_fd("minishell> ", 1);
+//		line = readline("");
 		line = readline("minishell> ");
 		signal(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
+//			printf("exit\n");
 			printf("\e[1A\e[11Cexit\n");
+//			printf("\e[6n");
 			exit(0);
 		}
 		if (strlen(line) == 0)
@@ -44,7 +48,7 @@ void minishell(int argc, char **argv)
 //		printf("line: %s\n", line);
 		tok = lexer(line);
 		node = parse(tok, &heredoc_err);
-		if (g_signal != 0)
+		if (g_signal != 0 || node == NULL)
 		{
 			g_signal = 0;
 			continue ;

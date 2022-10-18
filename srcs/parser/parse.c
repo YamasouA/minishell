@@ -67,6 +67,7 @@ t_node	*syntax_error(t_node *node, t_token *tok, t_token *head)
 	ft_putendl_fd("'", STDERR_FILENO);
 	free_token(head);
 	free_node(node);
+	g_exit_status = 258;
 	return (NULL);
 }
 
