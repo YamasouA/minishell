@@ -8,6 +8,10 @@ SRCS = main.c \
 		get_next_line_utils.c \
 		env.c
 
+UTILS_DIR = srcs/utils/
+UTILS_FILES = err_exit.c
+UTILS_SRCS = $(addprefix $(UTILS_DIR), $(UTILS_FILES))
+
 PARCER_DIR = srcs/parser/
 PARCER_FILES = parse.c \
 	parse_utils.c
@@ -60,12 +64,14 @@ PARCER_OBJS = $(PARCER_SRCS:.c=.o)
 EXPAND_OBJS = $(EXPAND_SRCS:.c=.o)
 LEXER_OBJS = $(LEXER_SRCS:.c=.o)
 BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
+UTILS_OBJS = $(UTILS_SRCS:.c=.o)
 EXEC_OBJS = $(EXEC_SRCS:.c=.o)
 OBJS += $(PARCER_OBJS)
 OBJS += $(EXPAND_OBJS)
 OBJS += $(LEXER_OBJS)
 OBJS += $(BUILTIN_OBJS)
 OBJS += $(EXEC_OBJS)
+OBJS += $(UTILS_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 INCLUDE = -I includes -I ./libft/includes 

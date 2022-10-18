@@ -46,7 +46,10 @@ void	free_node(t_node *node)
 		free_node(node->lhs);
 	if (node->rhs != NULL)
 		free_node(node->rhs);
-	free_cmd(node->cmd);
+	if (node->rhs == NULL && node->lhs == NULL)
+	{
+		free_cmd(node->cmd);
+	}
 	free(node);
 }
 
@@ -76,7 +79,10 @@ t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 	t_node	*node;
 
 	node = (t_node *)malloc(sizeof(t_node) * 1);
-	if (node == NULL || lhs == NULL || rhs == NULL)
+	if (node == NULL)
+		err_exit("malloc error: ");
+	//if (node == NULL || lhs == NULL || rhs == NULL)
+	if (lhs == NULL || rhs == NULL)
 	{
 		perror("OUT1");
 		return (NULL);
@@ -116,7 +122,7 @@ t_node	*new_node(t_node_kind kind)
 		perror("OUT2");
 	node->kind = kind;
 	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
-//	node->cmd->cmd = NULL;
+	//node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	node->cmd->redirect_in->next = NULL;
 	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
@@ -297,7 +303,8 @@ char	*ft_ultoa(unsigned long n)
 	figure_len = count_digit(n);
 	numstr = (char *)malloc(sizeof(char) * (figure_len + 1));
 	if (!numstr)
-		return (NULL);
+		//return (NULL);
+		err_exit("malloc error: ");
 	numstr[figure_len] = '\0';
 	if (n == 0)
 		numstr[0] = '0';

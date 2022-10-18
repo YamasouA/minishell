@@ -144,4 +144,8 @@ int	ft_unset(char **keys);//, t_env *envp);
 int	ft_env(char **strs);//, t_env *envp);
 int	ft_exit(char **strs);//, t_env *envp);
 
+// srcs/execution
 void	exec(t_node *node, int pipe_flag);
+
+// srcs/utils
+void	err_exit(char *msg);
