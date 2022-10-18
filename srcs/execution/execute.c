@@ -320,6 +320,7 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (pipe_flag != 1)
 			exit(exe_process(cmd));
 		dup2(fd[1], 1);
@@ -368,12 +369,20 @@ void	get_exit_status(pid_t pid)
 	while (pid2 != -1)
 	{
 		pid2 = waitpid(-1, &status, 0);
-		if (pid == pid2 && WIFEXITED(status))
+		if (pid == pid2)
 		{
-			g_exit_status = WEXITSTATUS(status);
+			if (WIFSIGNALED(status))
+			{
+				if (WTERMSIG(status) == SIGQUIT)
+					ft_putendl_fd("Quit: 3", 2);
+				//else if(WTERMSIG(status) == SIGINT)
+					//ft_putendl_fd("", 2);
+				g_exit_status = WTERMSIG(status) + 128;
+			}
+			else if (WIFEXITED(status))
+				g_exit_status = WEXITSTATUS(status);
 		}
 	}
-	
 }
 
 void	exec(t_node *node, int pipe_flag)

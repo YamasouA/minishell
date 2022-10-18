@@ -74,7 +74,7 @@ char	*find_quote(char *line, char quote)
 {
 	while (*line != '\0')
 	{
-		if (*line == quote && *(line - 1) != '\\')
+		if (*line == quote)// && *(line - 1) != '\\')
 			return (line);
 		line++;
 	}
@@ -99,6 +99,14 @@ ssize_t	len_word(char *line)
 	return (tmp - line);
 }
 
+void	tokenize_error(char *token)
+{
+	g_exit_status = 258;
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	ft_putstr_fd(token, 2);
+	ft_putstr_fd("'", 2);
+}
+
 void	tokenize(t_token *cur, char *line)
 {
 	ssize_t	len;
@@ -117,12 +125,16 @@ void	tokenize(t_token *cur, char *line)
 		{
 			len = len_word(line);
 			if (len == -1)
-				ft_exit2("error");
+			{
+				break;
+			}
 			cur->next = create_token(TK_STR, line, len);
 		}
 		line += len;
 		if (cur->next == NULL)
+		{
 			ft_exit2("error");
+		}
 		cur = cur->next;
 	}
 }
