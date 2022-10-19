@@ -1,4 +1,7 @@
 #include "minishell.h"
+#include <termios.h>
+
+typedef struct termios	t_termios;
 
 t_env *g_environ;
 bool	g_signal;
@@ -11,8 +14,51 @@ static void	signal_handler(int sig)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		
 	}
+}
+
+int	get_x_pos()
+{
+	int		i;	
+	char	c;
+	char	p[256];
+
+	i = 0;
+	while (1)
+	{
+		read(0, &c, 1);
+		if(c == ';')
+		{
+			while (1)
+			{
+				read(0, &c, 1);
+				if ('0' <= c && c <= '9')
+					p[i++] = c;
+				else
+					break ;
+			}
+		}
+		if(c == 'R')
+			break ;	
+	}
+	p[i] = '\0';
+	return (ft_atoi(p));
+}
+
+int	get_print_start()
+{
+	int			x;
+	t_termios	oldstate;
+	t_termios	state;
+
+	tcgetattr(0, &oldstate);
+	state = oldstate;
+	state.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(0, TCSANOW, &state);
+	ft_putstr_fd("\e[6n", 0);
+	x = get_x_pos();
+	tcsetattr(0, TCSANOW, &oldstate);
+	return (x);
 }
 
 void minishell(int argc, char **argv)
@@ -22,6 +68,7 @@ void minishell(int argc, char **argv)
 	t_node	*node;
 	bool	heredoc_err;
 	g_signal = 0;
+	int		x;
 
 //	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
@@ -30,14 +77,18 @@ void minishell(int argc, char **argv)
 		heredoc_err = 0;
 		signal(SIGINT, signal_handler);
 //		ft_putstr_fd("minishell> ", 1);
-//		line = readline("");
+		x = get_print_start();
 		line = readline("minishell> ");
 		signal(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
 //			printf("exit\n");
-			printf("\e[1A\e[11Cexit\n");
+			if (x == 1)
+				printf("\e[1A\e[11Cexit\n");
+			else
+				printf("\e[1A\e[13Cexit\n");
+
 //			printf("\e[6n");
 			exit(0);
 		}
