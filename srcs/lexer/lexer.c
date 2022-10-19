@@ -20,7 +20,8 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 	return (token);
 }
 
-bool	is_keyword(char c)
+//bool	is_keyword(char c)
+bool	is_meta(char c)
 {
 	return (strchr(" \t|&;()<>", c));
 }
@@ -87,7 +88,8 @@ ssize_t	len_word(char *line)
 	char	*tmp;
 
 	tmp = line;
-	while (*tmp != '\0' && !is_keyword(*tmp))
+	//while (*tmp != '\0' && !is_keyword(*tmp))
+	while (*tmp != '\0' && !is_meta(*tmp))
 	{
 		if (*tmp == '\'' || *tmp == '"')
 		{
@@ -122,11 +124,13 @@ void	tokenize(t_token *cur, char *line)
 		len = len_keyword(line);
 		if (len > 0)
 			cur->next = create_token(TK_KEYWORD, line, len);
-		else if (!is_keyword(*line))
+		//else if (!is_keyword(*line))
+		else if (!is_meta(*line))
 		{
 			len = len_word(line);
 			if (len == -1)
 			{
+				// how handle error?
 				break;
 			}
 			cur->next = create_token(TK_STR, line, len);

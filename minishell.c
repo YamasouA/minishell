@@ -118,6 +118,8 @@ void minishell(int argc, char **argv)
 		//print_node(node, 0);
 		exec(node, 0);
 		free(line);
+		free(tok);
+		free(node);
 	}
 	argc = 0;
 	strlen(*argv);
