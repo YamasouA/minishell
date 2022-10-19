@@ -107,16 +107,22 @@ void minishell(int argc, char **argv)
 		add_history(line);
 //		printf("line: %s\n", line);
 		tok = lexer(line);
+		if (tok == NULL)
+			continue ;
 		node = parse(tok, &heredoc_err);
+//		printf("ok2\n");
 		if (g_signal != 0 || node == NULL)
 		{
 			g_signal = 0;
 			continue ;
 		}
+//		printf("ok3\n");
 		node = expansion(node);
+//		printf("ok4\n");
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
 		exec(node, 0);
+//		printf("ok5\n");
 		free(line);
 		free(tok);
 		free(node);

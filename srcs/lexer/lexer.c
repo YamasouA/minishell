@@ -102,15 +102,28 @@ ssize_t	len_word(char *line)
 	return (tmp - line);
 }
 
-void	tokenize_error(char *token)
+void	free_token_list(t_token *head)
+{
+	t_token	*tmp;
+
+	while (head->next != NULL)
+	{
+		tmp = head;
+		head = head->next;
+		free(tmp);
+	}
+}
+
+void	tokenize_error(char *token, t_token *head)
 {
 	g_exit_status = 258;
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	ft_putstr_fd(token, 2);
-	ft_putstr_fd("'", 2);
+	ft_putstr_fd("'\n", 2);
+	free_token_list(head);
 }
 
-void	tokenize(t_token *cur, char *line)
+t_token	*tokenize(t_token *cur, char *line, t_token *head)
 {
 	ssize_t	len;
 
@@ -131,17 +144,22 @@ void	tokenize(t_token *cur, char *line)
 			if (len == -1)
 			{
 				// how handle error?
-				break;
+				tokenize_error(line, head);
+				return (NULL);
+//				break;
 			}
 			cur->next = create_token(TK_STR, line, len);
 		}
 		line += len;
 		if (cur->next == NULL)
 		{
-			ft_exit2("error");
+			tokenize_error(line, head);
+			return (NULL);
+//			ft_exit2("error");
 		}
 		cur = cur->next;
 	}
+	return (head);
 }
 
 t_token	*lexer(char *line)
@@ -152,7 +170,8 @@ t_token	*lexer(char *line)
 
 	head = create_token(TK_HEAD, "", 0);
 	cur = head;
-	tokenize(cur, line);
+	if (!tokenize(cur, line, head))
+		return (NULL);
 	/*
 	while (*line != '\0')
 	{
@@ -180,5 +199,6 @@ t_token	*lexer(char *line)
 		cur = cur->next;
 	}*/
 //	print_list(head);
+//	printf("ok\n");
 	return (head->next);
 }
