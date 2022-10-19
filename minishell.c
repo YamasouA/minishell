@@ -21,28 +21,37 @@ int	get_x_pos()
 {
 	int		i;	
 	char	c;
-	char	p[256];
+	char	p[32];
+	char	*semic_pos;
 
 	i = 0;
-	while (1)
+	while (read(0, &c, 1) != -1)
 	{
-		read(0, &c, 1);
-		if(c == ';')
-		{
-			while (1)
-			{
-				read(0, &c, 1);
-				if ('0' <= c && c <= '9')
-					p[i++] = c;
-				else
-					break ;
-			}
-		}
-		if(c == 'R')
-			break ;	
+		p[i++] = c;
+		if (c == 'R')
+			break ;
 	}
-	p[i] = '\0';
-	return (ft_atoi(p));
+	semic_pos = ft_strchr(p, ';');
+//	while (1)
+//	{
+//		read(0, &c, 1);
+//		if(c == ';')
+//		{
+//			while (1)
+//			{
+//				read(0, &c, 1);
+//				if ('0' <= c && c <= '9')
+//					p[i++] = c;
+//				else
+//					break ;
+//			}
+//		}
+//		if(c == 'R')
+//			break ;	
+//	}
+//	p[i] = '\0';
+	return (ft_atoi(semic_pos + 1));
+//	return (ft_atoi(p));
 }
 
 int	get_print_start()
