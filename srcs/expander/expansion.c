@@ -13,6 +13,8 @@ char	*handle_s_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
+//	if (in_quote_str == NULL)
+//		err_exit("substr error: ");
 	(*i)++;
 	return (in_quote_str);
 }
@@ -57,10 +59,10 @@ char	*find_env(char *var, size_t len)
 		}
 		tmp = tmp->next;
 	}
-	return (ft_strdup(""));
+	return (ft_strdup("")); //how handle error?
 }
 
-bool	ft_isspace2(char c)
+bool	ft_isspace2(char c) //rename
 {
 	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
 }
@@ -74,20 +76,22 @@ char	*handle_dollar(char *str, int *i)
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
 		if (ft_strchr(str + *i + 1, '\"'))
-			return (ft_strdup(""));
+			return (ft_strdup("")); //how handle error?
 		else
-			return (ft_strdup("$"));
+			return (ft_strdup("$")); //how handle error?
 	}
 	j = *i;
 	if (str[j] == '?')
 	{
 		(*i)++;
-		return (ft_strdup(ft_itoa(g_exit_status)));
+		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
 	}
 	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 		&& str[j] != '\'' && str[j] != '\"')
 		j++;
 	var = find_env(&str[*i], j - *i);
+//	if (var == NULL)
+//		err_exit("find_env error: ");
 	*i = j;
 	return (var);
 }
@@ -101,6 +105,8 @@ char	*expand_dollar(char *str, char *expanded, int *i)
 		expanded = ft_joinfree(expanded, ft_strdup("$"));
 		*i += 1;
 	}
+//	if (expanded == NULL)
+//		err_exit("joinfree error: ");
 	return (expanded);
 }
 
@@ -110,12 +116,14 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	ssize_t	j;
 
 	s = ft_strdup("");
+//	if (s == NULL)
+//		err_exit("strdup error: ")
 	j = *i + 1;
 	while (str[++(*i)] != '\"' && str[(*i)])
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
-			s = ft_joinfree(s, ft_substr(str, j, *i - j));
+			s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
 			s = expand_dollar(str, s, i);//handle_dollar(str, i));
 //			s = ft_joinfree(s, handle_dollar(str, i));
 			j = *i;
@@ -123,7 +131,7 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 		}
 	}
 	if (str[*i])
-		s = ft_joinfree(s, ft_substr(str, j, *i - j));
+		s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
 	(*i)++;
 	return (s);
 }
@@ -135,11 +143,13 @@ char	*expand(char *str, bool heredoc)
 	int		head;
 
 	expanded = ft_strdup("");
+//	if (expanded == NULL)
+//		err_exit("strdup error: ")
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
-			expanded = ft_joinfree(expanded, handle_s_quote(str, &i));
+			expanded = ft_joinfree(expanded, handle_s_quote(str, &i)); // when/where handle error?
 		else if (str[i] == '\"')
 			expanded = ft_joinfree(expanded, handle_d_quote(str, &i, heredoc));
 		else if (str[i] == '$' && !heredoc)

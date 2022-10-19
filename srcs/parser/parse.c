@@ -119,13 +119,19 @@ t_node	*new_node(t_node_kind kind)
 
 	node = (t_node *)ft_calloc(sizeof(t_node), 1);
 	if (node == NULL)
-		perror("OUT2");
+		err_exit("calloc error: ");
 	node->kind = kind;
 	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
+	if (node->cmd == NULL)
+		err_exit("calloc error: ");
 	//node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	if (node->cmd->redirect_in == NULL)
+		err_exit("calloc error: ");
 	node->cmd->redirect_in->next = NULL;
 	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	if (node->cmd->redirect_out == NULL)
+		err_exit("calloc error: ");
 	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
@@ -169,11 +175,21 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 	t_redirect	*redirect;
 
 	redirect = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	if (redirect == NULL)
+		err_exit("calloc error: ");
 	redirect->type = redir_type;
 	if (redir_type == HEREDOC)
+	{
 		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
+		if (redirect->delemiter == NULL)
+			err_exit("substr error: ");
+	}
 	else
+	{
 		redirect->file_name = ft_substr(tok->str, 0, tok->len);
+		if (redirect->file_name == NULL)
+			err_exit("substr error: ");
+	}
 	redirect->next = NULL;
 	return (redirect);
 }
@@ -242,8 +258,9 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
 			if (node->cmd->cmd[i++] == NULL)
 			{
-				perror("OUT4!!");
-				return (NULL);
+				err_exit("substr error: ");
+//				perror("OUT4!!");
+//				return (NULL);
 			}
 			*tok = (*tok)->next;
 		}
@@ -269,8 +286,9 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 	{
-		perror("OUT4!!");
-		return (NULL);
+		err_exit("calloc error: ");
+//		perror("OUT4!!");
+//		return (NULL);
 	}
 	if (!parse_simple_cmd(tok, node, error_flag, heredoc_flag))
 		return (NULL);
@@ -361,6 +379,8 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 //	signal(SIGINT, heredoc_signal_handler);
 	exp_deli = expand(deli, 1);
 	documents = ft_strdup("");
+//	if (documents == NULL)
+//		err_exit("strdup error: ");
 	rl_event_hook = check_state;
 	signal(SIGINT, heredoc_signal_handler);
 	while (1)
@@ -387,8 +407,10 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			//documents = check_quote(documents, deli);
 			break ;
 		}
-		documents = ft_strjoin(documents, line);
+		documents = ft_strjoin(documents, line); //needs free
 		documents = ft_strjoin(documents, "\n");
+		if (documents == NULL)
+			err_exit("strjoin error: ");
 	}
 //	doc_len = ft_strlen(documents);
 //	if (doc_len)
@@ -414,6 +436,8 @@ void	get_documents(t_redirect *redirect_in, bool *err)
 			numstr = ft_ultoa(xorshift());
 //				printf("%s\n", numstr);
 			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
+			if (redirect_in->file_name == NULL)
+				err_exit("strjoin error: ");
 //				printf("%s\n", node->cmd->redirect_in->file_name);
 			free(numstr);
 		}
