@@ -194,7 +194,10 @@ void	exec_others(t_cmd *cmd)
 	if (is_path(cmd->cmd[0]))
 	{
 		if (!access(cmd->cmd[0], X_OK))
+		{
+//			ft_putstr_fd("ok\n", 2);
 			execve(cmd->cmd[0], cmd->cmd, envstr);
+		}
 		else
 			print_access_err(cmd->cmd[0]);
 	}

@@ -84,11 +84,10 @@ t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 	if (node == NULL)
 		err_exit("malloc error: ");
 	//if (node == NULL || lhs == NULL || rhs == NULL)
-	if (lhs == NULL || rhs == NULL)
-	{
-		perror("OUT1");
-		return (NULL);
-	}
+//	if (lhs == NULL || rhs == NULL)
+//	{
+//		return (NULL);
+//	}
 	node->kind = kind;
 	node->lhs = lhs;
 	node->rhs = rhs;
@@ -121,19 +120,19 @@ t_node	*new_node(t_node_kind kind)
 
 	node = (t_node *)ft_calloc(sizeof(t_node), 1);
 	if (node == NULL)
-		err_exit("calloc error: ");
+		err_exit("malloc error: ");
 	node->kind = kind;
 	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
 	if (node->cmd == NULL)
-		err_exit("calloc error: ");
+		err_exit("malloc error: ");
 	//node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (node->cmd->redirect_in == NULL)
-		err_exit("calloc error: ");
+		err_exit("malloc error: ");
 	node->cmd->redirect_in->next = NULL;
 	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (node->cmd->redirect_out == NULL)
-		err_exit("calloc error: ");
+		err_exit("malloc error: ");
 	node->cmd->redirect_out->next = NULL;
 	node->lhs = NULL;
 	node->rhs = NULL;
@@ -178,19 +177,19 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 
 	redirect = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (redirect == NULL)
-		err_exit("calloc error: ");
+		err_exit("malloc error: ");
 	redirect->type = redir_type;
 	if (redir_type == HEREDOC)
 	{
 		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
 		if (redirect->delemiter == NULL)
-			err_exit("substr error: ");
+			err_exit("malloc error: ");
 	}
 	else
 	{
 		redirect->file_name = ft_substr(tok->str, 0, tok->len);
 		if (redirect->file_name == NULL)
-			err_exit("substr error: ");
+			err_exit("malloc error: ");
 	}
 	redirect->next = NULL;
 	return (redirect);
@@ -260,7 +259,7 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
 			if (node->cmd->cmd[i++] == NULL)
 			{
-				err_exit("substr error: ");
+				err_exit("malloc error: ");
 //				perror("OUT4!!");
 //				return (NULL);
 			}
@@ -280,20 +279,12 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 		return (NULL);
 	t = *tok;
 	node = new_node(ND_COMMAND);
-	if (node == NULL)
-	{
-		perror("OUT3!!");
-		return (NULL);
-	}
 	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
 	{
-		err_exit("calloc error: ");
-//		perror("OUT4!!");
-//		return (NULL);
+		err_exit("malloc error: ");
 	}
-	if (!parse_simple_cmd(tok, node, error_flag, heredoc_flag))
-		return (NULL);
+	parse_simple_cmd(tok, node, error_flag, heredoc_flag);
 	return (node);
 }
 
@@ -323,7 +314,6 @@ char	*ft_ultoa(unsigned long n)
 	figure_len = count_digit(n);
 	numstr = (char *)malloc(sizeof(char) * (figure_len + 1));
 	if (!numstr)
-		//return (NULL);
 		err_exit("malloc error: ");
 	numstr[figure_len] = '\0';
 	if (n == 0)
@@ -444,7 +434,7 @@ void	get_documents(t_redirect *redirect_in, bool *err)
 //				printf("%s\n", numstr);
 			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
 			if (redirect_in->file_name == NULL)
-				err_exit("strjoin error: ");
+				err_exit("malloc error: ");
 //				printf("%s\n", node->cmd->redirect_in->file_name);
 			free(numstr);
 		}
@@ -514,8 +504,8 @@ t_node	*parse(t_token *tok, bool *heredoc_err)
 		if (node->rhs == NULL)
 			return (syntax_error("pipe should have rhs", node, tok));
 		*/
-		if (node == NULL)
-			return (NULL);
+//		if (node == NULL)
+//			return (NULL);
 	}
 	if (1 <= heredoc_flag && heredoc_flag <= 16)
 		heredoc(node, heredoc_err);
