@@ -185,6 +185,16 @@ void	print_access_err(char *msg)
 		print_exec_process_error(msg, ": command not found", ENOENT);
 }
 
+bool	is_directory(char *pathname)
+{
+	struct stat	sb;
+
+	stat(pathname, &sb);
+	if ((sb.st_mode & S_IFMT) == S_IFDIR)
+		return (true);
+	return (false);
+}
+
 void	exec_others(t_cmd *cmd)
 {
 	char	**envstr;
@@ -193,7 +203,13 @@ void	exec_others(t_cmd *cmd)
 	envstr = envlist_to_str(g_environ);
 	if (is_path(cmd->cmd[0]))
 	{
-		if (!access(cmd->cmd[0], X_OK))
+		if (is_directory(cmd->cmd[0]))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->cmd[0], 2);
+			ft_putstr_fd(": is a directory\n", 2);
+		}
+		else if (!access(cmd->cmd[0], X_OK))
 		{
 //			ft_putstr_fd("ok\n", 2);
 			execve(cmd->cmd[0], cmd->cmd, envstr);
