@@ -107,7 +107,6 @@ void minishell(int argc, char **argv)
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
-//			printf("exit\n");
 			free_envlist(g_environ);
 			if (x == 1)
 				printf("\e[1A\e[11Cexit\n");
@@ -120,27 +119,21 @@ void minishell(int argc, char **argv)
 		if (strlen(line) == 0)
 			continue;
 		add_history(line);
-//		printf("line: %s\n", line);
 		tok = lexer(line);
-		free(line);
 		if (tok == NULL)
 			continue ;
 		node = parse(tok, &heredoc_err);
-//		printf("ok2\n");
 		if (g_signal != 0 || node == NULL)
 		{
+			free(line);
 			g_signal = 0;
 			continue ;
 		}
-//		printf("ok3\n");
 		node = expansion(node);
-//		printf("ok4\n");
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
 		exec(node, 0);
-//		printf("ok5\n");
-		//free(tok);
-		//free(node);
+		free(line);
 		free_token(tok);
 		free_node(node);
 	}
