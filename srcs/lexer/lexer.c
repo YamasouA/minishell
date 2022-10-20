@@ -12,7 +12,7 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 	token = ft_calloc(1, sizeof(t_token));
 	if (token == NULL)
 		//return NULL;
-		err_exit("ft_calloc error: ");
+		err_exit("malloc error: ");
 	token->kind = kind;
 	token->str = c;
 	token->len = len;
@@ -173,6 +173,7 @@ t_token	*lexer(char *line)
 	//head = create_token(TK_HEAD, "", 0);
 	//cur = head;
 	cur = &head;
+	cur->next = NULL;
 	if (!tokenize(cur, line, &head))
 		return (NULL);
 	/*

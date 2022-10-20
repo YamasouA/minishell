@@ -122,6 +122,7 @@ void minishell(int argc, char **argv)
 		add_history(line);
 //		printf("line: %s\n", line);
 		tok = lexer(line);
+		free(line);
 		if (tok == NULL)
 			continue ;
 		node = parse(tok, &heredoc_err);
@@ -138,7 +139,6 @@ void minishell(int argc, char **argv)
 		//print_node(node, 0);
 		exec(node, 0);
 //		printf("ok5\n");
-		free(line);
 		//free(tok);
 		//free(node);
 		free_token(tok);

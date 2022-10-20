@@ -208,10 +208,10 @@ void	exec_others(t_cmd *cmd)
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmd->cmd[0], 2);
 			ft_putstr_fd(": is a directory\n", 2);
+			exit(126);
 		}
 		else if (!access(cmd->cmd[0], X_OK))
 		{
-//			ft_putstr_fd("ok\n", 2);
 			execve(cmd->cmd[0], cmd->cmd, envstr);
 		}
 		else
