@@ -124,8 +124,10 @@ void minishell(int argc, char **argv)
 		exec(node, 0);
 //		printf("ok5\n");
 		free(line);
-		free(tok);
-		free(node);
+		//free(tok);
+		//free(node);
+		free_node(node);
+		free_token(tok);
 	}
 	argc = 0;
 	strlen(*argv);

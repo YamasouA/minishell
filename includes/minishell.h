@@ -125,6 +125,8 @@ char	*expand(char *str, bool heredoc);
 // srcs/parser
 t_node *parse(t_token *tok, bool *heredoc_err);
 void	print_node(t_node *node, int tab_n);
+void	free_node(t_node *node);
+void	free_token(t_token *tok);
 
 // srcs/lexer
 t_token *lexer(char *line);

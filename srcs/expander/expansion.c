@@ -13,8 +13,8 @@ char	*handle_s_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
-	if (in_quote_str == NULL)
-		err_exit("malloc error: ");
+	//if (in_quote_str == NULL)
+	//	err_exit("malloc error: ");
 	(*i)++;
 	return (in_quote_str);
 }
@@ -90,8 +90,8 @@ char	*handle_dollar(char *str, int *i)
 		&& str[j] != '\'' && str[j] != '\"')
 		j++;
 	var = find_env(&str[*i], j - *i);
-//	if (var == NULL)
-//		err_exit("find_env error: ");
+	//if (var == NULL)
+	//	err_exit("malloc error: ");
 	*i = j;
 	return (var);
 }
@@ -105,8 +105,8 @@ char	*expand_dollar(char *str, char *expanded, int *i)
 		expanded = ft_joinfree(expanded, ft_strdup("$"));
 		*i += 1;
 	}
-	if (expanded == NULL)
-		err_exit("malloc error: ");
+	//if (expanded == NULL)
+	//	err_exit("malloc error: ");
 	return (expanded);
 }
 
@@ -116,16 +116,16 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	ssize_t	j;
 
 	s = ft_strdup("");
-	if (s == NULL)
-		err_exit("malloc error: ")
+	//if (s == NULL)
+	//	err_exit("malloc error: ")
 	j = *i + 1;
 	while (str[++(*i)] != '\"' && str[(*i)])
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
 			s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
-			if (s == NULL)
-				err_exit("malloc error:");
+			//if (s == NULL)
+			//	err_exit("malloc error:");
 			s = expand_dollar(str, s, i);//handle_dollar(str, i));
 //			s = ft_joinfree(s, handle_dollar(str, i));
 			j = *i;
@@ -134,8 +134,8 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	}
 	if (str[*i])
 		s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
-	if (s == NULL)
-		err_exit("malloc error:");
+	//if (s == NULL)
+	//	err_exit("malloc error:");
 	(*i)++;
 	return (s);
 }
@@ -147,8 +147,8 @@ char	*expand(char *str, bool heredoc)
 	int		head;
 
 	expanded = ft_strdup("");
-	if (expanded == NULL)
-		err_exit("malloc error: ")
+	//if (expanded == NULL)
+	//	err_exit("malloc error: ")
 	i = 0;
 	while (str[i])
 	{
@@ -186,6 +186,8 @@ char	*exp_dollar(char *str, int *i)
 		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
 		j++;
 	var = find_env(&str[*i], j - *i);
+	//if (var == NULL)
+	//	err_exit("malloc error");
 	*i = j;
 	return (var);
 }
@@ -197,15 +199,11 @@ char	*expand_documents(char *str)
 	char	*expanded;
 
 	expanded = ft_strdup("");
-	if (expanded == NULL)
-		err_exit("malloc error");
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '$')
-		{
 			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
-		}
 		else
 		{
 			head = i;
@@ -213,6 +211,8 @@ char	*expand_documents(char *str)
 				i++;
 			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
+		if (expanded == NULL)
+			err_exit("malloc error");
 	}
 	return (expanded);
 }
