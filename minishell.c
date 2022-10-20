@@ -70,6 +70,20 @@ int	get_print_start()
 	return (x);
 }
 
+void	free_envlist(t_env *g_environ)
+{
+	t_env	*tmp;
+
+	while (g_environ != NULL)
+	{
+		tmp = g_environ;
+		g_environ = g_environ->next;
+		free(tmp->key);
+		free(tmp->value);
+		free(tmp);
+	}
+}
+
 void minishell(int argc, char **argv)
 {
 	char *line;
@@ -80,6 +94,7 @@ void minishell(int argc, char **argv)
 	int		x;
 
 //	signal(SIGINT, signal_handler);
+	g_environ = create_env();
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
@@ -93,6 +108,7 @@ void minishell(int argc, char **argv)
 		{
 			// free(line);
 //			printf("exit\n");
+			free_envlist(g_environ);
 			if (x == 1)
 				printf("\e[1A\e[11Cexit\n");
 			else
@@ -103,7 +119,6 @@ void minishell(int argc, char **argv)
 		}
 		if (strlen(line) == 0)
 			continue;
-		g_environ = create_env();
 		add_history(line);
 //		printf("line: %s\n", line);
 		tok = lexer(line);
