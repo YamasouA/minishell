@@ -114,7 +114,7 @@ char	*check_path_list(char **env_path, char *cmd)
 		else if (errno == EACCES)
 		{
 			free(save_error_path);
-			save_error_path = join_path;
+			save_error_path = ft_strdup(join_path);
 		}
 		free(join_path);
 	}
@@ -180,7 +180,7 @@ void	print_exec_process_error(char *cmd, char *msg, int status)
 void	print_access_err(char *msg)
 {
 	if (errno == EACCES)
-		print_exec_process_error(msg, ": Permission_denied", EACCES);
+		print_exec_process_error(msg, ": Permission denied", EACCES);
 	else if (errno == ENOENT)
 		print_exec_process_error(msg, ": command not found", ENOENT);
 }
