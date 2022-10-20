@@ -106,7 +106,8 @@ void	free_token_list(t_token *head)
 {
 	t_token	*tmp;
 
-	while (head->next != NULL)
+	head = head->next;
+	while (head != NULL)
 	{
 		tmp = head;
 		head = head->next;
@@ -164,13 +165,15 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 
 t_token	*lexer(char *line)
 {
-	t_token	*head;
+	//t_token	*head;
+	t_token	head;
 	t_token	*cur;
 	//ssize_t	len;
 
-	head = create_token(TK_HEAD, "", 0);
-	cur = head;
-	if (!tokenize(cur, line, head))
+	//head = create_token(TK_HEAD, "", 0);
+	//cur = head;
+	cur = &head;
+	if (!tokenize(cur, line, &head))
 		return (NULL);
 	/*
 	while (*line != '\0')
@@ -200,5 +203,6 @@ t_token	*lexer(char *line)
 	}*/
 //	print_list(head);
 //	printf("ok\n");
-	return (head->next);
+	//return (head->next);
+	return (head.next);
 }
