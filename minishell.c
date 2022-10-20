@@ -141,8 +141,8 @@ void minishell(int argc, char **argv)
 		free(line);
 		//free(tok);
 		//free(node);
-		free_node(node);
 		free_token(tok);
+		free_node(node);
 	}
 	argc = 0;
 	strlen(*argv);

@@ -10,6 +10,7 @@ void	free_redirect(t_redirect *redir)
 		redir = redir->next;
 		free(tmp->delemiter);
 		free(tmp->file_name);
+		free(tmp->documents);
 		free(tmp);
 	}
 }
@@ -49,6 +50,7 @@ void	free_node(t_node *node)
 	if (node->rhs == NULL && node->lhs == NULL)
 	{
 		free_cmd(node->cmd);
+		free(node->cmd);
 	}
 	free(node);
 }
@@ -394,6 +396,8 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			//rl_replace_line("", 0);
 			//rl_redisplay();
 			signal(SIGINT, SIG_IGN);
+			free(exp_deli);
+			free(documents);
 			return (NULL);
 		}
 		//printf("line:%s;", line);
@@ -405,18 +409,21 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{
 			//documents = check_quote(documents, deli);
+			free(line);
 			break ;
 		}
-		documents = ft_strjoin(documents, line); //needs free
-		documents = ft_strjoin(documents, "\n");
+		//documents = ft_strjoin(documents, line); //needs free
+		documents = ft_joinfree(documents, line); //needs free
+		documents = ft_joinfree(documents, ft_strdup("\n"));
 		if (documents == NULL)
-			err_exit("strjoin error: ");
+			err_exit("malloc error: ");
 	}
 //	doc_len = ft_strlen(documents);
 //	if (doc_len)
 //		documents[doc_len - 1] = '\0';
 //	printf("%s", documents);
 	signal(SIGINT, SIG_IGN);
+	free(exp_deli);
 	return (documents);
 }
 
