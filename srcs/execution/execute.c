@@ -2,6 +2,15 @@
 
 int	g_exit_status;
 
+void	error_checker(char *msg, int n)
+{
+	if (n == -1)
+	{
+		perror(msg);
+		exit(1);
+	}
+}
+
 bool	is_redirect(t_cmd *cmd)
 {
 	if (cmd->redirect_in->next == NULL && cmd->redirect_out->next == NULL)
@@ -239,21 +248,25 @@ void	open_and_dup2(t_redirect *redirect)
 	if (redirect->type == APPEND)
 	{
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		dup2(fd, 1);
+		//dup2(fd, 1);
+		xdup2(fd, 1);
 	}
 	else if (redirect->type == REDIRECT_OUT)
 	{
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		dup2(fd, 1);
+		//dup2(fd, 1);
+		xdup2(fd, 1);
 	}
 	else
 	{
 		fd = open(redirect->file_name, O_RDONLY);
-		dup2(fd, 0);
+		//dup2(fd, 0);
+		xdup2(fd, 0);
 		if (redirect->type == HEREDOC)
 			unlink(redirect->file_name);
 	}
-	close(fd);
+	//close(fd);
+	xclose(fd);
 }
 
 void	create_heredoc_tmpfile(t_redirect *redirect_in)
@@ -273,7 +286,8 @@ void	create_heredoc_tmpfile(t_redirect *redirect_in)
 	ft_putstr_fd(redirect_in->documents, fd);
 	free(redirect_in->documents);
 	redirect_in->documents = NULL;
-	close(fd);
+	//close(fd);
+	xclose(fd);
 }
 
 void	do_redirect(t_cmd *cmd)
@@ -325,6 +339,56 @@ static void	sig_handler(int sig)
 	rl_replace_line("", 0);
 }
 
+void	xunlink(const char *pathname)
+{
+	int	ret;
+
+	ret = unlink(pathname);
+	error_checker("unlink error", ret);
+}
+
+void	xdup(int oldfd)
+{
+	int	ret;
+
+	ret = dup(old_fd);
+	error_checker("dup error", ret);
+}
+
+void	xdup2(int oldfd, int newfd)
+{
+	int	ret;
+
+	ret = dup2(oldfd, newfd);
+	error_checker("dup2 error", ret);
+}
+
+pid_t	xfork()
+{
+	pid_t	pid;
+
+	pid = fork();
+	error_checker("fork error", pid);
+	return (pid);
+}
+
+void	xclose(int fd)
+{
+	int	ret;
+
+	ret = close(fd);
+	error_checker("close error", ret);
+}
+
+int	xopen(char *path, int flags)
+{
+	int	fd;
+
+	fd = open(path, flags);
+	error_checker("open error", fd);
+	return (fd);
+}
+
 pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 {
 	int		fd[2];
@@ -333,23 +397,30 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	if (pipe(fd) < 0)
 		perror("OUT!");
 	signal(SIGINT, sig_handler);
-	pid = fork();
-	if (pid < 0)
-		perror("OUT!");
+	//pid = fork();
+	//if (pid < 0)
+	//	perror("OUT!");
+	pid = xfork();
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if (pipe_flag != 1)
 			exit(exe_process(cmd));
-		dup2(fd[1], 1);
-		close(fd[1]);
-		close(fd[0]);
+		//dup2(fd[1], 1);
+		//close(fd[1]);
+		//close(fd[0]);
+		xdup2(fd[1], 1);
+		xclose(fd[1]);
+		xclose(fd[0]);
 		exit(exe_process(cmd));
 	}
-	dup2(fd[0], 0);
-	close(fd[1]);
-	close(fd[0]);
+	//dup2(fd[0], 0);
+	//close(fd[1]);
+	//close(fd[0]);
+	xdup2(fd[0], 0);
+	xclose(fd[1]);
+	xclose(fd[0]);
 	return (pid);
 }
 
@@ -414,8 +485,10 @@ void	exec(t_node *node, int pipe_flag)
 	g_exit_status = 0;
 	if (pipe_flag == 0)
 	{
-		backup_stdin = dup(0);
-		backup_stdout = dup(1);
+		//backup_stdin = dup(0);
+		//backup_stdout = dup(1);
+		backup_stdin = xdup(0);
+		backup_stdout = xdup(1);
 	}
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
@@ -433,8 +506,10 @@ void	exec(t_node *node, int pipe_flag)
 	}
 	if (pipe_flag == 0)
 	{
-		dup2(backup_stdin, 0);
-		dup2(backup_stdout, 1);
+		//dup2(backup_stdin, 0);
+		//dup2(backup_stdout, 1);
+		xdup2(backup_stdin, 0);
+		xdup2(backup_stdout, 1);
 		get_exit_status(pid);
 //		printf("ex_st: %d\n", g_exit_status);
 	}
