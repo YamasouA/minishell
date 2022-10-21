@@ -165,9 +165,9 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 
 t_token	*lexer(char *line)
 {
-	//t_token	*head;
 	t_token	head;
 	t_token	*cur;
+	//t_token	*head;
 	//ssize_t	len;
 
 	//head = create_token(TK_HEAD, "", 0);

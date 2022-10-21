@@ -6,7 +6,7 @@
 
 typedef struct termios	t_termios;
 
-t_env *g_environ;
+t_env	*g_environ;
 bool	g_signal;
 
 static void	signal_handler(int sig)
@@ -20,7 +20,7 @@ static void	signal_handler(int sig)
 	}
 }
 
-int	get_x_pos()
+int	get_x_pos(void)
 {
 	int		i;	
 	char	c;
@@ -38,7 +38,7 @@ int	get_x_pos()
 	return (ft_atoi(semic_pos + 1));
 }
 
-int	get_print_start()
+int	get_print_start(void)
 {
 	int			x;
 	t_termios	oldstate;
@@ -68,52 +68,63 @@ void	free_envlist(t_env *g_environ)
 	}
 }
 
-void minishell(int argc, char **argv)
+void	display_exit(int x)
 {
-	char *line;
+	struct winsize	ws;
+	int				line_length;
+
+	line_length = 0;
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) //cut func
+	{
+		if (0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
+		{
+			line_length = (int)ws.ws_col;
+		}
+	}
+	if (line_length - PROMPT_LENGTH - x < 0)
+	{
+		x = (line_length - PROMPT_LENGTH - x) * (-1);
+		printf("\e[1A\e[%dCexit\n", x);
+	}
+	else if (line_length - PROMPT_LENGTH - x == 0)
+		printf("exit\n");
+	else
+		printf("\e[1A\e[%dCexit\n", x + PROMPT_LENGTH);
+}
+
+void	minishell(int argc, char **argv)
+{
+	char	*line;
 	t_token	*tok;
 	t_node	*node;
 	bool	heredoc_err;
-	g_signal = 0;
 	int		x;
-	struct winsize	ws;
-	int			line_length;
+//	struct winsize	ws;
+//	int				line_length;
 
+	g_signal = 0;
 //	signal(SIGINT, signal_handler);
-	line_length = 0;
+//	line_length = 0;
 	g_environ = create_env();
 	signal(SIGQUIT, SIG_IGN);
-	while (1)
+	while (1) //cut func?
 	{
 		heredoc_err = 0;
 		signal(SIGINT, signal_handler);
 		x = get_print_start();
 		line = readline("minishell> ");
+//		line = readline("\e[32mminishell\e[0m> "); //green
+//		line = readline("\e[36mminishell\e[0m> "); //cyan
 		signal(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
 //			free_envlist(g_environ);
-			if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1)
-			{
-				if(0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
-				{
-					line_length = (int)ws.ws_col;
-				}
-			}
-			if (line_length - PROMPT_LENGTH - x < 0)
-			{
-				x = (line_length - PROMPT_LENGTH - x) * (-1);
-				printf("\e[1A\e[%dCexit\n", x);
-			}
-			else if (line_length - PROMPT_LENGTH - x == 0)
-				printf("exit\n");
-			else
-				printf("\e[1A\e[%dCexit\n", x + PROMPT_LENGTH);
-			exit(0);
+			display_exit(x);
+			exit(0); //include display_exit?
 		}
 		if (strlen(line) == 0)
-			continue;
+			continue ;
 		add_history(line);
 		tok = lexer(line);
 		if (tok == NULL)
@@ -129,7 +140,7 @@ void minishell(int argc, char **argv)
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
 		exec(node, 0);
-		free(line);
+		free(line); //cut func?
 		free_token(tok);
 		free_node(node);
 	}

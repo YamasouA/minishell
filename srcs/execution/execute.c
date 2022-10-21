@@ -86,7 +86,7 @@ int	exec_builtin(t_cmd *cmd)
 char	*create_and_check_path(char *env_path, char *cmd_name)
 {
 	char	*join_path;
-	
+
 	join_path = join_with_connector(env_path, cmd_name, '/');
 	if (join_path == NULL)
 		return (NULL);
