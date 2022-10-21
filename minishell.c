@@ -1,5 +1,8 @@
 #include "minishell.h"
 #include <termios.h>
+#include <sys/ioctl.h>
+
+#define PROMPT_LENGTH 11
 
 typedef struct termios	t_termios;
 
@@ -59,15 +62,33 @@ int	get_print_start()
 	int			x;
 	t_termios	oldstate;
 	t_termios	state;
+//	struct winsize	ws;
+//	int			line_length;
 
+//	line_length = 0;
 	tcgetattr(0, &oldstate);
 	state = oldstate;
 	state.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(0, TCSANOW, &state);
 	ft_putstr_fd("\e[6n", 0);
 	x = get_x_pos();
+//    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1)
+//	{
+//		printf("terminal_width  =%d\n", ws.ws_col);
+//		printf("terminal_height =%d\n", ws.ws_row);
+//        if( 0 < ws.ws_col && ws.ws_col == (int)ws.ws_col )
+//		{
+//          line_length = (int)ws.ws_col;
+//		}
+//	}
+//	if (line_length - 11 - x < 0)
+//	{
+//		x = (line_length - 11 - x) * (-1);
+//	}
 	tcsetattr(0, TCSANOW, &oldstate);
-	return (x);
+//	printf("%d", x);
+//	printf("terminal_width  =%d\n", ws.ws_col);
+	return (x - 1);
 }
 
 void	free_envlist(t_env *g_environ)
@@ -92,8 +113,15 @@ void minishell(int argc, char **argv)
 	bool	heredoc_err;
 	g_signal = 0;
 	int		x;
+	struct winsize	ws;
+	int			line_length;
+//	char	*num;
+//	char	*tmp;
+//	char	*str;
 
+//	num = NULL;
 //	signal(SIGINT, signal_handler);
+	line_length = 0;
 	g_environ = create_env();
 	signal(SIGQUIT, SIG_IGN);
 	while (1)
@@ -102,16 +130,50 @@ void minishell(int argc, char **argv)
 		signal(SIGINT, signal_handler);
 //		ft_putstr_fd("minishell> ", 1);
 		x = get_print_start();
+//		printf("%d",rl_point);
+//		x = rl_point;
+//		printf("%d\n", x);
 		line = readline("minishell> ");
 		signal(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
-			free_envlist(g_environ);
-			if (x == 1)
-				printf("\e[1A\e[11Cexit\n");
+//			free_envlist(g_environ);
+//			num = ft_itoa(x + 10);
+//			tmp = ft_strjoin("\e[1A\e[", num);
+//			str = ft_strjoin(tmp, "Cexit\n");
+//			printf("%s", str);
+//			x = get_print_start();
+//			printf("%d",rl_point);
+//			printf("exit\n");
+//			rl_line_buffer = "minishell> exit";
+//			rl_replace_line("minishell> exit", 0);
+//			rl_redisplay();
+
+			if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1)
+			{
+		//		printf("terminal_width  =%d\n", ws.ws_col);
+		//		printf("terminal_height =%d\n", ws.ws_row);
+				if(0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
+				{
+					line_length = (int)ws.ws_col;
+				}
+			}
+			if (line_length - PROMPT_LENGTH - x < 0)
+			{
+				x = (line_length - PROMPT_LENGTH - x) * (-1);
+				printf("\e[1A\e[%dCexit\n", x);
+			}
+			else if (line_length - PROMPT_LENGTH - x == 0)
+				printf("exit\n");
 			else
-				printf("\e[1A\e[13Cexit\n");
+				printf("\e[1A\e[%dCexit\n", x + PROMPT_LENGTH);
+//			else
+//				printf("\e[1A\e[%dCexit\n", x + 9);
+//			if (x == 1)
+//				printf("\e[1A\e[11Cexit\n");
+//			else
+//				printf("\e[1A\e[13Cexit\n");
 
 //			printf("\e[6n");
 			exit(0);
