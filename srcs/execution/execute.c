@@ -11,6 +11,57 @@ void	error_checker(char *msg, int n)
 	}
 }
 
+void	xunlink(const char *pathname)
+{
+	int	ret;
+
+	ret = unlink(pathname);
+	error_checker("unlink error", ret);
+}
+
+int	xdup(int oldfd)
+{
+	int	ret;
+
+	ret = dup(oldfd);
+	error_checker("dup error", ret);
+	return (ret);
+}
+
+void	xdup2(int oldfd, int newfd)
+{
+	int	ret;
+
+	ret = dup2(oldfd, newfd);
+	error_checker("dup2 error", ret);
+}
+
+pid_t	xfork()
+{
+	pid_t	pid;
+
+	pid = fork();
+	error_checker("fork error", pid);
+	return (pid);
+}
+
+void	xclose(int fd)
+{
+	int	ret;
+
+	ret = close(fd);
+	error_checker("close error", ret);
+}
+
+int	xopen(char *path, int flags)
+{
+	int	fd;
+
+	fd = open(path, flags);
+	error_checker("open error", fd);
+	return (fd);
+}
+
 bool	is_redirect(t_cmd *cmd)
 {
 	if (cmd->redirect_in->next == NULL && cmd->redirect_out->next == NULL)
@@ -59,14 +110,16 @@ char	**envlist_to_str(t_env *env)
 	cnt = count_envlist(env);
 	envstr = (char **)malloc(sizeof(char *) * (cnt + 1));
 	if (envstr == NULL)
-		perror("OUT");
+		err_exit("malloc error: ");
+//		perror("OUT");
 	i = -1;
 	head = env;
 	while (head != NULL)
 	{
 		envstr[++i] = join_with_connector(head->key, head->value, '=');
 		if (envstr[i] == NULL)
-			perror("OUT");
+			err_exit("malloc error: ");
+//			perror("OUT");
 		head = head->next;
 	}
 	envstr[i] = NULL;
@@ -98,7 +151,8 @@ char	*create_and_check_path(char *env_path, char *cmd_name)
 
 	join_path = join_with_connector(env_path, cmd_name, '/');
 	if (join_path == NULL)
-		return (NULL);
+		err_exit("malloc error: ");
+//		return (NULL);
 	if (!access(join_path, X_OK))
 		errno = 0;
 	return (join_path);
@@ -124,6 +178,8 @@ char	*check_path_list(char **env_path, char *cmd)
 		{
 			free(save_error_path);
 			save_error_path = ft_strdup(join_path);
+			if (save_error_path == NULL)
+				err_exit("malloc error: ");
 		}
 		free(join_path);
 	}
@@ -182,7 +238,7 @@ void	print_exec_process_error(char *cmd, char *msg, int status)
 	ft_putstr_fd("\n", 2);
 	if (status == EACCES)
 		exit(126);
-	else if (status == ENOENT)
+	else if (status == ENOENT || status == -1)
 		exit(127);
 }
 
@@ -192,6 +248,8 @@ void	print_access_err(char *msg)
 		print_exec_process_error(msg, ": Permission denied", EACCES);
 	else if (errno == ENOENT)
 		print_exec_process_error(msg, ": command not found", ENOENT);
+	else
+		print_exec_process_error(msg, ": No such file or directory", -1);
 }
 
 bool	is_directory(char *pathname)
@@ -235,6 +293,8 @@ void	exec_others(t_cmd *cmd)
 				print_access_err(path);
 			else if (errno == ENOENT)
 				print_access_err(cmd->cmd[0]);
+			else if (path == NULL) //&& errno == 0)
+				print_access_err(cmd->cmd[0]);
 //			perror("OUT1");
 		}
 		exit(execve(path, cmd->cmd, envstr));
@@ -263,7 +323,8 @@ void	open_and_dup2(t_redirect *redirect)
 		//dup2(fd, 0);
 		xdup2(fd, 0);
 		if (redirect->type == HEREDOC)
-			unlink(redirect->file_name);
+			xunlink(redirect->file_name);
+			//unlink(redirect->file_name);
 	}
 	//close(fd);
 	xclose(fd);
@@ -337,56 +398,6 @@ static void	sig_handler(int sig)
 	printf("\n");
 	rl_on_new_line();
 	rl_replace_line("", 0);
-}
-
-void	xunlink(const char *pathname)
-{
-	int	ret;
-
-	ret = unlink(pathname);
-	error_checker("unlink error", ret);
-}
-
-void	xdup(int oldfd)
-{
-	int	ret;
-
-	ret = dup(old_fd);
-	error_checker("dup error", ret);
-}
-
-void	xdup2(int oldfd, int newfd)
-{
-	int	ret;
-
-	ret = dup2(oldfd, newfd);
-	error_checker("dup2 error", ret);
-}
-
-pid_t	xfork()
-{
-	pid_t	pid;
-
-	pid = fork();
-	error_checker("fork error", pid);
-	return (pid);
-}
-
-void	xclose(int fd)
-{
-	int	ret;
-
-	ret = close(fd);
-	error_checker("close error", ret);
-}
-
-int	xopen(char *path, int flags)
-{
-	int	fd;
-
-	fd = open(path, flags);
-	error_checker("open error", fd);
-	return (fd);
 }
 
 pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)

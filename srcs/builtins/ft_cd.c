@@ -12,6 +12,8 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
 	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
+	if (s == NULL)
+		return (NULL);
 	i = 0;
 	while (i < len1)
 	{
