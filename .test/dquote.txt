@@ -1,0 +1,17 @@
+//double quote
+abcd"ABCD efgh"
+"ABCD efgh"defg
+"$HOME abcd"
+"'"HOME"'"
+"abc$HOME $HOME xyz"abc
+echo "$HOME"
+"a\"''"
+"'abc"
+">'"
+"<>'"
+$">>>>"
+abc"defg"
+echo "abc def"
+echo "abc"def
+"$$$"
+"$$$$"

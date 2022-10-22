@@ -1,0 +1,29 @@
+// env
+unset OLDPWD
+echo $OLDPWD
+
+export NEWVAR=abc
+echo $NEWVAR
+
+export NEWVAR2=abc=def=ghi
+echo $NEWVAAR2
+
+export NEWVAR+=xyz
+echo $NEWVAR
+
+cd ../
+pwd
+
+cd ./minishell
+pwd
+
+echo -n "abc"
+
+exit 2
+echo $?
+
+exit "abc"
+echo $?
+
+exit 2 1 4
+echo $?

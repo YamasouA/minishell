@@ -1,0 +1,17 @@
+// ERROR case
+echo "abc
+filename >
+|"hello"
+cat main.c || grep hello
+cat main.c |
+|
+|||||||||
+> > > >
+< filename echo
+> filename
+cat >>> filename
+'
+"
+'a\'""'
+cat <<< filename
+$"><<"|>

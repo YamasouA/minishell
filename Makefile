@@ -1,6 +1,6 @@
 CC = gcc
 # CFLAGS = -Wall -Wextra -Werror -I $(shell brew --prefix readline)/include -g -lreadline -lhistory -L$(shell brew --prefix readline)/lib
-NAME = test
+NAME = minishell
 
 SRCS = main.c \
 		minishell.c \

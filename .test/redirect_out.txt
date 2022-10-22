@@ -1,0 +1,12 @@
+// redirect
+ls|>l
+< filename
+< filename | grep
+exec > sample
+// redirect out
+> filename
+> filename | grep
+> filename >filename2 | grepp hello
+> filename >filename2 >filename3| grepp hello
+cat > main.c
+cat > main.c > get_next_line.c > .test/error.txt

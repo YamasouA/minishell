@@ -1,0 +1,9 @@
+cat
+ls
+exit
+env
+echo abc
+cd ../
+pwd
+cd ./minishell
+pwd

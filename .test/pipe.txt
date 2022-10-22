@@ -1,0 +1,6 @@
+ls | cat main.c
+ls | asf |,.ma:
+ls | cat | , | .test
+ls -l | grep *.c
+cat | cat | ls
+echo abc | cat
