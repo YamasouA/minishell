@@ -7,3 +7,5 @@ a.out
 *.a
 .test/libft
 .vimrc.local
+bash.txt
+minishell.txt

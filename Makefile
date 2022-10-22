@@ -40,23 +40,17 @@ LEXER_FILES = lexer.c \
 	lexer_utils.c
 LEXER_SRCS = $(addprefix $(LEXER_DIR), $(LEXER_FILES))
 
-LEXER_TEST_SRCS = srcs/lexer/tester.c \
-	get_next_line.c \
-	get_next_line_utils.c \
-	srcs/lexer/lexer.c \
-	srcs/lexer/lexer_utils.c \
-	srcs/parser/parse.c \
-	srcs/parser/parse_utils.c \
-	srcs/expander/expansion.c \
-	env.c \
-	srcs/execution/execute.c \
-	srcs/builtins/ft_echo.c \
-	srcs/builtins/ft_env.c \
-	srcs/builtins/ft_exit.c \
-	srcs/builtins/ft_export.c \
-	srcs/builtins/ft_unset.c \
-	srcs/builtins/ft_cd.c \
-	srcs/builtins/ft_pwd.c
+LEXER_TEST_SRCS += $(PARCER_SRCS)
+LEXER_TEST_SRCS += $(UTILS_SRCS)
+LEXER_TEST_SRCS += $(BUILTIN_SRCS)
+LEXER_TEST_SRCS += $(LEXER_SRCS)
+LEXER_TEST_SRCS += $(EXEC_SRCS)
+LEXER_TEST_SRCS += $(EXPAND_SRCS)
+LEXER_TEST_SRCS += get_next_line.c \
+		get_next_line_utils.c \
+		env.c \
+		srcs/lexer/tester.c
+
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)

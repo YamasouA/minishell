@@ -4,6 +4,19 @@
 t_env	*g_environ;
 bool	g_signal;
 
+void	set_signal_handler(int signum, sig_t sighandler)
+{
+	if (signal(signum, sighandler) == SIG_ERR)
+		err_exit("signal error: ");
+}
+char	*add_redirect_out(char *line, char *output)
+{
+	char	*new;
+
+	new = ft_strjoin(line, output);
+	return (new);
+}
+
 static void tester(char *file_name)
 {
 	int fd;
@@ -13,6 +26,8 @@ static void tester(char *file_name)
 	t_node	*node;
 	int	line_n;
 	bool	heredoc_err;
+	char	*line2;
+	char	*line3;
 //	t_env	*environ;
 	
 	printf("file_name: %s\n", file_name);
@@ -32,20 +47,24 @@ static void tester(char *file_name)
 		line = get_next_line(fd);
 		if (line == NULL)
 			break;
+		line2 = add_redirect_out(line, ">minishell.txt");
 		printf("\n============%s: line %d=============\n", file_name, line_n);
 		line_n++;
 		if (line[0] == '/' && line[1] == '/')
 			continue;
-		printf("input line: %s\n", line);
+		//printf("input line: %s\n", line);
 		line[ft_strlen(line) - 1] = '\0';
 		tok = lexer(line);
 		node = parse(tok, &heredoc_err);
 		//printf("==PARSE==\n");
 		//print_node(node, 0);
 		node = expansion(node);
-		printf("==EXPANSION==\n");
-		print_node(node, 0);
-//		exec(node);
+		//printf("==EXPANSION==\n");
+		//print_node(node, 0);
+		exec(node, 0);
+		line3 = add_redirect_out(line, ">bash.txt");
+		system(line3);
+		system("diff minishell.txt bash.txt");
 	} while (1);
 	free(line);
 }
