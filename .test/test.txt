@@ -3,10 +3,8 @@ ls | asf |,.ma:
 ls | cat | , | .test
 ls -l | grep *.c
 .test
-vim ./libft.c
 // redirect
-cat << delimiter
-ls|>-l
+ls|>l
 < filename
 < filename | grep
 exec > sample
@@ -58,10 +56,8 @@ abc'def'ghi"jkl"mno
 < filename <filename2 | grepp hello
 < filename <filename2 <filename3| grepp hello
 exec > sample
-<<$cat
-<<$HOME
-<<"$HOME"
-<<'"$HOME"'
+cat <<< filename
+$"><<"|>
 // ERROR case
 echo "abc
 filename >
@@ -73,9 +69,7 @@ cat main.c |
 > > > >
 < filename echo
 > filename
-cat <<< filename
 cat >>> filename
 '
 "
-$"><<"|>
 'a\'""'

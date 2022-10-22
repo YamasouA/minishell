@@ -49,12 +49,13 @@ static void tester(char *file_name)
 			break;
 		line2 = add_redirect_out(line, ">minishell.txt");
 		printf("\n============%s: line %d=============\n", file_name, line_n);
+		printf("%s\n", line);
 		line_n++;
 		if (line[0] == '/' && line[1] == '/')
 			continue;
 		//printf("input line: %s\n", line);
 		line[ft_strlen(line) - 1] = '\0';
-		tok = lexer(line);
+		tok = lexer(line2);
 		node = parse(tok, &heredoc_err);
 		//printf("==PARSE==\n");
 		//print_node(node, 0);

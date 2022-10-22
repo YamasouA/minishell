@@ -1,0 +1,5 @@
+<<$cat
+cat << delimiter
+<<$HOME
+<<"$HOME"
+<<'"$HOME"'
