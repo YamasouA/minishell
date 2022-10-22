@@ -374,7 +374,8 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 //	if (documents == NULL)
 //		err_exit("strdup error: ");
 	rl_event_hook = check_state;
-	signal(SIGINT, heredoc_signal_handler);
+	//signal(SIGINT, heredoc_signal_handler);
+	set_signal_handler(SIGINT, heredoc_signal_handler);
 	while (1)
 	{
 		line = readline("> ");
@@ -385,7 +386,8 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			//rl_on_new_line();
 			//rl_replace_line("", 0);
 			//rl_redisplay();
-			signal(SIGINT, SIG_IGN);
+			//signal(SIGINT, SIG_IGN);
+			set_signal_handler(SIGINT, SIG_IGN);
 			free(exp_deli);
 			free(documents);
 			return (NULL);
@@ -412,7 +414,8 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 //	if (doc_len)
 //		documents[doc_len - 1] = '\0';
 //	printf("%s", documents);
-	signal(SIGINT, SIG_IGN);
+	//signal(SIGINT, SIG_IGN);
+	set_signal_handler(SIGINT, SIG_IGN);
 	free(exp_deli);
 	return (documents);
 }

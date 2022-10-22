@@ -115,7 +115,9 @@ t_env	*env_last(t_env *env);
 void	update_or_add_value(t_env *env, char *key, char *value);
 void	print_env(t_env *env);
 
+// minishell.c
 void minishell(int argc, char **argv);
+void	set_signal_handler(int signum, sig_t sighandler);
 char *read_line();
 
 // srcs/expander

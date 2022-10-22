@@ -92,6 +92,12 @@ void	display_exit(int x)
 		printf("\e[1A\e[%dCexit\n", x + PROMPT_LENGTH);
 }
 
+void	set_signal_handler(int signum, sig_t sighandler)
+{
+	if (signal(signum, sighandler) == SIG_ERR)
+		err_exit("signal error: ");
+}
+
 void	minishell(int argc, char **argv)
 {
 	char	*line;
@@ -106,16 +112,17 @@ void	minishell(int argc, char **argv)
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
 	g_environ = create_env();
-	signal(SIGQUIT, SIG_IGN);
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
-		signal(SIGINT, signal_handler);
+		//signal(SIGINT, signal_handler);
+		set_signal_handler(SIGINT, signal_handler);
 		x = get_print_start();
 		line = readline("minishell> ");
 //		line = readline("\e[32mminishell\e[0m> "); //green
 //		line = readline("\e[36mminishell\e[0m> "); //cyan
-		signal(SIGINT, SIG_IGN);
+		//signal(SIGINT, SIG_IGN);
+		set_signal_handler(SIGINT, SIG_IGN);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);

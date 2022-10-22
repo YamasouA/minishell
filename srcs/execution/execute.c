@@ -62,6 +62,14 @@ int	xopen(char *path, int flags)
 	return (fd);
 }
 
+void	xpipe(int pipefd[2])
+{
+	int	ret;
+
+	ret = pipe(pipefd);
+	error_checker("pipe error", ret);
+}
+
 bool	is_redirect(t_cmd *cmd)
 {
 	if (cmd->redirect_in->next == NULL && cmd->redirect_out->next == NULL)
@@ -459,17 +467,21 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	int		fd[2];
 	pid_t	pid;
 
-	if (pipe(fd) < 0)
-		perror("OUT!");
-	signal(SIGINT, sig_handler);
+	//if (pipe(fd) < 0)
+	//	perror("OUT!");
+	xpipe(fd);
+	//signal(SIGINT, sig_handler);
+	set_signal_handler(SIGINT, sig_handler);
 	//pid = fork();
 	//if (pid < 0)
 	//	perror("OUT!");
 	pid = xfork();
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		//signal(SIGINT, SIG_DFL);
+		set_signal_handler(SIGINT, SIG_DFL);
+		//signal(SIGQUIT, SIG_DFL);
+		set_signal_handler(SIGINT, SIG_DFL);
 		if (pipe_flag != 1)
 			exit(exe_process(cmd));
 		//dup2(fd[1], 1);
