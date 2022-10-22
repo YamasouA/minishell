@@ -44,13 +44,13 @@ int	get_print_start(void)
 	t_termios	oldstate;
 	t_termios	state;
 
-	tcgetattr(0, &oldstate);
+	tcgetattr(0, &oldstate); //should error_handle
 	state = oldstate;
 	state.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(0, TCSANOW, &state);
+	tcsetattr(0, TCSANOW, &state); //should error_handle
 	ft_putstr_fd("\e[6n", 0);
 	x = get_x_pos();
-	tcsetattr(0, TCSANOW, &oldstate);
+	tcsetattr(0, TCSANOW, &oldstate); //should error_handle
 	return (x - 1);
 }
 
@@ -74,7 +74,7 @@ void	display_exit(int x)
 	int				line_length;
 
 	line_length = 0;
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) //cut func
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) //cut func //error handle
 	{
 		if (0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
 		{
@@ -112,11 +112,14 @@ void	minishell(int argc, char **argv)
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
 	g_environ = create_env();
+	if (g_environ == NULL)
+		err_exit("malloc error: ");
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
 		//signal(SIGINT, signal_handler);
 		set_signal_handler(SIGINT, signal_handler);
+		set_signal_handler(SIGQUIT, SIG_IGN);
 		x = get_print_start();
 		line = readline("minishell> ");
 //		line = readline("\e[32mminishell\e[0m> "); //green

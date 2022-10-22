@@ -324,14 +324,11 @@ bool	is_invalid_file_name(t_redirect *redirect)
 {
 	if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
 	{
-		if (access(redirect->file_name, W_OK))
+		if (access(redirect->file_name, W_OK) && errno == EACCES)
 		{
-			if (errno == EACCES)
-			{
-				print_redirect_err(redirect->file_name);
-//				return (print_redirect_err(redirect->file_name));
-				return (1);
-			}
+			print_redirect_err(redirect->file_name);
+//			return (print_redirect_err(redirect->file_name));
+			return (1);
 		}
 	}
 	else
@@ -481,7 +478,7 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 		//signal(SIGINT, SIG_DFL);
 		set_signal_handler(SIGINT, SIG_DFL);
 		//signal(SIGQUIT, SIG_DFL);
-		set_signal_handler(SIGINT, SIG_DFL);
+		set_signal_handler(SIGQUIT, SIG_DFL);
 		if (pipe_flag != 1)
 			exit(exe_process(cmd));
 		//dup2(fd[1], 1);
