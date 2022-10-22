@@ -5,7 +5,6 @@ abcd'ABCD efgh'
 '"'HOME'"'
 'abc$HOME $HOME xyz'abc
 echo '$HOME'
-'a\'""'
 '"abc'
 '>"'
 '<>"'
@@ -19,3 +18,4 @@ echo'abc def'
 echo 'abc'def
 '$$$'
 '$$$$'
+//segv(only test)'a\'""'
