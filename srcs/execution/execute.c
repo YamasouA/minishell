@@ -301,25 +301,74 @@ void	exec_others(t_cmd *cmd)
 	}
 }
 
-void	open_and_dup2(t_redirect *redirect)
+void	print_redirect_err(char *file_name)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(file_name, 2);
+	if (errno == EACCES)
+		ft_putstr_fd(": Permission denied\n", 2);
+	else if (errno == ENOENT)
+		ft_putstr_fd(": No such file or directory\n", 2);
+//	return (1);
+}
+
+bool	is_invalid_file_name(t_redirect *redirect)
+{
+	if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
+	{
+		if (access(redirect->file_name, W_OK))
+		{
+			if (errno == EACCES)
+			{
+				print_redirect_err(redirect->file_name);
+//				return (print_redirect_err(redirect->file_name));
+				return (1);
+			}
+		}
+	}
+	else
+	{
+		if (access(redirect->file_name, R_OK))
+		{
+//			return (print_redirect_err(redirect->file_name));
+			print_redirect_err(redirect->file_name);
+			return (1);
+		}
+	}
+	return (0);
+	
+}
+
+int	open_and_dup2(t_redirect *redirect)
 {
 	int	fd;
 
+	if (is_invalid_file_name(redirect))
+		return (1);
 	if (redirect->type == APPEND)
 	{
+//		if (!access(redirect->file_name, W_OK))
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
+//		else
+//			print_redirect_err(redirect->file_name);
 		//dup2(fd, 1);
 		xdup2(fd, 1);
 	}
 	else if (redirect->type == REDIRECT_OUT)
 	{
+//		if (!access(redirect->file_name, W_OK))
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+//		else
+//			print_redirect_err(redirect->file_name);
 		//dup2(fd, 1);
 		xdup2(fd, 1);
 	}
 	else
 	{
+//		if (!access(redirect->file_name, R_OK))
 		fd = open(redirect->file_name, O_RDONLY);
+//		else
+//			print_redirect_err(redirect->file_name);
 		//dup2(fd, 0);
 		xdup2(fd, 0);
 		if (redirect->type == HEREDOC)
@@ -328,6 +377,7 @@ void	open_and_dup2(t_redirect *redirect)
 	}
 	//close(fd);
 	xclose(fd);
+	return (0);
 }
 
 void	create_heredoc_tmpfile(t_redirect *redirect_in)
@@ -351,7 +401,7 @@ void	create_heredoc_tmpfile(t_redirect *redirect_in)
 	xclose(fd);
 }
 
-void	do_redirect(t_cmd *cmd)
+int	do_redirect(t_cmd *cmd)
 {
 	t_redirect	*redirect_in;
 	t_redirect	*redirect_out;
@@ -364,14 +414,17 @@ void	do_redirect(t_cmd *cmd)
 		{
 			create_heredoc_tmpfile(redirect_in);
 		}
-		open_and_dup2(redirect_in);
+		if (open_and_dup2(redirect_in))
+			return (1);
 	}
 	redirect_out = cmd->redirect_out;
 	while (redirect_out->next)
 	{
 		redirect_out = redirect_out->next;
-		open_and_dup2(redirect_out);
+		if (open_and_dup2(redirect_out))
+			return (1);
 	}
+	return (0);
 }
 
 int	exe_process(t_cmd *cmd)
@@ -383,7 +436,8 @@ int	exe_process(t_cmd *cmd)
 	status = 0;
 	if (is_redirect(cmd))
 	{
-		do_redirect(cmd);
+		if (do_redirect(cmd))
+			return (1);
 	}
 	if (which_builtin(cmd->cmd))
 		status = exec_builtin(cmd);
