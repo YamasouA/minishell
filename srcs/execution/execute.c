@@ -83,6 +83,8 @@ bool	which_builtin(char **cmd)
 		"export", "exit", "pwd", "env"};
 	size_t		i;
 
+	if (*cmd == NULL)
+		return (false);
 	i = 0;
 	while (builtins[i] != NULL)
 	{
@@ -446,7 +448,7 @@ int	exe_process(t_cmd *cmd)
 	}
 	if (which_builtin(cmd->cmd))
 		status = exec_builtin(cmd);
-	else
+	else if(cmd->cmd[0] != NULL)
 		exec_others(cmd);
 	return (status);
 }
@@ -507,7 +509,8 @@ pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
 	{
 		g_exit_status = exe_process(node->cmd);
 	}
-	else if (node->cmd->cmd[0] != NULL)
+	else
+//	else if (node->cmd->cmd[0] != NULL)
 	{
 		pid = exe_cmd(node->cmd, pipe_flag);
 	}

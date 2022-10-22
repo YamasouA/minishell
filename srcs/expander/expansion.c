@@ -75,7 +75,7 @@ char	*handle_dollar(char *str, int *i)
 	(*i)++;
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
-		if (ft_strchr(str + *i + 1, '\"'))
+		if (str[*i] == '\'' || ft_strchr(str + *i + 1, '\"'))
 			return (ft_strdup("")); //how handle error?
 		else
 			return (ft_strdup("$")); //how handle error?
