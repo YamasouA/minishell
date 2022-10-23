@@ -81,6 +81,7 @@ static void tester(char *file_name)
 	//	system("cat diff.txt | grep -v identical ; if [ $? = 0 ];then cat diff.txt >> result.txt;fi");
 	} while (1);
 	free(line);
+	close(fd);
 }
 
 int main(int argc, char *argv[])

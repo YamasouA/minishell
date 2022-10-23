@@ -4,7 +4,11 @@ int	ft_echo(char **strs)//, t_env *envp)
 {
 	int	i;
 
-	if (ft_strlen(strs[1]) == 2 && ft_strncmp(strs[1], "-n", 3) == 0)
+	if (strs[1] == NULL)
+	{
+		ft_putstr_fd("\n", 1);
+	}
+	else if (ft_strlen(strs[1]) == 2 && ft_strncmp(strs[1], "-n", 3) == 0)
 	{
 		i = 2;
 		while (strs[i])

@@ -444,7 +444,9 @@ int	exe_process(t_cmd *cmd)
 	if (is_redirect(cmd))
 	{
 		if (do_redirect(cmd))
+		{
 			return (1);
+		}
 	}
 	if (which_builtin(cmd->cmd))
 		status = exec_builtin(cmd);
@@ -587,6 +589,8 @@ void	exec(t_node *node, int pipe_flag)
 		//dup2(backup_stdout, 1);
 		xdup2(backup_stdin, 0);
 		xdup2(backup_stdout, 1);
+		xclose(backup_stdin);
+		xclose(backup_stdout);
 		get_exit_status(pid);
 //		printf("ex_st: %d\n", g_exit_status);
 	}
