@@ -60,7 +60,13 @@ static void tester(char *file_name)
 			continue;
 		//printf("input line: %s\n", line);
 		tok = lexer(line2);
+		if (tok == NULL)
+			continue ;
 		node = parse(tok, &heredoc_err);
+		if (node == NULL)
+		{
+			continue;
+		}
 		//printf("==PARSE==\n");
 		//print_node(node, 0);
 		node = expansion(node);
@@ -70,7 +76,8 @@ static void tester(char *file_name)
 		line3 = add_redirect_out(line, ">bash.txt");
 		//printf("%s\n", line3);
 		system(line3);
-		system("diff -s minishell.txt bash.txt");
+		system("diff -s minishell.txt bash.txt > diff.txt");
+		system("cat diff.txt | grep -v identical ; if [ $? = 0 ];then cat diff.txt >> result.txt;fi");
 	} while (1);
 	free(line);
 }

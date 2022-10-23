@@ -138,7 +138,10 @@ void	minishell(int argc, char **argv)
 		add_history(line);
 		tok = lexer(line);
 		if (tok == NULL)
+		{
+			free(line);
 			continue ;
+		}
 		node = parse(tok, &heredoc_err);
 		if (g_signal != 0 || node == NULL)
 		{

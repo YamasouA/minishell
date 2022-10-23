@@ -2,7 +2,6 @@ echo abc def
 echo abc  def
 cat main.c
 ls
-exit
 env
 echo abc
 cd ../

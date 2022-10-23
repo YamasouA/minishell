@@ -29,8 +29,8 @@ echo -e "abc"
 //exit 2
 echo $?
 
-exit "abc"
-echo $?
+//exit "abc"
+//echo $?
 
-exit 2 1 4
-echo $?
+//exit 2 1 4
+//echo $?
