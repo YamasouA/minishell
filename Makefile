@@ -4,8 +4,6 @@ NAME = minishell
 
 SRCS = main.c \
 		minishell.c \
-		get_next_line.c \
-		get_next_line_utils.c \
 		env.c
 
 UTILS_DIR = srcs/utils/
@@ -46,9 +44,7 @@ LEXER_TEST_SRCS += $(BUILTIN_SRCS)
 LEXER_TEST_SRCS += $(LEXER_SRCS)
 LEXER_TEST_SRCS += $(EXEC_SRCS)
 LEXER_TEST_SRCS += $(EXPAND_SRCS)
-LEXER_TEST_SRCS += get_next_line.c \
-		get_next_line_utils.c \
-		env.c \
+LEXER_TEST_SRCS += env.c \
 		srcs/lexer/tester.c
 
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
