@@ -450,7 +450,7 @@ int	exe_process(t_cmd *cmd)
 	}
 	if (which_builtin(cmd->cmd))
 		status = exec_builtin(cmd);
-	else if(cmd->cmd[0] != NULL)
+	else if(cmd->cmd[0] != NULL && cmd->cmd[0][0] != '\0')
 		exec_others(cmd);
 	return (status);
 }
