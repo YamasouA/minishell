@@ -24,6 +24,7 @@ cd ./minishell
 pwd
 
 echo -n "abc"
+echo -e "abc"
 
 //exit 2
 echo $?

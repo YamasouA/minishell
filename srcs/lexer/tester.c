@@ -51,7 +51,10 @@ static void tester(char *file_name)
 		line2 = add_redirect_out(line, ">minishell.txt");
 		printf("\n============%s: line %d=============\n", file_name, line_n);
 		//printf("%s\n", line2);
-		printf("cmd: %s", line);
+//		printf("cmd: %s", line);
+		ft_putstr_fd("cmd: ", 1);
+		ft_putstr_fd(line, 1);
+		ft_putstr_fd("\n", 1);
 		line_n++;
 		if (line[0] == '/' && line[1] == '/')
 			continue;
@@ -67,7 +70,7 @@ static void tester(char *file_name)
 		line3 = add_redirect_out(line, ">bash.txt");
 		//printf("%s\n", line3);
 		system(line3);
-		system("diff -u minishell.txt bash.txt");
+		system("diff -s minishell.txt bash.txt");
 	} while (1);
 	free(line);
 }
