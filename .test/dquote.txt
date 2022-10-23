@@ -10,8 +10,11 @@ echo "$HOME"
 ">'"
 "<>'"
 $">>>>"
+">>>>"$
+">>>>"$HOME
 abc"defg"
 echo "abc def"
 echo "abc"def
 "$$$"
 "$$$$"
+$HO"ME"

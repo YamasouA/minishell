@@ -2,6 +2,12 @@
 unset OLDPWD
 echo $OLDPWD
 
+export
+
+export abc=123 def=456
+echo $abc
+echo $def
+
 export NEWVAR=abc
 echo $NEWVAR
 
@@ -19,7 +25,7 @@ pwd
 
 echo -n "abc"
 
-exit 2
+//exit 2
 echo $?
 
 exit "abc"

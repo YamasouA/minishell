@@ -43,6 +43,7 @@ static void tester(char *file_name)
 	line = NULL;
 	line_n = 1;
 	do {
+		errno = 0;
 		free(line);
 		line = get_next_line(fd);
 		if (line == NULL)
