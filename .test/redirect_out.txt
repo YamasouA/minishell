@@ -2,11 +2,15 @@
 ls|>l
 < filename
 < filename | grep
-exec > sample
+ls | < main.c
 // redirect out
 > filename
 > filename | grep
+> ls.txt ls
 > filename >filename2 | grepp hello
+ls > filename >filename2 >filename3| grepp hello
+> filename >filename2 >filename3 ls | grepp hello
 > filename >filename2 >filename3| grepp hello
-cat > abcd.c
-cat > efgh.c > next.c > last.txt
+cat abc > abcd.c
+cat abc > efgh.c > next.c > last.txt
+//exec > sample
