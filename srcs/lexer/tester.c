@@ -12,7 +12,6 @@ void	set_signal_handler(int signum, sig_t sighandler)
 char	*add_redirect_out(char *line, char *output)
 {
 	char	*new;
-
 	new = ft_strjoin(line, output);
 	return (new);
 }
@@ -30,7 +29,7 @@ static void tester(char *file_name)
 	char	*line3;
 //	t_env	*environ;
 	
-	printf("file_name: %s\n", file_name);
+	printf("\n\n\nfile_name: %s\n", file_name);
 	g_environ = create_env();
 	//file_name = "test.txt";
 //	file_name = "test3.txt";
@@ -48,14 +47,15 @@ static void tester(char *file_name)
 		line = get_next_line(fd);
 		if (line == NULL)
 			break;
+		line[ft_strlen(line) - 1] = '\0';
 		line2 = add_redirect_out(line, ">minishell.txt");
 		printf("\n============%s: line %d=============\n", file_name, line_n);
-		printf("%s\n", line);
+		//printf("%s\n", line2);
+		printf("cmd: %s", line);
 		line_n++;
 		if (line[0] == '/' && line[1] == '/')
 			continue;
 		//printf("input line: %s\n", line);
-		line[ft_strlen(line) - 1] = '\0';
 		tok = lexer(line2);
 		node = parse(tok, &heredoc_err);
 		//printf("==PARSE==\n");
@@ -65,8 +65,9 @@ static void tester(char *file_name)
 		//print_node(node, 0);
 		exec(node, 0);
 		line3 = add_redirect_out(line, ">bash.txt");
+		//printf("%s\n", line3);
 		system(line3);
-		system("diff minishell.txt bash.txt");
+		system("diff -u minishell.txt bash.txt");
 	} while (1);
 	free(line);
 }
