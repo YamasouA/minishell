@@ -14,6 +14,8 @@ int	ft_echo(char **strs)//, t_env *envp)
 		while (strs[i])
 		{
 			ft_putstr_fd(strs[i++], 1);
+			if (strs[i] != NULL)
+				ft_putstr_fd(" ", 1);
 		}	
 	}
 	else
@@ -22,6 +24,8 @@ int	ft_echo(char **strs)//, t_env *envp)
 		while (strs[i])
 		{
 			ft_putstr_fd(strs[i++], 1);
+			if (strs[i] != NULL)
+				ft_putstr_fd(" ", 1);
 		}
 		ft_putstr_fd("\n", 1);
 	}
