@@ -36,7 +36,7 @@ void	xdup2(int oldfd, int newfd)
 	error_checker("dup2 error", ret);
 }
 
-pid_t	xfork()
+pid_t	xfork(void)
 {
 	pid_t	pid;
 
@@ -256,7 +256,7 @@ void	print_access_err(char *msg)
 {
 	if (errno == EACCES)
 		print_exec_process_error(msg, ": Permission denied", EACCES);
-	else if (errno == ENOENT)
+	else if (errno == ENOENT && !is_path(msg))
 		print_exec_process_error(msg, ": command not found", ENOENT);
 	else
 		print_exec_process_error(msg, ": No such file or directory", -1);
@@ -450,7 +450,7 @@ int	exe_process(t_cmd *cmd)
 	}
 	if (which_builtin(cmd->cmd))
 		status = exec_builtin(cmd);
-	else if(cmd->cmd[0] != NULL && cmd->cmd[0][0] != '\0')
+	else if (cmd->cmd[0] != NULL && cmd->cmd[0][0] != '\0')
 		exec_others(cmd);
 	return (status);
 }
