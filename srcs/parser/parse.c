@@ -243,6 +243,8 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 	size_t	i;
 
 	i = 0;
+	if (peek(*tok, "|") == 1)
+		*err = 1;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
 		redir_type = which_redir(*tok);
@@ -258,11 +260,7 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 		{
 			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
 			if (node->cmd->cmd[i++] == NULL)
-			{
 				err_exit("malloc error: ");
-//				perror("OUT4!!");
-//				return (NULL);
-			}
 			*tok = (*tok)->next;
 		}
 	}
