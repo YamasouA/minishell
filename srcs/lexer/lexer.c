@@ -115,13 +115,39 @@ void	free_token_list(t_token *head)
 	}
 }
 
-void	tokenize_error(char *token, t_token *head)
+//void	tokenize_error(char *token, t_token *head)
+void	tokenize_error(char token, t_token *head)
 {
 	g_exit_status = 258;
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	ft_putstr_fd(token, 2);
+	ft_putchar_fd(token, 2);
+//	ft_putstr_fd(token, 2);
 	ft_putstr_fd("'\n", 2);
 	free_token_list(head);
+}
+
+void	quote_error(char *token, t_token *head)
+{
+	char *tmp;
+
+	g_exit_status = 258;
+	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
+	while (*token != '\0')
+	{
+		if (*token == '\'' || *token == '"')
+		{
+			tmp = token;
+			token = find_quote(token + 1, *token);
+			if (token == NULL)
+			{
+				ft_putchar_fd(tmp[0], 2);
+				break ;
+			}
+		}
+		token++;
+	}
+	ft_putstr_fd("'\n", 2);
+	free_token_list(head);	
 }
 
 t_token	*tokenize(t_token *cur, char *line, t_token *head)
@@ -145,7 +171,8 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 			if (len == -1)
 			{
 				// how handle error?
-				tokenize_error(line, head);
+				quote_error(line, head);
+//				tokenize_error(line, head);
 				return (NULL);
 //				break;
 			}
@@ -154,7 +181,7 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 		line += len;
 		if (cur->next == NULL)
 		{
-			tokenize_error(line, head);
+			tokenize_error(*line, head);
 			return (NULL);
 //			ft_exit2("error");
 		}
