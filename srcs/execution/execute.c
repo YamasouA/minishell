@@ -332,6 +332,14 @@ bool	is_invalid_file_name(t_redirect *redirect)
 //			return (print_redirect_err(redirect->file_name));
 			return (1);
 		}
+		else if (is_directory(redirect->file_name))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(redirect->file_name, 2);
+			ft_putstr_fd(": is a directory\n", 2);
+			return (1);
+		}
+
 	}
 	else
 	{
