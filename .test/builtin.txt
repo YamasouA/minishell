@@ -17,7 +17,30 @@ echo $NEWVAAR2
 export NEWVAR+=xyz
 echo $NEWVAR
 
-cd ../
+export TEST="a=b=c=d"
+env | grep TEST
+echo $TEST
+
+export TEST="-n hello"
+env | grep TEST
+echo $TEST
+
+export PIPE="|"
+echo $PIPE
+ps -a $PIPE grep bash
+ps -a | grep bash
+
+export TEST="a"
+export TEST="b" | echo $TEST
+echo $TEST
+
+export a=" "
+echo$a-a
+
+//cd ../
+pwd
+
+echo hello | cd ..
 pwd
 
 cd ./minishell
@@ -27,6 +50,7 @@ echo -n "abc"
 echo -e "abc"
 
 //exit 2
+echo $? | exit 42 
 echo $?
 
 //exit "abc"

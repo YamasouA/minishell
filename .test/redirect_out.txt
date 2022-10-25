@@ -7,10 +7,11 @@ ls | < main.c
 > filename
 > filename | grep
 > ls.txt ls
-> filename >filename2 | grepp hello
-ls > filename >filename2 >filename3| grepp hello
-> filename >filename2 >filename3 ls | grepp hello
-> filename >filename2 >filename3| grepp hello
+> filename >filename2 | grep hello
+ls > filename >filename2 >filename3| grep hello
+> filename >filename2 >filename3 ls | grep hello
+> filename >filename2 >filename3| grep hello
+> f0 echo > f1 > f2 > f3 abc
 cat abc > abcd.c
 cat abc > efgh.c > next.c > last.txt
 //exec > sample

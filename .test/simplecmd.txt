@@ -4,7 +4,7 @@ cat main.c
 ls
 env
 echo abc
-cd ../
+//cd ../
 pwd
 cd ./minishell
 pwd
