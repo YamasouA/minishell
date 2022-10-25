@@ -322,7 +322,7 @@ void	print_redirect_err(char *file_name)
 //	return (1);
 }
 
-bool	is_invalid_file_name(t_redirect *redirect)
+bool	is_valid_file_name(t_redirect *redirect)
 {
 	if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
 	{
@@ -330,16 +330,15 @@ bool	is_invalid_file_name(t_redirect *redirect)
 		{
 			print_redirect_err(redirect->file_name);
 //			return (print_redirect_err(redirect->file_name));
-			return (1);
+			return (0);
 		}
 		else if (is_directory(redirect->file_name))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(redirect->file_name, 2);
 			ft_putstr_fd(": is a directory\n", 2);
-			return (1);
+			return (0);
 		}
-
 	}
 	else
 	{
@@ -347,18 +346,17 @@ bool	is_invalid_file_name(t_redirect *redirect)
 		{
 //			return (print_redirect_err(redirect->file_name));
 			print_redirect_err(redirect->file_name);
-			return (1);
+			return (0);
 		}
 	}
-	return (0);
-	
+	return (1);
 }
 
 int	open_and_dup2(t_redirect *redirect)
 {
 	int	fd;
 
-	if (is_invalid_file_name(redirect))
+	if (!is_valid_file_name(redirect))
 		return (1);
 	if (redirect->type == APPEND)
 	{
