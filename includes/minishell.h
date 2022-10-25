@@ -69,6 +69,7 @@ enum e_redirect_type
 	REDIRECT_OUT,
 	HEREDOC,
 	APPEND,
+	REDIRECT_NONE,
 };
 
 typedef struct s_redirect	t_redirect;
