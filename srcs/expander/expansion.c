@@ -86,9 +86,16 @@ char	*handle_dollar(char *str, int *i)
 		(*i)++;
 		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
 	}
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"')
+	if (ft_isalpha(str[j]) && str[j] != '_')
+	{
+		while (ft_isalnum(str[j]) && str[j] != '_')
+			j++;
+	}
+	else
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"')
+//		j++;
 	var = find_env(&str[*i], j - *i);
 	//if (var == NULL)
 	//	err_exit("malloc error: ");
@@ -157,7 +164,14 @@ char	*expand(char *str, bool heredoc)
 		else if (str[i] == '\"')
 			expanded = ft_joinfree(expanded, handle_d_quote(str, &i, heredoc));
 		else if (str[i] == '$' && !heredoc)
+		{
 			expanded = expand_dollar(str, expanded, &i);
+			if (expanded[0] == '\0' && str[i] == '\0')
+			{
+				free(expanded);
+				return (NULL);
+			}
+		}
 		else
 		{
 			head = i;
@@ -182,9 +196,16 @@ char	*exp_dollar(char *str, int *i)
 		|| str[*i] == '\n' || str[*i] == '$')
 		return (ft_strdup("$"));
 	j = *i;
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
+	if (ft_isalpha(str[j]) && str[j] != '_')
+	{
+		while (ft_isalnum(str[j]) && str[j] != '_')
+			j++;
+	}
+	else
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
+//		j++;
 	var = find_env(&str[*i], j - *i);
 	//if (var == NULL)
 	//	err_exit("malloc error");
@@ -238,6 +259,21 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 	}
 }
 
+void	expand_redir(t_redirect *redirect)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(redirect->file_name);
+	expand_cmd_instance(&(redirect->file_name), 0);
+	if (redirect->file_name == NULL)
+	{
+		redirect->file_name = tmp;
+		redirect->type = REDIRECT_NONE;
+	}
+	else
+		free(tmp);
+}
+
 void	recursive_expansion(t_node *node)
 {
 	if (node->lhs != NULL)
@@ -262,7 +298,8 @@ void	expand_redir_list(t_node *node)
 		}
 		else
 		{
-			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
+			expand_redir(node->cmd->redirect_in);
+//			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
 		}
 	}
 	node->cmd->redirect_in = head;
@@ -270,7 +307,8 @@ void	expand_redir_list(t_node *node)
 	while (node->cmd->redirect_out->next)
 	{
 		node->cmd->redirect_out = node->cmd->redirect_out->next;
-		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
+		expand_redir(node->cmd->redirect_out);
+//		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
 	}
 	node->cmd->redirect_out = head;
 }

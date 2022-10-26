@@ -319,14 +319,22 @@ void	print_redirect_err(char *file_name)
 		ft_putstr_fd(": Permission denied\n", 2);
 	else if (errno == ENOENT)
 		ft_putstr_fd(": No such file or directory\n", 2);
+	else
+		ft_putstr_fd(": ambiguous redirect\n", 2);
 //	return (1);
 }
 
 bool	is_valid_file_name(t_redirect *redirect)
 {
-	if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
+	if (redirect->type == REDIRECT_NONE)
 	{
-		if (access(redirect->file_name, W_OK) && errno == EACCES)
+		print_redirect_err(redirect->file_name);
+		return (0);
+	}
+	else if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
+	{
+		if ((access(redirect->file_name, W_OK) && errno == EACCES)
+			|| redirect->file_name[0] == '\0')
 		{
 			print_redirect_err(redirect->file_name);
 //			return (print_redirect_err(redirect->file_name));
