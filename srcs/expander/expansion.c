@@ -86,12 +86,12 @@ char	*handle_dollar(char *str, int *i)
 		(*i)++;
 		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
 	}
-	if (ft_isalpha(str[j]) && str[j] != '_')
+	if (ft_isalpha(str[j]) || str[j] == '_')
 	{
-		while (ft_isalnum(str[j]) && str[j] != '_')
+		while (ft_isalnum(str[j]) || str[j] == '_')
 			j++;
 	}
-	else
+	else if (ft_isdigit(str[j]))
 		j++;
 //	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 //		&& str[j] != '\'' && str[j] != '\"')
@@ -192,16 +192,17 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
-		|| str[*i] == '\n' || str[*i] == '$')
+	//if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
+	//	|| str[*i] == '\n' || str[*i] == '$')
+	if (!ft_isalnum(str[*i]))
 		return (ft_strdup("$"));
 	j = *i;
-	if (ft_isalpha(str[j]) && str[j] != '_')
+	if (ft_isalpha(str[j]) || str[j] == '_')
 	{
-		while (ft_isalnum(str[j]) && str[j] != '_')
+		while (ft_isalnum(str[j]) || str[j] == '_')
 			j++;
 	}
-	else
+	else if (ft_isdigit(str[j]))
 		j++;
 //	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
 //		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
