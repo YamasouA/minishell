@@ -77,8 +77,10 @@ static void tester(char *file_name)
 		line3 = add_redirect_out(line, ">bash.txt");
 		//printf("%s\n", line3);
 		system(line3);
-		system("diff -s minishell.txt bash.txt >> diff.txt");
-	//	system("cat diff.txt | grep -v identical ; if [ $? = 0 ];then cat diff.txt >> result.txt;fi");
+//		system("diff -s minishell.txt bash.txt >> diff.txt");
+		system("diff -s minishell.txt bash.txt | grep -v identical");
+//		system("cat diff.txt");
+//		system("cat diff.txt | grep -v identical ; if [ $? = 0 ];then cat diff.txt >> result.txt;fi");
 	} while (1);
 	free(line);
 	close(fd);
