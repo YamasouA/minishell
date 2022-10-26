@@ -86,9 +86,16 @@ char	*handle_dollar(char *str, int *i)
 		(*i)++;
 		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
 	}
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"')
+	if (ft_isalpha(str[j]) && str[j] != '_')
+	{
+		while (ft_isalnum(str[j]) && str[j] != '_')
+			j++;
+	}
+	else
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"')
+//		j++;
 	var = find_env(&str[*i], j - *i);
 	//if (var == NULL)
 	//	err_exit("malloc error: ");
@@ -189,9 +196,16 @@ char	*exp_dollar(char *str, int *i)
 		|| str[*i] == '\n' || str[*i] == '$')
 		return (ft_strdup("$"));
 	j = *i;
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
+	if (ft_isalpha(str[j]) && str[j] != '_')
+	{
+		while (ft_isalnum(str[j]) && str[j] != '_')
+			j++;
+	}
+	else
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
+//		j++;
 	var = find_env(&str[*i], j - *i);
 	//if (var == NULL)
 	//	err_exit("malloc error");
