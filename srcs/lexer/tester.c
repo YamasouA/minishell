@@ -49,6 +49,8 @@ static void tester(char *file_name)
 		if (line == NULL)
 			break;
 		line[ft_strlen(line) - 1] = '\0';
+		system("> minishell.txt");
+		system("> bash.txt");
 		line2 = add_redirect_out(line, ">minishell.txt");
 		printf("\n============%s: line %d=============\n", file_name, line_n);
 		//printf("%s\n", line2);
@@ -74,7 +76,9 @@ static void tester(char *file_name)
 		//printf("==EXPANSION==\n");
 		//print_node(node, 0);
 		exec(node, 0);
-		line3 = add_redirect_out(line, ">bash.txt");
+		line3 = ft_strjoin("echo \"", line);
+		line3 = ft_strjoin(line3, "\"");
+		line3 = add_redirect_out(line3, "| bash > bash.txt");
 		//printf("%s\n", line3);
 		system(line3);
 //		system("diff -s minishell.txt bash.txt >> diff.txt");
