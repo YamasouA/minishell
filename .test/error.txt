@@ -8,7 +8,7 @@ cat main.c |
 |||||||||
 > > > >
 < filename echo
-> filename
+> filename.TMP
 cat >>> filename
 '
 "

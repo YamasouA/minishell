@@ -1,12 +1,12 @@
 // simple doller
-echo $ > ABC
+echo $ > ABC.TMP
 $HOMEabcd
 $HOME abcd
 echo $$
 echo $HELLOWORLD
-echo $ > ABC
+echo $ > ABC.TMP
 echo $|ABC
-echo $|>ABC
+echo $|>ABC.TMP
 echo $hello
 echo $ hello
 echo $

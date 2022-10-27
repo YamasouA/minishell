@@ -1,17 +1,17 @@
 // redirect
-ls|>l
+ls|>l.TMP
 < filename
 < filename | grep
 ls | < main.c
 // redirect out
-> filename
-> filename | grep
+> filename.TMP
+> filename.TMP | grep
 > ls.txt ls
-> filename >filename2 | grep hello
-ls > filename >filename2 >filename3| grep hello
-> filename >filename2 >filename3 ls | grep hello
-> filename >filename2 >filename3| grep hello
-> f0 echo > f1 > f2 > f3 abc
-cat abc > abcd.c
-cat abc > efgh.c > next.c > last.txt
-//exec > sample
+> filename >filename2.TMP | grep hello
+ls > filename.TMP >filename2.TMP >filename3.TMP| grep hello
+> filename.TMP >filename2.TMP >filename3.TMP ls | grep hello
+> filename.TMP >filename2.TMP >filename3.TMP| grep hello
+> f0.TMP echo > f1.TMP > f2.TMP > f3.TMP abc
+cat abc > abcd.c.TMP
+cat abc > efgh.c.TMP > next.c.TMP > last.txt.TMP
+//exec > sample.TMP

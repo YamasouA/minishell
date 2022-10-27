@@ -84,6 +84,7 @@ $(LIBFT):
 clean:
 	$(MAKE) clean -C ./libft
 	$(RM) *.o
+	$(RM) *.TMP
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
