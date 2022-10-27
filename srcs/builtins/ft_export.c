@@ -69,7 +69,10 @@ void	push_new_env_var(char *arg, t_env *envp)
 		return ;
 	else
 		set_data(arg, new);
-	add_env(&envp, new);
+	if (envp == NULL)
+		add_env(&g_environ, new);
+	else
+		add_env(&envp, new);
 }
 
 int	is_append_flag(char **key, char *eq_pos)

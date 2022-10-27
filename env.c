@@ -61,7 +61,8 @@ void	set_data(char *environ, t_env *new)
 	{
 		new->key = ft_strdup(environ);
 		if (new->key == NULL)
-			printf("error");
+			//printf("error");
+			err_exit("malloc error:");
 		new->value = NULL;
 	}
 	else
@@ -69,7 +70,8 @@ void	set_data(char *environ, t_env *new)
 		new->key = ft_substr(environ, 0, eq_pos - environ);
 		new->value = ft_strdup(eq_pos + 1);
 		if (new->key == NULL || new->value == NULL)
-			printf("error");
+			//printf("error");
+			err_exit("malloc error:");
 	}
 	new->is_env = true;
 	new->next = NULL;
