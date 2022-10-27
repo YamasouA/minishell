@@ -138,7 +138,7 @@ char	**envlist_to_str(t_env *env)
 
 int	exec_builtin(t_cmd *cmd)
 {
-	static char	*builtins[] = {"cd", "echo", "unset", \
+	const char	*builtins[] = {"cd", "echo", "unset", \
 		"export", "exit", "pwd", "env"};
 	static int	(*builtin_func[])(char **) = {&ft_cd, &ft_echo, &ft_unset, \
 		&ft_export, &ft_exit, &ft_pwd, &ft_env};

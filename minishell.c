@@ -44,13 +44,16 @@ int	get_print_start(void)
 	t_termios	oldstate;
 	t_termios	state;
 
-	tcgetattr(0, &oldstate); //should error_handle
+	if (tcgetattr(0, &oldstate) == -1)
+		return (0);
 	state = oldstate;
 	state.c_lflag &= ~(ICANON | ECHO);
-	tcsetattr(0, TCSANOW, &state); //should error_handle
+	if (tcsetattr(0, TCSANOW, &state) == -1)
+		return (0);
 	ft_putstr_fd("\e[6n", 0);
 	x = get_x_pos();
-	tcsetattr(0, TCSANOW, &oldstate); //should error_handle
+	if (tcsetattr(0, TCSANOW, &oldstate) == -1)
+		return (0);
 	return (x - 1);
 }
 
@@ -74,13 +77,10 @@ void	display_exit(int x)
 	int				line_length;
 
 	line_length = 0;
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) //cut func //error handle
-	{
-		if (0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
-		{
-			line_length = (int)ws.ws_col;
-		}
-	}
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) //cut func ?
+		return ;
+	if (0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
+		line_length = (int)ws.ws_col;
 	if (line_length - PROMPT_LENGTH - x < 0)
 	{
 		x = (line_length - PROMPT_LENGTH - x) * (-1);

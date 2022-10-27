@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-bool	ft_isspace(char *str)
+bool	ft_isspace(char str)
 {
-	return (*str == '\t' || *str == ' ');
+	return (str == '\t' || str == ' ');
 }
 
 t_token	*create_token(t_kind kind, char *c, size_t len)
@@ -156,7 +156,7 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 
 	while (*line != '\0')
 	{
-		if (ft_isspace(line))
+		if (ft_isspace(*line))
 		{
 			line++;
 			continue ;
