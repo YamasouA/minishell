@@ -7,7 +7,7 @@ ls | < main.c
 > filename.TMP
 > filename.TMP | grep
 > ls.txt ls
-> filename >filename2.TMP | grep hello
+> filename.TMP >filename2.TMP | grep hello
 ls > filename.TMP >filename2.TMP >filename3.TMP| grep hello
 > filename.TMP >filename2.TMP >filename3.TMP ls | grep hello
 > filename.TMP >filename2.TMP >filename3.TMP| grep hello

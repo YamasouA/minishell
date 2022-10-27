@@ -23,7 +23,7 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 //bool	is_keyword(char c)
 bool	is_meta(char c)
 {
-	return (strchr(" \t|&;()<>", c));
+	return (strchr(" \t|<>", c));
 }
 
 size_t	len_keyword(char *c)

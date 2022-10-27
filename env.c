@@ -112,7 +112,7 @@ t_env	*create_env(void)
 	{
 		new = (t_env *)malloc(sizeof(t_env) * 1);
 		if (new == NULL)
-			return (NULL);
+			err_exit("malloc error: ");
 		else
 			set_data(environ[i], new);
 		add_env(&env, new);

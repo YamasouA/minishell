@@ -112,8 +112,8 @@ void	minishell(int argc, char **argv)
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
 	g_environ = create_env();
-	if (g_environ == NULL)
-		err_exit("malloc error: ");
+//	if (g_environ == NULL)
+//		err_exit("malloc error: ");
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
