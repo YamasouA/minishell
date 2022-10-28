@@ -30,7 +30,8 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	return (s);
 }
 
-char	*no_current_dir(t_env *env, char *path)
+//char	*no_current_dir(t_env *env, char *path)
+char	*no_current_dir(char *path)
 {
 	char	*pwd;
 	char	*newpwd;
@@ -38,25 +39,31 @@ char	*no_current_dir(t_env *env, char *path)
 	ft_putendl_fd("cd: error retrieving current directory: \
 		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
 	
-	pwd = search_key(env, "PWD");
+	//pwd = search_key(env, "PWD");
+	pwd = search_key(g_environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
 }
 
-void	set_pwd(t_env *env, char *path)
+//void	set_pwd(t_env *env, char *path)
+void	set_pwd(char *path)
 {
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0); 
 	if (pwd == NULL)
-		pwd = no_current_dir(env, path);
-	update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
-	update_or_add_value(&env, "PWD", pwd);
+		//pwd = no_current_dir(env, path);
+		pwd = no_current_dir(path);
+	//update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
+	//update_or_add_value(&env, "PWD", pwd);
+	update_or_add_value(&g_environ, "OLDPWD", search_key(g_environ, "PWD"));
+	update_or_add_value(&g_environ, "PWD", pwd);
 	free(pwd);
 }
 
-int	get_path(t_env *env, char *s, char **path)
+//int	get_path(t_env *env, char *s, char **path)
+int	get_path(char *s, char **path)
 {
 	int	status;
 
@@ -64,7 +71,7 @@ int	get_path(t_env *env, char *s, char **path)
 	if (s == NULL)
 		*path = ft_xstrdup(search_key(g_environ, "HOME"));
 	else if (ft_strncmp(s, "-", 2) == 0)
-		*path = ft_xstrdup(search_key(env, "OLDPWD"));
+		*path = ft_xstrdup(search_key(g_environ, "OLDPWD"));
 	else
 		*path = ft_xstrdup(s);
 	if (*path != NULL)
@@ -102,7 +109,8 @@ int	ft_cd(char **strs)//, t_env *env)
 	int	status;
 	char	*path;
 
-	status = get_path(g_environ, strs[1], &path);
+	//status = get_path(g_environ, strs[1], &path);
+	status = get_path(strs[1], &path);
 	if (status == -1)
 	{
 		print_error(path, "not set");
@@ -111,7 +119,8 @@ int	ft_cd(char **strs)//, t_env *env)
 	}
 	status = do_cd(path);
 	if (!status)
-		set_pwd(g_environ, strs[1]);
+		//set_pwd(g_environ, strs[1]);
+		set_pwd(strs[1]);
 	free(path);
 	return (1);
 }
