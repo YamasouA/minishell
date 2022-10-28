@@ -60,9 +60,13 @@ int	update_env_var(char *arg, int flag)// t_env *envp
 	if (target_var)
 	{
 		equal_pos = ft_strchr(arg, '=');
+		if (!equal_pos)
+			return (1);
 		value = ft_substr(equal_pos, 1, ft_strlen(equal_pos + 1));
 		if (flag & EXPORT_APPEND)
+		{
 			target_var->value = ft_joinfree(target_var->value, value);
+		}
 		else if (flag & EXPORT_NEW)
 		{
 			tmp = target_var->value;
@@ -106,7 +110,9 @@ int	is_append_flag(char **key, char *eq_pos)
 		*(eq_pos - 1) = '\0';
 		tmp = *key;
 		*key = ft_strjoin(*key, eq_pos);
-//		free(tmp); //The actual argument(key) is taken in malloc, so it is free.
+		free(tmp); //The actual argument(key) is taken in malloc, so it is free.
+		if (*key == NULL)
+			err_exit("malloc error: ");
 		return (1);
 	}
 	return (0);
