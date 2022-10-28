@@ -1,0 +1,17 @@
+// redirect
+ls|>l.TMP
+< filename
+< filename | grep
+ls | < main.c
+// redirect out
+> filename.TMP
+> filename.TMP | grep
+> ls.txt ls
+> filename.TMP >filename2.TMP | grep hello
+ls > filename.TMP >filename2.TMP >filename3.TMP| grep hello
+> filename.TMP >filename2.TMP >filename3.TMP ls | grep hello
+> filename.TMP >filename2.TMP >filename3.TMP| grep hello
+> f0.TMP echo > f1.TMP > f2.TMP > f3.TMP abc
+cat abc > abcd.c.TMP
+cat abc > efgh.c.TMP > next.c.TMP > last.txt.TMP
+//exec > sample.TMP

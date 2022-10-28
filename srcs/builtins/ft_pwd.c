@@ -13,6 +13,7 @@ int	ft_pwd(char **strs)
 		return (1);
 	}
 	ft_putendl_fd(pwd, STDOUT_FILENO);
+	free(pwd);
 	return (0);
 }
 

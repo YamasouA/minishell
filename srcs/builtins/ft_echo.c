@@ -4,12 +4,18 @@ int	ft_echo(char **strs)//, t_env *envp)
 {
 	int	i;
 
-	if (ft_strlen(strs[1]) == 2 && ft_strncmp(strs[1], "-n", 3) == 0)
+	if (strs[1] == NULL)
+	{
+		ft_putstr_fd("\n", 1);
+	}
+	else if (ft_strlen(strs[1]) == 2 && ft_strncmp(strs[1], "-n", 3) == 0)
 	{
 		i = 2;
 		while (strs[i])
 		{
 			ft_putstr_fd(strs[i++], 1);
+			if (strs[i] != NULL)
+				ft_putstr_fd(" ", 1);
 		}	
 	}
 	else
@@ -18,6 +24,8 @@ int	ft_echo(char **strs)//, t_env *envp)
 		while (strs[i])
 		{
 			ft_putstr_fd(strs[i++], 1);
+			if (strs[i] != NULL)
+				ft_putstr_fd(" ", 1);
 		}
 		ft_putstr_fd("\n", 1);
 	}

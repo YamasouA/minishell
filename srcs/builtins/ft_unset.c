@@ -23,6 +23,7 @@ void	free_env(t_env **env)
 	free((*env)->key);
 	free((*env)->value);
 	free(*env);
+	env = NULL;
 }
 
 void	print_unset_error(char *msg)
@@ -32,26 +33,34 @@ void	print_unset_error(char *msg)
 	ft_putstr_fd("': not a valid identifier\n", 2);	
 }
 
-void	del_and_free_env(char *key, t_env *envp)
+void	del_and_free_env(char *key)//, t_env *envp)
 {
 	t_env	*prev_env;
 	t_env	*cur;
 
 	prev_env = NULL;
-	cur = envp;
+	cur = g_environ;
+//	cur = envp;
 	while (cur)
 	{
 		if (ft_strncmp(cur->key, key, ft_strlen(key)+1) == 0)
 		{
+//			printf("ok1\n");
 			if (prev_env)
 				prev_env->next = cur->next;
-			else if (cur == envp)
-				envp = cur->next;
+			else if (cur == g_environ)
+				g_environ = cur->next;
+//				envp = cur->next;
+//			printf("ok2n");
 			free_env(&cur);
+			break ;
 		}
+//		printf("ok3\n");
 		prev_env = cur;
+//		printf("ok4\n");
 		cur = cur->next;
-	}	
+//		printf("ok5\n");
+	}
 }
 
 int	ft_unset(char **keys)//, t_env *envp)
@@ -69,7 +78,7 @@ int	ft_unset(char **keys)//, t_env *envp)
 			exit_status = 1;
 			continue ;
 		}
-		del_and_free_env(keys[i], g_environ);
+		del_and_free_env(keys[i]);//, g_environ);
 		i++;
 	}
 	return (exit_status);

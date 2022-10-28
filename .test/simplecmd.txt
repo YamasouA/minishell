@@ -1,0 +1,10 @@
+echo abc def
+echo abc  def
+cat main.c
+ls
+env
+echo abc
+//cd ../
+pwd
+cd ./minishell
+pwd

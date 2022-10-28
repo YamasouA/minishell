@@ -32,7 +32,7 @@ void	update_or_add_value(t_env *env, char *key, char *value)
 	while (env)
 	{
 		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
-			break;
+			break ;
 		env = env->next;
 	}
 	if (env != NULL)
@@ -50,9 +50,9 @@ void	update_or_add_value(t_env *env, char *key, char *value)
 
 void	set_data(char *environ, t_env *new)
 {
+	char	*eq_pos;
 //	char	key;
 //	char	value;
-	char	*eq_pos;
 
 	if (new == NULL)
 		printf("error");
@@ -61,7 +61,8 @@ void	set_data(char *environ, t_env *new)
 	{
 		new->key = ft_strdup(environ);
 		if (new->key == NULL)
-			printf("error");
+			//printf("error");
+			err_exit("malloc error:");
 		new->value = NULL;
 	}
 	else
@@ -69,7 +70,8 @@ void	set_data(char *environ, t_env *new)
 		new->key = ft_substr(environ, 0, eq_pos - environ);
 		new->value = ft_strdup(eq_pos + 1);
 		if (new->key == NULL || new->value == NULL)
-			printf("error");
+			//printf("error");
+			err_exit("malloc error:");
 	}
 	new->is_env = true;
 	new->next = NULL;
@@ -79,8 +81,8 @@ t_env	*search_env(t_env *env, char *key)
 {
 	while (env)
 	{
-		if (ft_strncmp(env->key, key, ft_strlen(key)+1) == 0)
-			return env;
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			return (env);
 		env = env->next;
 	}
 	return (NULL);
@@ -91,21 +93,20 @@ char	*search_key(t_env *env, char *key)
 	while (env)
 	{
 //		printf("key:%s\n", env->key);
-		if (ft_strncmp(env->key, key, ft_strlen(key)+1) == 0)
-			return env->value;
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			return (env->value);
 		env = env->next;
 	}
 //	printf("key:%s\n", env->key);
 	return (NULL);
 }
 
-
-t_env	*create_env()
+t_env	*create_env(void)
 {
 	extern char	**environ;
-	t_env	*env;
-	t_env	*new;
-	int	i;
+	t_env		*env;
+	t_env		*new;
+	int			i;
 
 	i = 0;
 	env = NULL;
@@ -113,7 +114,7 @@ t_env	*create_env()
 	{
 		new = (t_env *)malloc(sizeof(t_env) * 1);
 		if (new == NULL)
-			return (NULL);
+			err_exit("malloc error: ");
 		else
 			set_data(environ[i], new);
 		add_env(&env, new);

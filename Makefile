@@ -1,12 +1,14 @@
 CC = gcc
 # CFLAGS = -Wall -Wextra -Werror -I $(shell brew --prefix readline)/include -g -lreadline -lhistory -L$(shell brew --prefix readline)/lib
-NAME = test
+NAME = minishell
 
 SRCS = main.c \
 		minishell.c \
-		get_next_line.c \
-		get_next_line_utils.c \
 		env.c
+
+UTILS_DIR = srcs/utils/
+UTILS_FILES = err_exit.c
+UTILS_SRCS = $(addprefix $(UTILS_DIR), $(UTILS_FILES))
 
 PARCER_DIR = srcs/parser/
 PARCER_FILES = parse.c \
@@ -36,23 +38,15 @@ LEXER_FILES = lexer.c \
 	lexer_utils.c
 LEXER_SRCS = $(addprefix $(LEXER_DIR), $(LEXER_FILES))
 
-LEXER_TEST_SRCS = srcs/lexer/tester.c \
-	get_next_line.c \
-	get_next_line_utils.c \
-	srcs/lexer/lexer.c \
-	srcs/lexer/lexer_utils.c \
-	srcs/parser/parse.c \
-	srcs/parser/parse_utils.c \
-	srcs/expander/expansion.c \
-	env.c \
-	srcs/execution/execute.c \
-	srcs/builtins/ft_echo.c \
-	srcs/builtins/ft_env.c \
-	srcs/builtins/ft_exit.c \
-	srcs/builtins/ft_export.c \
-	srcs/builtins/ft_unset.c \
-	srcs/builtins/ft_cd.c \
-	srcs/builtins/ft_pwd.c
+LEXER_TEST_SRCS += $(PARCER_SRCS)
+LEXER_TEST_SRCS += $(UTILS_SRCS)
+LEXER_TEST_SRCS += $(BUILTIN_SRCS)
+LEXER_TEST_SRCS += $(LEXER_SRCS)
+LEXER_TEST_SRCS += $(EXEC_SRCS)
+LEXER_TEST_SRCS += $(EXPAND_SRCS)
+LEXER_TEST_SRCS += env.c \
+		srcs/lexer/tester.c
+
 LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
 
 OBJS = $(SRCS:.c=.o)
@@ -60,12 +54,14 @@ PARCER_OBJS = $(PARCER_SRCS:.c=.o)
 EXPAND_OBJS = $(EXPAND_SRCS:.c=.o)
 LEXER_OBJS = $(LEXER_SRCS:.c=.o)
 BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
+UTILS_OBJS = $(UTILS_SRCS:.c=.o)
 EXEC_OBJS = $(EXEC_SRCS:.c=.o)
 OBJS += $(PARCER_OBJS)
 OBJS += $(EXPAND_OBJS)
 OBJS += $(LEXER_OBJS)
 OBJS += $(BUILTIN_OBJS)
 OBJS += $(EXEC_OBJS)
+OBJS += $(UTILS_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 INCLUDE = -I includes -I ./libft/includes 
@@ -88,6 +84,7 @@ $(LIBFT):
 clean:
 	$(MAKE) clean -C ./libft
 	$(RM) *.o
+	$(RM) *.TMP
 
 fclean: clean
 	$(MAKE) fclean -C ./libft

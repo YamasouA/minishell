@@ -13,6 +13,8 @@ char	*handle_s_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
+	//if (in_quote_str == NULL)
+	//	err_exit("malloc error: ");
 	(*i)++;
 	return (in_quote_str);
 }
@@ -57,10 +59,10 @@ char	*find_env(char *var, size_t len)
 		}
 		tmp = tmp->next;
 	}
-	return (ft_strdup(""));
+	return (ft_strdup("")); //how handle error?
 }
 
-bool	ft_isspace2(char c)
+bool	ft_isspace2(char c) //rename
 {
 	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
 }
@@ -73,15 +75,47 @@ char	*handle_dollar(char *str, int *i)
 	(*i)++;
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
-		return (ft_strdup(""));
+		if (str[*i] == '\'' || ft_strchr(str + *i + 1, '\"'))
+			return (ft_strdup("")); //how handle error?
+		else
+			return (ft_strdup("$")); //how handle error?
 	}
 	j = *i;
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"')
+	if (str[j] == '?')
+	{
+		(*i)++;
+		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
+	}
+	if (ft_isalpha(str[j]) || str[j] == '_')
+	{
+		while (ft_isalnum(str[j]) || str[j] == '_')
+			j++;
+	}
+	else if (ft_isdigit(str[j]))
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"')
+//		j++;
 	var = find_env(&str[*i], j - *i);
+	//if (var == NULL)
+	//	err_exit("malloc error: ");
 	*i = j;
 	return (var);
+}
+
+char	*expand_dollar(char *str, char *expanded, int *i)
+{
+//	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
+	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_' || str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')
+		expanded = ft_joinfree(expanded, handle_dollar(str, i));
+	else
+	{
+		expanded = ft_joinfree(expanded, ft_strdup("$"));
+		*i += 1;
+	}
+	//if (expanded == NULL)
+	//	err_exit("malloc error: ");
+	return (expanded);
 }
 
 char	*handle_d_quote(char *str, int *i, bool here_doc)
@@ -90,33 +124,28 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	ssize_t	j;
 
 	s = ft_strdup("");
+	//if (s == NULL)
+	//	err_exit("malloc error: ")
 	j = *i + 1;
 	while (str[++(*i)] != '\"' && str[(*i)])
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
-			s = ft_joinfree(s, ft_substr(str, j, *i - j));
-			s = ft_joinfree(s, handle_dollar(str, i));
+			s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
+			//if (s == NULL)
+			//	err_exit("malloc error:");
+			s = expand_dollar(str, s, i);//handle_dollar(str, i));
+//			s = ft_joinfree(s, handle_dollar(str, i));
 			j = *i;
 			(*i)--;
 		}
 	}
 	if (str[*i])
-		s = ft_joinfree(s, ft_substr(str, j, *i - j));
+		s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
+	//if (s == NULL)
+	//	err_exit("malloc error:");
 	(*i)++;
 	return (s);
-}
-
-char	*expand_dollar(char *str, char *expanded, int *i)
-{
-	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
-		expanded = ft_joinfree(expanded, handle_dollar(str, i));
-	else
-	{
-		expanded = ft_joinfree(expanded, ft_strdup("$"));
-		*i += 1;
-	}
-	return (expanded);
 }
 
 char	*expand(char *str, bool heredoc)
@@ -126,23 +155,34 @@ char	*expand(char *str, bool heredoc)
 	int		head;
 
 	expanded = ft_strdup("");
+	//if (expanded == NULL)
+	//	err_exit("malloc error: ")
 	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
-			expanded = ft_joinfree(expanded, handle_s_quote(str, &i));
+			expanded = ft_joinfree(expanded, handle_s_quote(str, &i)); // when/where handle error?
 		else if (str[i] == '\"')
 			expanded = ft_joinfree(expanded, handle_d_quote(str, &i, heredoc));
 		else if (str[i] == '$' && !heredoc)
+		{
 			expanded = expand_dollar(str, expanded, &i);
+			if (expanded[0] == '\0' && str[i] == '\0')
+			{
+				free(expanded);
+				return (NULL);
+			}
+		}
 		else
-		{// cut func handle_general
+		{
 			head = i;
 			while (str[i] && str[i] != '\'' && str[i] != '\"'
 				&& (str[i] != '$' || heredoc))
 				i++;
 			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
+		if (expanded == NULL)
+			err_exit("malloc error");
 	}
 	return (expanded);
 }
@@ -153,39 +193,49 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"' || str[*i] == '$')
-		return ft_strdup("$");
+	//if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
+	//	|| str[*i] == '\n' || str[*i] == '$')
+	if (!ft_isalnum(str[*i]))
+		return (ft_strdup("$"));
 	j = *i;
-	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-		&& str[j] != '\'' && str[j] != '\"')
+	if (ft_isalpha(str[j]) || str[j] == '_')
+	{
+		while (ft_isalnum(str[j]) || str[j] == '_')
+			j++;
+	}
+	else if (ft_isdigit(str[j]))
 		j++;
+//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
+//		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
+//		j++;
 	var = find_env(&str[*i], j - *i);
+	//if (var == NULL)
+	//	err_exit("malloc error");
 	*i = j;
 	return (var);
 }
 
 char	*expand_documents(char *str)
 {
-	int	i;
-	int	head;
+	int		i;
+	int		head;
 	char	*expanded;
 
 	expanded = ft_strdup("");
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$')// !isspace(str[i + 1]))// str[i + 1] != '\'' && str[i + 1] != '\"')
-		{
+		if (str[i] == '$')
 			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
-		}
 		else
 		{
 			head = i;
 			while (str[i] && str[i] != '$')
 				i++;
-			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));	
+			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
 		}
-
+		if (expanded == NULL)
+			err_exit("malloc error");
 	}
 	return (expanded);
 }
@@ -195,8 +245,8 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 	char	*tmp;
 
 	if ((ft_strchr(*cmd_data, '\'')
-		|| ft_strchr(*cmd_data, '\"')
-		|| ft_strchr(*cmd_data, '$'))
+			|| ft_strchr(*cmd_data, '\"')
+			|| ft_strchr(*cmd_data, '$'))
 		&& !here_doc)
 	{
 		tmp = *cmd_data;
@@ -209,6 +259,21 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 		*cmd_data = expand_documents(*cmd_data);
 		free(tmp);
 	}
+}
+
+void	expand_redir(t_redirect *redirect)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(redirect->file_name);
+	expand_cmd_instance(&(redirect->file_name), 0);
+	if (redirect->file_name == NULL)
+	{
+		redirect->file_name = tmp;
+		redirect->type = REDIRECT_NONE;
+	}
+	else
+		free(tmp);
 }
 
 void	recursive_expansion(t_node *node)
@@ -229,14 +294,14 @@ void	expand_redir_list(t_node *node)
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
-			if (node->cmd->redirect_in->delemiter[0] != '\'' || node->cmd->redirect_in->delemiter[0] != '\"')
+			if (node->cmd->redirect_in->delemiter[0] != '\''
+				|| node->cmd->redirect_in->delemiter[0] != '\"')
 				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
-//			else
-//				expand_cmd_instance(&(node->cmd->redirect_in->documents), 0);
 		}
 		else
 		{
-			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
+			expand_redir(node->cmd->redirect_in);
+//			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
 		}
 	}
 	node->cmd->redirect_in = head;
@@ -244,7 +309,8 @@ void	expand_redir_list(t_node *node)
 	while (node->cmd->redirect_out->next)
 	{
 		node->cmd->redirect_out = node->cmd->redirect_out->next;
-		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
+		expand_redir(node->cmd->redirect_out);
+//		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
 	}
 	node->cmd->redirect_out = head;
 }

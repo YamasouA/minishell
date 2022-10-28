@@ -57,12 +57,17 @@ B_SRCS_FILES	=	ft_lstnew.c \
 	 		ft_lstclear.c \
 	 		ft_lstiter.c \
 	 		ft_lstmap.c
+GET_NEXT_LINE_DIR = get_next_line/
+GET_NEXT_LINE_FILES = get_next_line.c \
+				get_next_line_utils.c
 b_flag	=	false
 SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILES))
 B_SRCS = $(addprefix $(B_SRCS_DIR), $(B_SRCS_FILES))
+GNL_SRCS = $(addprefix $(GET_NEXT_LINE_DIR), $(GET_NEXT_LINE_FILES))
 OBJS	:=	$(SRCS:.c=.o)
 B_OBJS	:=	$(B_SRCS:.c=.o)
-
+GNL_OBJS := $(GNL_SRCS:.c=.o)
+OBJS += $(GNL_OBJS)
 ifdef WITH_BONUS
 OBJS += $(B_OBJS)
 endif

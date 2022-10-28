@@ -1,0 +1,21 @@
+// single quote
+abcd'ABCD efgh'
+'ABCD efgh'defg
+'$HOME abcd'
+'"'HOME'"'
+'abc$HOME $HOME xyz'abc
+echo '$HOME'
+'"abc'
+'>"'
+'<>"'
+$'>>>>'
+abc'defg'
+echo 'abc def'
+echo 'abc'def
+'$ABC'
+'$"Hell'
+echo'abc def'
+echo 'abc'def
+'$$$'
+'$$$$'
+//segv(only test)'a\'""'

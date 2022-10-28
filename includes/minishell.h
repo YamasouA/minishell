@@ -12,7 +12,7 @@
 #include "get_next_line.h"
 
 
-typedef enum e_token_kind t_kind;
+typedef enum e_token_kind		t_kind;
 enum e_token_kind
 {
 	TK_KEYWORD, // | >> > << < $
@@ -23,8 +23,7 @@ enum e_token_kind
 	TK_HEAD,
 };
 
-typedef struct s_token t_token;
-
+typedef struct s_token			t_token;
 struct s_token
 {
 	t_kind	kind;
@@ -33,7 +32,7 @@ struct s_token
 	size_t	len;
 };
 
-typedef struct s_env t_env;
+typedef struct s_env			t_env;
 struct s_env
 {
 	bool	is_env;
@@ -42,10 +41,11 @@ struct s_env
 	t_env	*next;
 };
 
-extern t_env *g_environ;
+extern t_env	*g_environ;
+extern int	g_exit_status;
+extern bool	g_signal;
 
-
-typedef enum e_node_kind t_node_kind;
+typedef enum e_node_kind		t_node_kind;
 enum e_node_kind
 {
 	ND_PIPE,
@@ -60,16 +60,17 @@ enum e_node_kind
 	//ND_ARG,
 };
 
-typedef enum e_redirect_type t_redirect_type;
+typedef enum e_redirect_type	t_redirect_type;
 enum e_redirect_type
 {
 	REDIRECT_IN,
 	REDIRECT_OUT,
 	HEREDOC,
 	APPEND,
+	REDIRECT_NONE,
 };
 
-typedef struct s_redirect	t_redirect;
+typedef struct s_redirect		t_redirect;
 struct s_redirect
 {
 	char			*delemiter;
@@ -79,11 +80,11 @@ struct s_redirect
 	char			*documents;
 };
 
-typedef struct s_cmd	t_cmd;
+typedef struct s_cmd			t_cmd;
 struct s_cmd
 {
 	//int	flag;
-	char	**cmd;
+	char		**cmd;
 	t_redirect	*redirect_in;
 	t_redirect	*redirect_out;
 	//char	*delemiter;
@@ -92,7 +93,7 @@ struct s_cmd
 	//char	**redirect_append; // >>
 };
 
-typedef struct s_node t_node;
+typedef struct s_node			t_node;
 struct s_node
 {
 	t_node_kind	kind;
@@ -113,33 +114,41 @@ t_env	*env_last(t_env *env);
 void	update_or_add_value(t_env *env, char *key, char *value);
 void	print_env(t_env *env);
 
-void minishell(int argc, char **argv);
-char *read_line();
+// minishell.c
+void	minishell(int argc, char **argv);
+void	set_signal_handler(int signum, sig_t sighandler);
+char	*read_line();
 
 // srcs/expander
 t_node	*expansion(t_node *node);
 char	*expand(char *str, bool heredoc);
 
 // srcs/parser
-t_node *parse(t_token *tok);
+t_node	*parse(t_token *tok, bool *heredoc_err);
 void	print_node(t_node *node, int tab_n);
+void	free_node(t_node *node);
+void	free_token(t_token *tok);
 
 // srcs/lexer
-t_token *lexer(char *line);
-bool	ft_isspace(char *str);
+t_token	*lexer(char *line);
+bool	ft_isspace(char str);
 
 // lexer_utils.c
-void ft_exit2(char *msg);
+void	ft_exit2(char *msg);
 
 // builtins
 char	*join_with_connector(char *s1, char *s2, char connector);
 //char	*join_slash(char *s1, char *s2);
-int	ft_echo(char **strs);//, t_env *envp);
-int	ft_cd(char **strs);//, t_env *env);
-int	ft_pwd(char **strs);//,t_env *envp);
-int	ft_export(char **args);//, t_env *envp);
-int	ft_unset(char **keys);//, t_env *envp);
-int	ft_env(char **strs);//, t_env *envp);
-int	ft_exit(char **strs);//, t_env *envp);
+int		ft_echo(char **strs);//, t_env *envp);
+int		ft_cd(char **strs);//, t_env *env);
+int		ft_pwd(char **strs);//,t_env *envp);
+int		ft_export(char **args);//, t_env *envp);
+int		ft_unset(char **keys);//, t_env *envp);
+int		ft_env(char **strs);//, t_env *envp);
+int		ft_exit(char **strs);//, t_env *envp);
 
+// srcs/execution
 void	exec(t_node *node, int pipe_flag);
+
+// srcs/utils
+void	err_exit(char *msg);

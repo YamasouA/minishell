@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-bool	ft_isspace(char *str)
+bool	ft_isspace(char str)
 {
-	return (*str == '\t' || *str == ' ');
+	return (str == '\t' || str == ' ');
 }
 
 t_token	*create_token(t_kind kind, char *c, size_t len)
@@ -11,7 +11,8 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 
 	token = ft_calloc(1, sizeof(t_token));
 	if (token == NULL)
-		return (NULL);
+		//return NULL;
+		err_exit("malloc error: ");
 	token->kind = kind;
 	token->str = c;
 	token->len = len;
@@ -19,9 +20,10 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 	return (token);
 }
 
-bool	is_keyword(char c)
+//bool	is_keyword(char c)
+bool	is_meta(char c)
 {
-	return (strchr(" \t|&;()<>", c));
+	return (strchr(" \t|<>", c));
 }
 
 size_t	len_keyword(char *c)
@@ -74,7 +76,7 @@ char	*find_quote(char *line, char quote)
 {
 	while (*line != '\0')
 	{
-		if (*line == quote && *(line - 1) != '\\')
+		if (*line == quote)// && *(line - 1) != '\\')
 			return (line);
 		line++;
 	}
@@ -86,7 +88,8 @@ ssize_t	len_word(char *line)
 	char	*tmp;
 
 	tmp = line;
-	while (*tmp != '\0' && !is_keyword(*tmp))
+	//while (*tmp != '\0' && !is_keyword(*tmp))
+	while (*tmp != '\0' && !is_meta(*tmp))
 	{
 		if (*tmp == '\'' || *tmp == '"')
 		{
@@ -99,13 +102,61 @@ ssize_t	len_word(char *line)
 	return (tmp - line);
 }
 
-void	tokenize(t_token *cur, char *line)
+void	free_token_list(t_token *head)
+{
+	t_token	*tmp;
+
+	head = head->next;
+	while (head != NULL)
+	{
+		tmp = head;
+		head = head->next;
+		free(tmp);
+	}
+}
+
+//void	tokenize_error(char *token, t_token *head)
+void	tokenize_error(char token, t_token *head)
+{
+	g_exit_status = 258;
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	ft_putchar_fd(token, 2);
+//	ft_putstr_fd(token, 2);
+	ft_putstr_fd("'\n", 2);
+	free_token_list(head);
+}
+
+void	quote_error(char *token, t_token *head)
+{
+	char *tmp;
+
+	g_exit_status = 258;
+	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
+	while (*token != '\0')
+	{
+		if (*token == '\'' || *token == '"')
+		{
+			tmp = token;
+			token = find_quote(token + 1, *token);
+			if (token == NULL)
+			{
+				ft_putchar_fd(tmp[0], 2);
+				break ;
+			}
+		}
+		token++;
+	}
+	ft_putstr_fd("'\n", 2);
+	free_token_list(head);	
+}
+
+t_token	*tokenize(t_token *cur, char *line, t_token *head)
 {
 	ssize_t	len;
 
 	while (*line != '\0')
 	{
-		if (ft_isspace(line))
+		if (ft_isspace(*line))
 		{
 			line++;
 			continue ;
@@ -113,29 +164,45 @@ void	tokenize(t_token *cur, char *line)
 		len = len_keyword(line);
 		if (len > 0)
 			cur->next = create_token(TK_KEYWORD, line, len);
-		else if (!is_keyword(*line))
+		//else if (!is_keyword(*line))
+		else if (!is_meta(*line))
 		{
 			len = len_word(line);
 			if (len == -1)
-				ft_exit2("error");
+			{
+				// how handle error?
+				quote_error(line, head);
+//				tokenize_error(line, head);
+				return (NULL);
+//				break;
+			}
 			cur->next = create_token(TK_STR, line, len);
 		}
 		line += len;
 		if (cur->next == NULL)
-			ft_exit2("error");
+		{
+			tokenize_error(*line, head);
+			return (NULL);
+//			ft_exit2("error");
+		}
 		cur = cur->next;
 	}
+	return (head);
 }
 
 t_token	*lexer(char *line)
 {
-	t_token	*head;
+	t_token	head;
 	t_token	*cur;
+	//t_token	*head;
 	//ssize_t	len;
 
-	head = create_token(TK_HEAD, "", 0);
-	cur = head;
-	tokenize(cur, line);
+	//head = create_token(TK_HEAD, "", 0);
+	//cur = head;
+	cur = &head;
+	cur->next = NULL;
+	if (!tokenize(cur, line, &head))
+		return (NULL);
 	/*
 	while (*line != '\0')
 	{
@@ -163,5 +230,7 @@ t_token	*lexer(char *line)
 		cur = cur->next;
 	}*/
 //	print_list(head);
-	return (head->next);
+//	printf("ok\n");
+	//return (head->next);
+	return (head.next);
 }
