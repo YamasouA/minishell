@@ -101,20 +101,22 @@ void	set_pwd(t_env *env, char *path)
 
 int	get_path(t_env *env, char *s, char **path)
 {
+	int	status;
+
+	status = -1;
 	if (s == NULL)
-		*path = ft_strdup(search_key(env, "HOME"));
-	else if (ft_strlen(s) == 1 && ft_strncmp(s, "-", 1) == 0)
-		*path = ft_strdup(search_key(env, "OLDPWD"));
+		*path = ft_xstrdup(search_key(g_environ, "HOME"));
+	else if (ft_strncmp(s, "-", 2) == 0)
+		*path = ft_xstrdup(search_key(env, "OLDPWD"));
 	else
-		*path = ft_strdup(s);
-	if ((s == NULL || ft_strncmp(s, "-", 2) == 0) && !(*path))
-	{
-		if (s == NULL)
-			*path = ft_strdup("HOME");
-		else
-			*path = ft_strdup("OLDPWD");
-	}
-	return -1 * (*path == NULL);
+		*path = ft_xstrdup(s);
+	if (*path != NULL)
+		status = 0;
+	if (*path == NULL && s == NULL)
+		*path = ft_xstrdup("HOME");
+	if (*path == NULL && ft_strncmp(s, "-", 2) == 0)
+		*path = ft_xstrdup("OLDPWD");
+	return (status);
 }
 
 void	print_error(char *dir, char *msg)
@@ -146,17 +148,17 @@ int	ft_cd(char **strs)//, t_env *env)
 	status = get_path(g_environ, strs[1], &path);
 	if (status == -1)
 	{
-		print_error("", "not set");
+		print_error(path, "not set");
 		return (0);
 	}
 	//printf("path: %s\n", path);
 	status = do_cd(path);
-	printf("status: %d\n", status);
+	//printf("status: %d\n", status);
 	if (!status)
 		set_pwd(g_environ, strs[1]);
 	return (1);
 }
-
+/*
 void	print_cmds(char **strs)
 {
 	int	i;
@@ -167,7 +169,7 @@ void	print_cmds(char **strs)
 		printf("%s ", strs[i++]);
 	printf("]\n");
 }
-
+*/
 /*
 int main(void)
 {
