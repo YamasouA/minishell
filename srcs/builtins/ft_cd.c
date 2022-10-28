@@ -13,14 +13,13 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	len2 = ft_strlen(s2);
 	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
 	if (s == NULL)
-		return (NULL);
+		err_exit("malloc error: ");
 	i = 0;
 	while (i < len1)
 	{
 		s[i] = s1[i];
 		i++;
 	}
-//	s[i++] = '/';
 	s[i++] = connector;
 	while (i < len1 + len2 + 1)
 	{
@@ -67,9 +66,6 @@ char	*no_current_dir(t_env *env, char *path)
 		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
 	
 	pwd = search_key(env, "PWD");
-	//newpwd = ft_strjoin(pwd, "/");
-	//newpwd = ft_strjoin(pwd, path);
-	//newpwd = join_slash(pwd, path);
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
@@ -78,25 +74,17 @@ char	*no_current_dir(t_env *env, char *path)
 void	set_pwd(t_env *env, char *path)
 {
 	char	*pwd;
-	//char	*oldpwd;
-
-	//printf("[bef]pwd: %s\n", search_key(env, "PWD"));
-	//printf("[bef]oldpwd: %s\n", search_key(env, "OLDPWD"));
-
 	char *tmp;
-	// getcwdでセットされたerrnoを見ると、cdやcd -のケースの時にセットされている
+
 	tmp = getcwd(NULL, 0); 
 	if (tmp == NULL)
 		tmp = no_current_dir(env, path);
-	//printf("pwd: %s\n", tmp);
 	update_or_add_value(env, "OLDPWD", search_key(env, "PWD"));
 	pwd = ft_strdup(tmp);
 	free(tmp);
 	if (pwd == NULL)
 		return ;
 	update_or_add_value(env, "PWD", pwd);
-	//printf("[aft]pwd: %s\n", search_key(env, "PWD"));
-	//printf("[aft]oldpwd: %s\n", search_key(env, "OLDPWD"));
 }
 
 int	get_path(t_env *env, char *s, char **path)
@@ -151,9 +139,7 @@ int	ft_cd(char **strs)//, t_env *env)
 		print_error(path, "not set");
 		return (0);
 	}
-	//printf("path: %s\n", path);
 	status = do_cd(path);
-	//printf("status: %d\n", status);
 	if (!status)
 		set_pwd(g_environ, strs[1]);
 	return (1);
