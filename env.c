@@ -2,9 +2,9 @@
 
 t_env	*env_last(t_env *env)
 {
-	int	i;
+//	int	i;
 
-	i = 0;
+//	i = 0;
 	if (env == NULL)
 		return (NULL);
 	while (env->next != NULL)
@@ -127,7 +127,8 @@ void	print_env(t_env *env)
 {
 	while (env)
 	{
-		printf("%s=%s\n", env->key, env->value);
+		if (env->value)
+			printf("%s=%s\n", env->key, env->value);
 		env = env->next;
 	}
 }

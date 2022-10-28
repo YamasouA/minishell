@@ -23,7 +23,7 @@ void	free_env(t_env **env)
 	free((*env)->key);
 	free((*env)->value);
 	free(*env);
-	env = NULL;
+	*env = NULL;
 }
 
 void	print_unset_error(char *msg)
@@ -45,21 +45,16 @@ void	del_and_free_env(char *key)//, t_env *envp)
 	{
 		if (ft_strncmp(cur->key, key, ft_strlen(key)+1) == 0)
 		{
-//			printf("ok1\n");
 			if (prev_env)
 				prev_env->next = cur->next;
 			else if (cur == g_environ)
 				g_environ = cur->next;
 //				envp = cur->next;
-//			printf("ok2n");
 			free_env(&cur);
-			break ;
+			return ;
 		}
-//		printf("ok3\n");
 		prev_env = cur;
-//		printf("ok4\n");
 		cur = cur->next;
-//		printf("ok5\n");
 	}
 }
 

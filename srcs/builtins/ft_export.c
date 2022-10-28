@@ -25,7 +25,19 @@ bool	is_valid_var(char *str) // shareable unset func
 	return (true);
 }
 
-int	update_env_var(char *arg, t_env *envp, int flag)
+void	free_args(char **args)
+{
+	size_t	i;
+
+	i = 0;
+	while (args[i])
+	{
+		free(args[i++]);
+	}
+	free(args);
+}
+
+int	update_env_var(char *arg, int flag)// t_env *envp
 {
 	char	*equal_pos;
 	char	**split_args;
@@ -34,8 +46,17 @@ int	update_env_var(char *arg, t_env *envp, int flag)
 	char	*tmp;
 
 	split_args = ft_split(arg, '='); // must free
-	target_var = search_env(envp, split_args[0]);
-	//free split_args
+	target_var = search_env(g_environ, split_args[0]);
+	free_args(split_args);
+//	size_t	i;
+//
+//	i = 0;
+//	while (split_args[i])
+//	{
+//		free(split_args[i++]);
+//	}
+//	free(split_args);
+//	free(split_args);
 	if (target_var)
 	{
 		equal_pos = ft_strchr(arg, '=');
@@ -60,19 +81,20 @@ void	print_invalid_identifier(char *str)
 	ft_putstr_fd("': not a valid identifier\n", 2);
 }
 
-void	push_new_env_var(char *arg, t_env *envp)
+void	push_new_env_var(char *arg)//, t_env *envp)
 {
 	t_env	*new;
 
 	new = (t_env *)malloc(sizeof(t_env) * 1);
 	if (new == NULL)
-		return ;
+		err_exit("malloc error: ");
 	else
 		set_data(arg, new);
-	if (envp == NULL)
-		add_env(&g_environ, new);
-	else
-		add_env(&envp, new);
+//	if (g_environ == NULL)
+//		add_env(&g_environ, new);
+//	else
+	add_env(&g_environ, new);
+//		add_env(&envp, new);
 }
 
 int	is_append_flag(char **key, char *eq_pos)
@@ -98,25 +120,27 @@ int	which_update_flag(char **key)
 
 	flag = EXPORT_NONE;
 	eq_pos = ft_strchr(*key, '=');
-	if (eq_pos)
-	{
-		if (is_append_flag(key, eq_pos))
-			flag = EXPORT_APPEND;
-		else
-			flag = EXPORT_NEW;
-	}
+//	if (eq_pos)
+//	{
+	if (is_append_flag(key, eq_pos))
+		flag = EXPORT_APPEND;
+	else
+		flag = EXPORT_NEW;
+//	}
 	split_args = ft_split(*key, '=');
 	if (!is_valid_var(split_args[0]))
 	{
 		//free split_args
+		free_args(split_args);
 		print_invalid_identifier(*key);
 		return (EXPORT_ERROR);
 	}
+	free_args(split_args);
 	//free split_args
 	return (flag); 
 }
 
-int	add_var_to_env(char **args, t_env *envp)
+int	add_var_to_env(char **args)//, t_env *envp)
 {
 	int	i;
 //	char	*eq_pos;
@@ -132,8 +156,8 @@ int	add_var_to_env(char **args, t_env *envp)
 			exit_status = 1;
 		if (flag & EXPORT_NEW || flag & EXPORT_APPEND)
 		{
-			if (!update_env_var(args[i], envp, flag))
-				push_new_env_var(args[i], envp);
+			if (!update_env_var(args[i], flag))
+				push_new_env_var(args[i]);//, envp);
 		}
 	}
 	return (exit_status);
@@ -143,7 +167,10 @@ void	print_prefix_env(t_env *envp)
 {
 	while (envp)
 	{
-		printf("declare -x %s=\"%s\"\n", envp->key, envp->value);
+		if (envp->value)
+			printf("declare -x %s=\"%s\"\n", envp->key, envp->value);
+		else
+			printf("declare -x %s\n", envp->key);
 		envp = envp->next;
 	}
 }
@@ -154,7 +181,7 @@ int	ft_export(char **args)//, t_env *envp)
 
 	exit_status = 0;
 	if (args[1])
-		exit_status = add_var_to_env(args, g_environ);
+		exit_status = add_var_to_env(args);//, g_environ);
 	else
 		print_prefix_env(g_environ);
 	return (exit_status);
