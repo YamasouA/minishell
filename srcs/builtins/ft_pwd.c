@@ -9,7 +9,8 @@ int	ft_pwd(char **strs)
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 	{
-		ft_putstr_fd("error pwd", 2);
+		//ft_putstr_fd("error pwd", 2);
+		perror("getcwd error: ");
 		return (1);
 	}
 	ft_putendl_fd(pwd, STDOUT_FILENO);
