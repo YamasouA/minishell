@@ -13,14 +13,13 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	len2 = ft_strlen(s2);
 	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
 	if (s == NULL)
-		return (NULL);
+		err_exit("malloc error: ");
 	i = 0;
 	while (i < len1)
 	{
 		s[i] = s1[i];
 		i++;
 	}
-//	s[i++] = '/';
 	s[i++] = connector;
 	while (i < len1 + len2 + 1)
 	{
@@ -30,35 +29,9 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	s[i] = '\0';
 	return (s);
 }
-/*
-char	*join_slash(char *s1, char *s2)
-{
-	size_t	len1;
-	size_t	len2;
-	char	*s;
-	size_t	i;
 
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
-	i = 0;
-	while (i < len1)
-	{
-		s[i] = s1[i];
-		i++;
-	}
-	s[i++] = '/';
-	while (i < len1 + len2 + 1)
-	{
-		s[i] = s2[i - len1 - 1];
-		i++;
-	}
-	s[i] = '\0';
-	return (s);
-}
-*/
-
-char	*no_current_dir(t_env *env, char *path)
+//char	*no_current_dir(t_env *env, char *path)
+char	*no_current_dir(char *path)
 {
 	char	*pwd;
 	char	*newpwd;
@@ -66,55 +39,48 @@ char	*no_current_dir(t_env *env, char *path)
 	ft_putendl_fd("cd: error retrieving current directory: \
 		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
 	
-	pwd = search_key(env, "PWD");
-	//newpwd = ft_strjoin(pwd, "/");
-	//newpwd = ft_strjoin(pwd, path);
-	//newpwd = join_slash(pwd, path);
+	//pwd = search_key(env, "PWD");
+	pwd = search_key(g_environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
 }
 
-void	set_pwd(t_env *env, char *path)
+//void	set_pwd(t_env *env, char *path)
+void	set_pwd(char *path)
 {
 	char	*pwd;
-	//char	*oldpwd;
 
-	//printf("[bef]pwd: %s\n", search_key(env, "PWD"));
-	//printf("[bef]oldpwd: %s\n", search_key(env, "OLDPWD"));
-
-	char *tmp;
-	// getcwdでセットされたerrnoを見ると、cdやcd -のケースの時にセットされている
-	tmp = getcwd(NULL, 0); 
-	if (tmp == NULL)
-		tmp = no_current_dir(env, path);
-	//printf("pwd: %s\n", tmp);
-	update_or_add_value(env, "OLDPWD", search_key(env, "PWD"));
-	pwd = ft_strdup(tmp);
-	free(tmp);
+	pwd = getcwd(NULL, 0); 
 	if (pwd == NULL)
-		return ;
-	update_or_add_value(env, "PWD", pwd);
-	//printf("[aft]pwd: %s\n", search_key(env, "PWD"));
-	//printf("[aft]oldpwd: %s\n", search_key(env, "OLDPWD"));
+		//pwd = no_current_dir(env, path);
+		pwd = no_current_dir(path);
+	//update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
+	//update_or_add_value(&env, "PWD", pwd);
+	update_or_add_value(&g_environ, "OLDPWD", search_key(g_environ, "PWD"));
+	update_or_add_value(&g_environ, "PWD", pwd);
+	free(pwd);
 }
 
-int	get_path(t_env *env, char *s, char **path)
+//int	get_path(t_env *env, char *s, char **path)
+int	get_path(char *s, char **path)
 {
+	int	status;
+
+	status = -1;
 	if (s == NULL)
-		*path = ft_strdup(search_key(env, "HOME"));
-	else if (ft_strlen(s) == 1 && ft_strncmp(s, "-", 1) == 0)
-		*path = ft_strdup(search_key(env, "OLDPWD"));
+		*path = ft_xstrdup(search_key(g_environ, "HOME"));
+	else if (ft_strncmp(s, "-", 2) == 0)
+		*path = ft_xstrdup(search_key(g_environ, "OLDPWD"));
 	else
-		*path = ft_strdup(s);
-	if ((s == NULL || ft_strncmp(s, "-", 2) == 0) && !(*path))
-	{
-		if (s == NULL)
-			*path = ft_strdup("HOME");
-		else
-			*path = ft_strdup("OLDPWD");
-	}
-	return -1 * (*path == NULL);
+		*path = ft_xstrdup(s);
+	if (*path != NULL)
+		status = 0;
+	if (*path == NULL && s == NULL)
+		*path = ft_xstrdup("HOME");
+	if (*path == NULL && ft_strncmp(s, "-", 2) == 0)
+		*path = ft_xstrdup("OLDPWD");
+	return (status);
 }
 
 void	print_error(char *dir, char *msg)
@@ -143,20 +109,22 @@ int	ft_cd(char **strs)//, t_env *env)
 	int	status;
 	char	*path;
 
-	status = get_path(g_environ, strs[1], &path);
+	//status = get_path(g_environ, strs[1], &path);
+	status = get_path(strs[1], &path);
 	if (status == -1)
 	{
-		print_error("", "not set");
+		print_error(path, "not set");
+		free(path);
 		return (0);
 	}
-	//printf("path: %s\n", path);
 	status = do_cd(path);
-	printf("status: %d\n", status);
 	if (!status)
-		set_pwd(g_environ, strs[1]);
+		//set_pwd(g_environ, strs[1]);
+		set_pwd(strs[1]);
+	free(path);
 	return (1);
 }
-
+/*
 void	print_cmds(char **strs)
 {
 	int	i;
@@ -167,7 +135,7 @@ void	print_cmds(char **strs)
 		printf("%s ", strs[i++]);
 	printf("]\n");
 }
-
+*/
 /*
 int main(void)
 {

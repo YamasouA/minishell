@@ -25,27 +25,31 @@ void	add_env(t_env **env, t_env *new)
 	last->next = new;
 }
 
-void	update_or_add_value(t_env *env, char *key, char *value)
+void	update_or_add_value(t_env **env, char *key, char *value)
 {
-	t_env	*new;
+	t_env *tmp;
 
-	while (env)
+	tmp = *env;
+	while (*env)
 	{
-		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
 			break ;
-		env = env->next;
+		*env = (*env)->next;
 	}
-	if (env != NULL)
-		env->value = value;
+	if (*env != NULL)
+	{
+		free((*env)->value);
+		(*env)->value = ft_xstrdup(value);
+	}
 	else
 	{
-		new = (t_env *)malloc(sizeof(t_env) * 1);
-		if (new == NULL)
-			return ;
-		new->key = key;
-		new->value = value;
-		env = new;
+		*env = (t_env *)malloc(sizeof(t_env) * 1);
+		if (*env == NULL)
+			err_exit("malloc error: ");
+		(*env)->key = key;
+		(*env)->value = ft_xstrdup(value);
 	}
+	*env = tmp;
 }
 
 void	set_data(char *environ, t_env *new)
