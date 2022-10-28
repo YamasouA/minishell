@@ -111,7 +111,8 @@ t_env	*search_env(t_env *env, char *key);
 void	set_data(char *environ, t_env *new);
 void	add_env(t_env **env, t_env *new);
 t_env	*env_last(t_env *env);
-void	update_or_add_value(t_env *env, char *key, char *value);
+//void	update_or_add_value(t_env *env, char *key, char *value);
+void	update_or_add_value(t_env **env, char *key, char *value);
 void	print_env(t_env *env);
 
 // minishell.c

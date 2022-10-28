@@ -29,33 +29,6 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	s[i] = '\0';
 	return (s);
 }
-/*
-char	*join_slash(char *s1, char *s2)
-{
-	size_t	len1;
-	size_t	len2;
-	char	*s;
-	size_t	i;
-
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	s = (char *)malloc(sizeof(char) * (len1 + len2) + 2);
-	i = 0;
-	while (i < len1)
-	{
-		s[i] = s1[i];
-		i++;
-	}
-	s[i++] = '/';
-	while (i < len1 + len2 + 1)
-	{
-		s[i] = s2[i - len1 - 1];
-		i++;
-	}
-	s[i] = '\0';
-	return (s);
-}
-*/
 
 char	*no_current_dir(t_env *env, char *path)
 {
@@ -74,17 +47,13 @@ char	*no_current_dir(t_env *env, char *path)
 void	set_pwd(t_env *env, char *path)
 {
 	char	*pwd;
-	char *tmp;
 
-	tmp = getcwd(NULL, 0); 
-	if (tmp == NULL)
-		tmp = no_current_dir(env, path);
-	update_or_add_value(env, "OLDPWD", search_key(env, "PWD"));
-	pwd = ft_strdup(tmp);
-	free(tmp);
+	pwd = getcwd(NULL, 0); 
 	if (pwd == NULL)
-		return ;
-	update_or_add_value(env, "PWD", pwd);
+		pwd = no_current_dir(env, path);
+	update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
+	update_or_add_value(&env, "PWD", pwd);
+	free(pwd);
 }
 
 int	get_path(t_env *env, char *s, char **path)
@@ -137,11 +106,13 @@ int	ft_cd(char **strs)//, t_env *env)
 	if (status == -1)
 	{
 		print_error(path, "not set");
+		free(path);
 		return (0);
 	}
 	status = do_cd(path);
 	if (!status)
 		set_pwd(g_environ, strs[1]);
+	free(path);
 	return (1);
 }
 /*
