@@ -30,24 +30,25 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 	t_env *tmp;
 
 	tmp = *env;
-	while (*env)
+	while ((*env)->next)
 	{
 		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
 			break ;
 		*env = (*env)->next;
 	}
-	if (*env != NULL)
+	if ((*env)->next != NULL)
 	{
 		free((*env)->value);
 		(*env)->value = ft_xstrdup(value);
 	}
 	else
 	{
-		*env = (t_env *)malloc(sizeof(t_env) * 1);
+		(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
 		if (*env == NULL)
 			err_exit("malloc error: ");
-		(*env)->key = key;
-		(*env)->value = ft_xstrdup(value);
+		(*env)->next->key = key;
+		(*env)->next->value = ft_xstrdup(value);
+		(*env)->next->next = NULL;
 	}
 	*env = tmp;
 }
