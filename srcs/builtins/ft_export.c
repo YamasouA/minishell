@@ -120,7 +120,8 @@ int	is_append_flag(char **key, char *eq_pos)
 
 int	which_update_flag(char **key)
 {
-	char	**split_args;
+//	char	**split_args;
+	char	*var_name;
 	char	*eq_pos;
 	int		flag;
 
@@ -133,16 +134,20 @@ int	which_update_flag(char **key)
 	else
 		flag = EXPORT_NEW;
 //	}
-	split_args = ft_split(*key, '=');
-	if (!is_valid_var(split_args[0]))
+//	split_args = ft_split(*key, '=');
+//	equal_pos = ft_strchr(arg, '=');
+	var_name = ft_substr(*key, 0, eq_pos - key[0]);
+//	printf("%s\n",var_name);
+//	if (!is_valid_var(split_args[0]))
+	if (!is_valid_var(var_name))
 	{
-		//free split_args
-		free_args(split_args);
+		free(var_name);
+//		free_args(split_args);
 		print_invalid_identifier(*key);
 		return (EXPORT_ERROR);
 	}
-	free_args(split_args);
-	//free split_args
+//	free_args(split_args);
+	free(var_name);
 	return (flag); 
 }
 
