@@ -44,7 +44,7 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 	else
 	{
 		(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
-		if (*env == NULL)
+		if ((*env)->next == NULL)
 			err_exit("malloc error: ");
 		(*env)->next->key = key;
 		(*env)->next->value = ft_xstrdup(value);

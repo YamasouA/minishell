@@ -126,7 +126,8 @@ char	**envlist_to_str(t_env *env)
 	head = env;
 	while (head != NULL)
 	{
-		envstr[++i] = join_with_connector(head->key, head->value, '=');
+		if (head->value)
+			envstr[++i] = join_with_connector(head->key, head->value, '=');
 		if (envstr[i] == NULL)
 			err_exit("malloc error: ");
 //			perror("OUT");
@@ -277,6 +278,7 @@ void	exec_others(t_cmd *cmd)
 	char	**envstr;
 	char	*path;
 
+	printf("ok\n");
 	envstr = envlist_to_str(g_environ);
 	if (is_path(cmd->cmd[0]))
 	{
@@ -307,7 +309,9 @@ void	exec_others(t_cmd *cmd)
 				print_access_err(cmd->cmd[0]);
 //			perror("OUT1");
 		}
-		exit(execve(path, cmd->cmd, envstr));
+//		exit(execve(path, cmd->cmd, envstr));
+		execve(path, cmd->cmd, envstr);
+		printf("%s\n", path);
 	}
 }
 

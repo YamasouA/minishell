@@ -105,7 +105,7 @@ void	minishell(int argc, char **argv)
 	t_node	*node;
 	bool	heredoc_err;
 	int		x;
-	t_env	*pwd;
+//	t_env	*pwd;
 //	struct winsize	ws;
 //	int				line_length;
 
@@ -113,12 +113,8 @@ void	minishell(int argc, char **argv)
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
 	g_environ = create_env();
-	pwd = search_env(g_environ, "PWD");
-	free(pwd->value);
-	pwd->value = getcwd(NULL, 0);
+	update_or_add_value(&g_environ, ft_xstrdup("PWD"), getcwd(NULL, 0));
 	update_or_add_value(&g_environ, ft_xstrdup("OLDPWD"), NULL);
-//	if (g_environ == NULL)
-//		err_exit("malloc error: ");
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
