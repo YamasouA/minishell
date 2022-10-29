@@ -1,30 +1,6 @@
 #include "minishell.h"
 
 
-void	exit_with_number(char **strs, size_t cnt)
-{
-	int	n;
-
-	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (cnt > 2)
-	{
-		ft_putendl_fd("bash: exit: too many arguments", STDERR_FILENO);
-	}
-	else
-	{
-		n = ft_atoi(strs[1]);
-		exit(n);
-		/*
-		if (n < 0)
-			exit(256 + n);
-		else if (n <= 255)
-			exit(n);
-		else
-			exit(n - 256);
-		*/
-	}
-}
-
 void	exit_with_str(char **strs)
 {
 	ft_putendl_fd("exit", STDERR_FILENO);
@@ -32,6 +8,29 @@ void	exit_with_str(char **strs)
 	ft_putstr_fd(strs[1], STDERR_FILENO);
 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
 	exit(255);
+}
+
+void	exit_with_number(char **strs, size_t cnt)
+{
+	long long n;
+	bool	ret;
+
+	if (cnt > 2)
+	{
+		ft_putendl_fd("exit", STDOUT_FILENO);
+		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+	}
+	else
+	{
+		ret = ft_atol_bool(strs[1], &n);
+		if (ret)
+		{
+			ft_putendl_fd("exit", STDOUT_FILENO);
+			exit(n);
+		}
+		else
+			exit_with_str(strs);
+	}
 }
 
 void	exit_with_arg(char **strs, size_t cnt)
