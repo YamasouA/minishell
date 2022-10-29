@@ -128,7 +128,7 @@ void	tokenize_error(char token, t_token *head)
 
 void	quote_error(char *token, t_token *head)
 {
-	char *tmp;
+	char	*tmp;
 
 	g_exit_status = 258;
 	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
@@ -147,7 +147,7 @@ void	quote_error(char *token, t_token *head)
 		token++;
 	}
 	ft_putstr_fd("'\n", 2);
-	free_token_list(head);	
+	free_token_list(head);
 }
 
 t_token	*tokenize(t_token *cur, char *line, t_token *head)

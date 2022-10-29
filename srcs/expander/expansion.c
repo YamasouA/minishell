@@ -59,12 +59,18 @@ char	*find_env(char *var, size_t len)
 		}
 		tmp = tmp->next;
 	}
-	return (ft_strdup("")); //how handle error?
+	return (ft_strdup(""));
 }
 
-bool	ft_isspace2(char c) //rename
+//bool	ft_isspace2(char c) //rename
+//{
+//	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
+//}
+
+char	*exp_exit_status(int *i)
 {
-	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
+	(*i)++;
+	return (ft_strdup(ft_itoa(g_exit_status)));
 }
 
 char	*handle_dollar(char *str, int *i)
@@ -76,16 +82,17 @@ char	*handle_dollar(char *str, int *i)
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
 		if (str[*i] == '\'' || ft_strchr(str + *i + 1, '\"'))
-			return (ft_strdup("")); //how handle error?
+			return (ft_strdup(""));
 		else
-			return (ft_strdup("$")); //how handle error?
+			return (ft_strdup("$"));
 	}
 	j = *i;
 	if (str[j] == '?')
-	{
-		(*i)++;
-		return (ft_strdup(ft_itoa(g_exit_status))); //how handle error?
-	}
+		return (exp_exit_status(i));
+//	{
+//		(*i)++;
+//		return (ft_strdup(ft_itoa(g_exit_status)));
+//	}
 	if (ft_isalpha(str[j]) || str[j] == '_')
 	{
 		while (ft_isalnum(str[j]) || str[j] == '_')
@@ -106,7 +113,8 @@ char	*handle_dollar(char *str, int *i)
 char	*expand_dollar(char *str, char *expanded, int *i)
 {
 //	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
-	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_' || str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')
+	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'
+		|| str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')
 		expanded = ft_joinfree(expanded, handle_dollar(str, i));
 	else
 	{
@@ -131,7 +139,7 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
-			s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
+			s = ft_joinfree(s, ft_substr(str, j, *i - j));
 			//if (s == NULL)
 			//	err_exit("malloc error:");
 			s = expand_dollar(str, s, i);//handle_dollar(str, i));
@@ -141,18 +149,29 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 		}
 	}
 	if (str[*i])
-		s = ft_joinfree(s, ft_substr(str, j, *i - j)); //how handle error?
+		s = ft_joinfree(s, ft_substr(str, j, *i - j));
 	//if (s == NULL)
 	//	err_exit("malloc error:");
 	(*i)++;
 	return (s);
 }
 
+char	*handle_normal(char *str, int *i, bool heredoc)
+{
+	int	head;
+
+	head = *i;
+	while (str[*i] && str[*i] != '\'' && str[*i] != '\"'
+		&& (str[*i] != '$' || heredoc))
+		(*i)++;
+	return (ft_substr(str, head, *i - head));
+}
+
 char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
 	int		i;
-	int		head;
+//	int		head;
 
 	expanded = ft_strdup("");
 	//if (expanded == NULL)
@@ -161,7 +180,7 @@ char	*expand(char *str, bool heredoc)
 	while (str[i])
 	{
 		if (str[i] == '\'')
-			expanded = ft_joinfree(expanded, handle_s_quote(str, &i)); // when/where handle error?
+			expanded = ft_joinfree(expanded, handle_s_quote(str, &i));
 		else if (str[i] == '\"')
 			expanded = ft_joinfree(expanded, handle_d_quote(str, &i, heredoc));
 		else if (str[i] == '$' && !heredoc)
@@ -175,11 +194,11 @@ char	*expand(char *str, bool heredoc)
 		}
 		else
 		{
-			head = i;
-			while (str[i] && str[i] != '\'' && str[i] != '\"'
-				&& (str[i] != '$' || heredoc))
-				i++;
-			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
+//			head = i;
+//			while (str[i] && str[i] != '\'' && str[i] != '\"'
+//				&& (str[i] != '$' || heredoc))
+//				i++;
+			expanded = ft_joinfree(expanded, handle_normal(str, &i, heredoc));//ft_substr(str, head, i - head));
 		}
 		if (expanded == NULL)
 			err_exit("malloc error");
@@ -299,10 +318,7 @@ void	expand_redir_list(t_node *node)
 				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
 		}
 		else
-		{
 			expand_redir(node->cmd->redirect_in);
-//			expand_cmd_instance(&(node->cmd->redirect_in->file_name), 0);
-		}
 	}
 	node->cmd->redirect_in = head;
 	head = node->cmd->redirect_out;
@@ -310,7 +326,6 @@ void	expand_redir_list(t_node *node)
 	{
 		node->cmd->redirect_out = node->cmd->redirect_out->next;
 		expand_redir(node->cmd->redirect_out);
-//		expand_cmd_instance(&(node->cmd->redirect_out->file_name), 0);
 	}
 	node->cmd->redirect_out = head;
 }

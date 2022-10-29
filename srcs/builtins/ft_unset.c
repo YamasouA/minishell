@@ -5,7 +5,7 @@
 bool	is_valid_unset_args(char *str)
 {
 	int	i;
-	
+
 	if (!ft_isalpha(str[0]) && str[0] != '_')
 		return (false);
 	i = 1;
@@ -30,7 +30,7 @@ void	print_unset_error(char *msg)
 {
 	ft_putstr_fd("minishell: unset: `", 2);
 	ft_putstr_fd(msg, 2);
-	ft_putstr_fd("': not a valid identifier\n", 2);	
+	ft_putstr_fd("': not a valid identifier\n", 2);
 }
 
 void	del_and_free_env(char *key)//, t_env *envp)
@@ -43,7 +43,7 @@ void	del_and_free_env(char *key)//, t_env *envp)
 //	cur = envp;
 	while (cur)
 	{
-		if (ft_strncmp(cur->key, key, ft_strlen(key)+1) == 0)
+		if (ft_strncmp(cur->key, key, ft_strlen(key) + 1) == 0)
 		{
 			if (prev_env)
 				prev_env->next = cur->next;
@@ -62,7 +62,7 @@ int	ft_unset(char **keys)//, t_env *envp)
 {
 	int	i;
 	int	exit_status;
-	
+
 	exit_status = 0;
 	i = 1;
 	while (keys[i])

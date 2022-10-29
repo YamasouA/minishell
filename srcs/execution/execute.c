@@ -145,7 +145,7 @@ int	exec_builtin(t_cmd *cmd)
 	size_t		i;
 
 	i = 0;
-	while (i < sizeof(builtins)/ sizeof(builtins[0])) //(int)(sizeof(builtins / sizeof(char *))))
+	while (i < (sizeof(builtins) / sizeof(builtins[0])))
 	{
 		if (ft_strncmp(cmd->cmd[0], builtins[i], ft_strlen(builtins[i]) + 1)
 			== 0)
@@ -282,7 +282,7 @@ void	exec_others(t_cmd *cmd)
 	{
 		if (is_directory(cmd->cmd[0]))
 		{
-			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd("minishell: ", 2); //cut func
 			ft_putstr_fd(cmd->cmd[0], 2);
 			ft_putstr_fd(": is a directory\n", 2);
 			exit(126);
@@ -299,7 +299,7 @@ void	exec_others(t_cmd *cmd)
 		path = check_path(cmd->cmd[0]);
 		if (path == NULL || errno != 0)
 		{
-			if (errno == EACCES)
+			if (errno == EACCES) //cut func
 				print_access_err(path);
 			else if (errno == ENOENT)
 				print_access_err(cmd->cmd[0]);
@@ -328,7 +328,7 @@ bool	is_valid_file_name(t_redirect *redirect)
 {
 	if (redirect->type == REDIRECT_NONE)
 	{
-		print_redirect_err(redirect->file_name);
+		print_redirect_err(redirect->file_name); //include return ?
 		return (0);
 	}
 	else if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
@@ -342,7 +342,7 @@ bool	is_valid_file_name(t_redirect *redirect)
 		}
 		else if (is_directory(redirect->file_name))
 		{
-			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd("minishell: ", 2); //cut func
 			ft_putstr_fd(redirect->file_name, 2);
 			ft_putstr_fd(": is a directory\n", 2);
 			return (0);
@@ -368,35 +368,21 @@ int	open_and_dup2(t_redirect *redirect)
 		return (1);
 	if (redirect->type == APPEND)
 	{
-//		if (!access(redirect->file_name, W_OK))
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
-//		else
-//			print_redirect_err(redirect->file_name);
-		//dup2(fd, 1);
 		xdup2(fd, 1);
 	}
 	else if (redirect->type == REDIRECT_OUT)
 	{
-//		if (!access(redirect->file_name, W_OK))
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-//		else
-//			print_redirect_err(redirect->file_name);
-		//dup2(fd, 1);
 		xdup2(fd, 1);
 	}
 	else
 	{
-//		if (!access(redirect->file_name, R_OK))
 		fd = open(redirect->file_name, O_RDONLY);
-//		else
-//			print_redirect_err(redirect->file_name);
-		//dup2(fd, 0);
 		xdup2(fd, 0);
 		if (redirect->type == HEREDOC)
 			xunlink(redirect->file_name);
-			//unlink(redirect->file_name);
 	}
-	//close(fd);
 	xclose(fd);
 	return (0);
 }
