@@ -12,10 +12,10 @@
 
 #ifndef LIBFT_H
 # define LIBFT_H
+# include	<stdbool.h>
 # include	<limits.h>
 # include	<stdlib.h>
 # include	<unistd.h>
-# include	<stdbool.h>
 
 typedef struct s_list
 {
@@ -82,4 +82,5 @@ unsigned int	ft_abs(int n);
 int				ft_max(int n1, int n2);
 
 char	*ft_xstrdup(const char *s1);
+bool	ft_atol_bool(const char *str, long long *i);
 #endif

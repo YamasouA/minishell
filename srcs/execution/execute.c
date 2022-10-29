@@ -561,7 +561,7 @@ void	exec(t_node *node, int pipe_flag)
 	static pid_t	pid;
 
 	errno = 0;
-	g_exit_status = 0;
+	//g_exit_status = 0;
 	if (pipe_flag == 0)
 	{
 		//backup_stdin = dup(0);
