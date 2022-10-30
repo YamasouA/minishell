@@ -38,16 +38,21 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 	}
 	if ((*env)->next != NULL)
 	{
+//		printf("prev:%s\n", (*env)->value);
 		free((*env)->value);
+//		(*env)->value = value;
+//		printf("after:%s\n", value);
 		(*env)->value = ft_xstrdup(value);
+//		printf("ok3\n");
 	}
 	else
 	{
 		(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
 		if ((*env)->next == NULL)
 			err_exit("malloc error: ");
-		(*env)->next->key = key;
-		(*env)->next->value = ft_xstrdup(value);
+		(*env)->next->key = ft_xstrdup(key);
+		(*env)->next->value = value;
+//		(*env)->next->value = ft_xstrdup(value);
 		(*env)->next->next = NULL;
 	}
 	*env = tmp;

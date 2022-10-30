@@ -58,6 +58,7 @@ void	set_pwd(char *path)
 	//update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
 	//update_or_add_value(&env, "PWD", pwd);
 	update_or_add_value(&g_environ, "OLDPWD", search_key(g_environ, "PWD"));
+	printf("ok\n");
 	update_or_add_value(&g_environ, "PWD", pwd);
 	free(pwd);
 }

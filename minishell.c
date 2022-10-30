@@ -105,6 +105,7 @@ void	minishell(int argc, char **argv)
 	t_node	*node;
 	bool	heredoc_err;
 	int		x;
+	char	*pwd;
 //	t_env	*pwd;
 //	struct winsize	ws;
 //	int				line_length;
@@ -113,8 +114,10 @@ void	minishell(int argc, char **argv)
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
 	g_environ = create_env();
-	update_or_add_value(&g_environ, ft_xstrdup("PWD"), getcwd(NULL, 0));
-	update_or_add_value(&g_environ, ft_xstrdup("OLDPWD"), NULL);
+	pwd = getcwd(NULL, 0);
+	update_or_add_value(&g_environ, "PWD", pwd);
+	free(pwd);
+	update_or_add_value(&g_environ, "OLDPWD", NULL);
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
