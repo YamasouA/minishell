@@ -305,7 +305,14 @@ char	*exp_only_dollar(char *str)
 	while (str[i])
 	{
 		if (str[i] == '$')
+		{
 			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
+			if (expanded[0] == '\0' && str[i] == '\0')
+			{
+				free(expanded);
+				return (NULL);
+			}
+		}
 		else if (str[i] == '\'' || str[i] == '"')
 			expanded = ft_joinfree(expanded, handle_quote(str, &i, str[i]));
 		else
