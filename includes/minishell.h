@@ -84,6 +84,7 @@ typedef struct s_cmd			t_cmd;
 struct s_cmd
 {
 	//int	flag;
+	char		*cmdstr;
 	char		**cmd;
 	t_redirect	*redirect_in;
 	t_redirect	*redirect_out;
@@ -129,6 +130,7 @@ t_node	*parse(t_token *tok, bool *heredoc_err);
 void	print_node(t_node *node, int tab_n);
 void	free_node(t_node *node);
 void	free_token(t_token *tok);
+size_t	cmd_len(t_token *tok);
 
 // srcs/lexer
 t_token	*lexer(char *line);

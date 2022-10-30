@@ -268,31 +268,119 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 			|| ft_strchr(*cmd_data, '$'))
 		&& !here_doc)
 	{
+//		printf("ok7\n");
 		tmp = *cmd_data;
 		*cmd_data = expand(*cmd_data, here_doc);
 		free(tmp);
 	}
 	else
 	{
+//		printf("ok8\n");
 		tmp = *cmd_data;
 		*cmd_data = expand_documents(*cmd_data);
 		free(tmp);
+//		printf("ok9\n");
+	}
+}
+
+char	*handle_quote(char *str, int *i, char quote)
+{
+	int	head;
+
+	head = *i;
+	(*i)++;
+	while (str[*i] && str[*i] != quote)
+		(*i)++;
+	return (ft_substr(str, head, *i - head));
+}
+
+char	*exp_only_dollar(char *str)
+{
+	int		i;
+	int		head;
+	char	*expanded;
+
+	expanded = ft_strdup("");
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
+		else if (str[i] == '\'' || str[i] == '"')
+			expanded = ft_joinfree(expanded, handle_quote(str, &i, str[i]));
+		else
+		{
+			head = i;
+			while (str[i] && str[i] != '$')
+				i++;
+			expanded = ft_joinfree(expanded, ft_substr(str, head, i - head));
+		}
+		if (expanded == NULL)
+			err_exit("malloc error");
+	}
+	return (expanded);
+}
+
+void	expand_cmdstr(t_cmd *cmd)
+{
+	char	*tmp;
+	t_token *head;
+	t_token	*tok;
+	int		i;
+
+	tmp = NULL;
+	if (ft_strchr(cmd->cmdstr, '$'))
+	{
+		tmp = cmd->cmdstr;
+		cmd->cmdstr = exp_only_dollar(cmd->cmdstr);
+		free(tmp);
+	}
+	tok = lexer(cmd->cmdstr);
+	head = tok;
+	cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(tok) + 1));
+	i = 0;
+	while (tok != NULL)
+	{
+		cmd->cmd[i] = ft_substr(tok->str, 0, tok->len);
+		if (cmd->cmd[i++] == NULL)
+			err_exit("malloc error: ");
+		tok = tok->next;
+	}
+//	printf("%d\n", i);
+	cmd->cmd[i] = NULL;
+	free(cmd->cmdstr);
+	free_token(head);
+	i = 0;
+	while (cmd->cmd[i] != NULL)
+	{
+//		printf("%s", cmd->cmd[i]);
+		expand_cmd_instance(&(cmd->cmd[i]), 0);
+		i++;
 	}
 }
 
 void	expand_redir(t_redirect *redirect)
 {
 	char	*tmp;
+	char	*tmp2;
 
 	tmp = ft_strdup(redirect->file_name);
-	expand_cmd_instance(&(redirect->file_name), 0);
-	if (redirect->file_name == NULL)
+	redirect->file_name = exp_only_dollar(redirect->file_name);
+	tmp2 = redirect->file_name;
+	redirect->file_name = ft_strtrim(redirect->file_name, " ");
+	free(tmp2);
+//	expand_cmd_instance(&(redirect->file_name), 0);
+	if (redirect->file_name == NULL || ft_strchr(redirect->file_name, ' '))
 	{
 		redirect->file_name = tmp;
 		redirect->type = REDIRECT_NONE;
 	}
 	else
+	{
 		free(tmp);
+		expand_cmd_instance(&(redirect->file_name), 0);
+	}
+//	free(trimed);
 }
 
 void	recursive_expansion(t_node *node)
@@ -314,7 +402,7 @@ void	expand_redir_list(t_node *node)
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
 			if (node->cmd->redirect_in->delemiter[0] != '\''
-				|| node->cmd->redirect_in->delemiter[0] != '\"')
+				&& node->cmd->redirect_in->delemiter[0] != '\"')
 				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
 		}
 		else
@@ -336,13 +424,17 @@ t_node	*expansion(t_node *node)
 
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		if (node->cmd->cmd == NULL)
+//		if (node->cmd->cmd == NULL)
+		if (node->cmd->cmdstr == NULL)
 			return (NULL);
 		i = 0;
-		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
+//		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
+		if (node->cmd->cmdstr != NULL) //include expand_cmd_instance?
 		{
-			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
-			i++;
+			expand_cmdstr(node->cmd);
+//			expand_cmd_instance(&(node->cmd->cmdstr), 0);
+//			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
+//			i++;
 		}
 		expand_redir_list(node);
 	}

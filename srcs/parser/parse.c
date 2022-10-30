@@ -258,13 +258,18 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 		}
 		else
 		{
-			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
-			if (node->cmd->cmd[i++] == NULL)
+			if (node->cmd->cmdstr[0] != '\0')
+				node->cmd->cmdstr = ft_joinfree(node->cmd->cmdstr, ft_strdup(" "));
+			node->cmd->cmdstr = ft_joinfree(node->cmd->cmdstr, ft_substr((*tok)->str, 0, (*tok)->len));
+//			node->cmd->cmd[i] = ft_substr((*tok)->str, 0, (*tok)->len);
+//			if (node->cmd->cmd[i++] == NULL)
+			if (node->cmd->cmdstr == NULL)
 				err_exit("malloc error: ");
 			*tok = (*tok)->next;
 		}
 	}
-	node->cmd->cmd[i] = NULL;
+//	printf("%s\n", node->cmd->cmdstr);
+//	node->cmd->cmd[i] = NULL;
 	return (node);
 }
 
@@ -277,8 +282,10 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 		return (NULL);
 	t = *tok;
 	node = new_node(ND_COMMAND);
-	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
-	if (node->cmd->cmd == NULL)
+	node->cmd->cmdstr = ft_strdup("");
+//	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
+//	if (node->cmd->cmd == NULL)
+	if (node->cmd->cmdstr == NULL)
 	{
 		err_exit("malloc error: ");
 	}
