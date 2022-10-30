@@ -1,8 +1,7 @@
 #include "minishell.h"
 #include <dirent.h>
 
-t_env	*g_environ;
-bool	g_signal;
+t_sh_var	g_sh_var={};
 
 void	set_signal_handler(int signum, sig_t sighandler)
 {
@@ -31,7 +30,7 @@ static void tester(char *file_name)
 	if (system(NULL) == 0)
 		return ;
 	printf("\n\n\nfile_name: %s\n", file_name);
-	g_environ = create_env();
+	g_sh_var.environ = create_env();
 	//file_name = "test.txt";
 //	file_name = "test3.txt";
 	fd = open(file_name, O_RDONLY);

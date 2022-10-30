@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	g_exit_status;
+//int	g_sh_var.exit_status;
 
 void	error_checker(char *msg, int n)
 {
@@ -203,7 +203,7 @@ char	*check_path(char *path)
 	char	*join_path;
 	char	**split_path;
 
-	env_path = search_key(g_environ, "PATH");
+	env_path = search_key(g_sh_var.environ, "PATH");
 	if (env_path == NULL)
 		return (NULL);
 	split_path = ft_split(env_path, ':');
@@ -278,8 +278,7 @@ void	exec_others(t_cmd *cmd)
 	char	**envstr;
 	char	*path;
 
-	printf("ok\n");
-	envstr = envlist_to_str(g_environ);
+	envstr = envlist_to_str(g_sh_var.environ);
 	if (is_path(cmd->cmd[0]))
 	{
 		if (is_directory(cmd->cmd[0]))
@@ -442,7 +441,6 @@ int	exe_process(t_cmd *cmd)
 {
 	int	status;
 
-//	ft_putstr_fd("ok\n", 1);
 	errno = 0;
 	status = 0;
 	if (is_redirect(cmd))
@@ -513,7 +511,7 @@ pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
 	pid = 0;
 	if (!pipe_flag && which_builtin(node->cmd->cmd))
 	{
-		g_exit_status = exe_process(node->cmd);
+		g_sh_var.exit_status = exe_process(node->cmd);
 	}
 	else
 //	else if (node->cmd->cmd[0] != NULL)
@@ -550,10 +548,10 @@ void	get_exit_status(pid_t pid)
 					ft_putendl_fd("Quit: 3", 2);
 				//else if(WTERMSIG(status) == SIGINT)
 					//ft_putendl_fd("", 2);
-				g_exit_status = WTERMSIG(status) + 128;
+				g_sh_var.exit_status = WTERMSIG(status) + 128;
 			}
 			else if (WIFEXITED(status))
-				g_exit_status = WEXITSTATUS(status);
+				g_sh_var.exit_status = WEXITSTATUS(status);
 		}
 	}
 }
@@ -565,7 +563,7 @@ void	exec(t_node *node, int pipe_flag)
 	static pid_t	pid;
 
 	errno = 0;
-	//g_exit_status = 0;
+	//g_sh_var.exit_status = 0;
 	if (pipe_flag == 0)
 	{
 		//backup_stdin = dup(0);
@@ -596,6 +594,6 @@ void	exec(t_node *node, int pipe_flag)
 		xclose(backup_stdin);
 		xclose(backup_stdout);
 		get_exit_status(pid);
-//		printf("ex_st: %d\n", g_exit_status);
+//		printf("ex_st: %d\n", g_sh_var.exit_status);
 	}
 }

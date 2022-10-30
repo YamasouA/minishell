@@ -72,7 +72,7 @@ t_node	*syntax_error(t_node *node, t_token *tok, t_token *head)
 	ft_putendl_fd("'", STDERR_FILENO);
 	free_token(head);
 	free_node(node);
-	g_exit_status = 258;
+	g_sh_var.exit_status = 258;
 	return (NULL);
 }
 
@@ -343,14 +343,14 @@ unsigned long	xorshift(void)
 
 static void	heredoc_signal_handler(int sig)
 {
-	g_signal = sig;
+	g_sh_var.signal = sig;
 }
 
 static int	check_state(void)
 {
-	if (g_signal != 0)
+	if (g_sh_var.signal != 0)
 	{
-		//g_signal = 0;
+		//g_sh_var.signal = 0;
 		rl_done = 1;
 	}
 	return (0);
@@ -377,7 +377,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 	while (1)
 	{
 		line = readline("> ");
-		if (g_signal != 0)
+		if (g_sh_var.signal != 0)
 		{
 			*heredoc_err = 1;
 			//printf("\n");

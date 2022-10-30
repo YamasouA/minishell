@@ -4,10 +4,10 @@
 
 #define PROMPT_LENGTH 11
 
-typedef struct termios	t_termios;
 
-t_env	*g_environ;
-bool	g_signal;
+t_sh_var	g_sh_var={};
+//t_env	*g_environ;
+//bool	g_signal;
 
 static void	signal_handler(int sig)
 {
@@ -57,14 +57,14 @@ int	get_print_start(void)
 	return (x - 1);
 }
 
-void	free_envlist(t_env *g_environ)
+void	free_envlist()
 {
 	t_env	*tmp;
 
-	while (g_environ != NULL)
+	while (g_sh_var.environ != NULL)
 	{
-		tmp = g_environ;
-		g_environ = g_environ->next;
+		tmp = g_sh_var.environ;
+		g_sh_var.environ = g_sh_var.environ->next;
 		free(tmp->key);
 		free(tmp->value);
 		free(tmp);
@@ -110,14 +110,14 @@ void	minishell(int argc, char **argv)
 //	struct winsize	ws;
 //	int				line_length;
 
-	g_signal = 0;
+	g_sh_var.signal = 0;
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
-	g_environ = create_env();
+	g_sh_var.environ = create_env();
 	pwd = getcwd(NULL, 0);
-	update_or_add_value(&g_environ, "PWD", pwd);
+	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
-	update_or_add_value(&g_environ, "OLDPWD", NULL);
+	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
 	while (1) //cut func?
 	{
 		heredoc_err = 0;
@@ -133,7 +133,7 @@ void	minishell(int argc, char **argv)
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
-//			free_envlist(g_environ);
+//			free_envlist(g_sh_var.environ);
 			display_exit(x);
 			exit(0); //include display_exit?
 		}
@@ -147,10 +147,10 @@ void	minishell(int argc, char **argv)
 			continue ;
 		}
 		node = parse(tok, &heredoc_err);
-		if (g_signal != 0 || node == NULL)
+		if (g_sh_var.signal != 0 || node == NULL)
 		{
 			free(line);
-			g_signal = 0;
+			g_sh_var.signal = 0;
 			continue ;
 		}
 		node = expansion(node);

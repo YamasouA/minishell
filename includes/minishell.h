@@ -12,6 +12,7 @@
 #include "get_next_line.h"
 
 
+typedef struct termios	t_termios;
 typedef enum e_token_kind		t_kind;
 enum e_token_kind
 {
@@ -41,9 +42,15 @@ struct s_env
 	t_env	*next;
 };
 
-extern t_env	*g_environ;
-extern int	g_exit_status;
-extern bool	g_signal;
+typedef struct s_sh_var	t_sh_var;
+struct s_sh_var
+{
+	t_env	*environ;
+	int	exit_status;
+	volatile bool	signal;
+};
+
+extern t_sh_var	g_sh_var;
 
 typedef enum e_node_kind		t_node_kind;
 enum e_node_kind

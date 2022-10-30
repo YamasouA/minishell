@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-//t_env	*g_environ;
+//t_env	*g_sh_var.environ;
 
 char	*join_with_connector(char *s1, char *s2, char connector)
 {
@@ -40,7 +40,7 @@ char	*no_current_dir(char *path)
 		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
 	
 	//pwd = search_key(env, "PWD");
-	pwd = search_key(g_environ, "PWD");
+	pwd = search_key(g_sh_var.environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
@@ -57,9 +57,9 @@ void	set_pwd(char *path)
 		pwd = no_current_dir(path);
 	//update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
 	//update_or_add_value(&env, "PWD", pwd);
-	update_or_add_value(&g_environ, "OLDPWD", search_key(g_environ, "PWD"));
+	update_or_add_value(&g_sh_var.environ, "OLDPWD", search_key(g_sh_var.environ, "PWD"));
 	printf("ok\n");
-	update_or_add_value(&g_environ, "PWD", pwd);
+	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 }
 
@@ -70,9 +70,9 @@ int	get_path(char *s, char **path)
 
 	status = -1;
 	if (s == NULL)
-		*path = ft_xstrdup(search_key(g_environ, "HOME"));
+		*path = ft_xstrdup(search_key(g_sh_var.environ, "HOME"));
 	else if (ft_strncmp(s, "-", 2) == 0)
-		*path = ft_xstrdup(search_key(g_environ, "OLDPWD"));
+		*path = ft_xstrdup(search_key(g_sh_var.environ, "OLDPWD"));
 	else
 		*path = ft_xstrdup(s);
 	if (*path != NULL)
@@ -110,7 +110,7 @@ int	ft_cd(char **strs)//, t_env *env)
 	int	status;
 	char	*path;
 
-	//status = get_path(g_environ, strs[1], &path);
+	//status = get_path(g_sh_var.environ, strs[1], &path);
 	status = get_path(strs[1], &path);
 	if (status == -1)
 	{
@@ -120,7 +120,7 @@ int	ft_cd(char **strs)//, t_env *env)
 	}
 	status = do_cd(path);
 	if (!status)
-		//set_pwd(g_environ, strs[1]);
+		//set_pwd(g_sh_var.environ, strs[1]);
 		set_pwd(strs[1]);
 	free(path);
 	return (1);

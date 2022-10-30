@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-//t_env	*g_environ;
+//t_env	*g_sh_var.environ;
 
 bool	is_valid_unset_args(char *str)
 {
@@ -39,7 +39,7 @@ void	del_and_free_env(char *key)//, t_env *envp)
 	t_env	*cur;
 
 	prev_env = NULL;
-	cur = g_environ;
+	cur = g_sh_var.environ;
 //	cur = envp;
 	while (cur)
 	{
@@ -47,8 +47,8 @@ void	del_and_free_env(char *key)//, t_env *envp)
 		{
 			if (prev_env)
 				prev_env->next = cur->next;
-			else if (cur == g_environ)
-				g_environ = cur->next;
+			else if (cur == g_sh_var.environ)
+				g_sh_var.environ = cur->next;
 //				envp = cur->next;
 			free_env(&cur);
 			return ;
@@ -73,7 +73,7 @@ int	ft_unset(char **keys)//, t_env *envp)
 			exit_status = 1;
 			continue ;
 		}
-		del_and_free_env(keys[i]);//, g_environ);
+		del_and_free_env(keys[i]);//, g_sh_var.environ);
 		i++;
 	}
 	return (exit_status);

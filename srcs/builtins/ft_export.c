@@ -5,7 +5,7 @@
 #define EXPORT_APPEND 2
 #define EXPORT_ERROR 4
 
-//t_env	*g_environ;
+//t_env	*g_sh_var.environ;
 
 bool	is_valid_var(char *str) // shareable unset func
 {
@@ -69,7 +69,7 @@ int	update_env_var(char *arg, int flag)// t_env *envp
 //	char	*tmp;
 
 	split_args = ft_split(arg, '='); // must free
-	target_var = search_env(g_environ, split_args[0]);
+	target_var = search_env(g_sh_var.environ, split_args[0]);
 	free_args(split_args);
 //	size_t	i;
 //
@@ -118,10 +118,10 @@ void	push_new_env_var(char *arg)//, t_env *envp)
 		err_exit("malloc error: ");
 	else
 		set_data(arg, new);
-//	if (g_environ == NULL)
-//		add_env(&g_environ, new);
+//	if (g_sh_var.environ == NULL)
+//		add_env(&g_sh_var.environ, new);
 //	else
-	add_env(&g_environ, new);
+	add_env(&g_sh_var.environ, new);
 //		add_env(&envp, new);
 }
 
@@ -221,9 +221,9 @@ int	ft_export(char **args)//, t_env *envp)
 
 	exit_status = 0;
 	if (args[1])
-		exit_status = add_var_to_env(args);//, g_environ);
+		exit_status = add_var_to_env(args);//, g_sh_var.environ);
 	else
-		print_prefix_env(g_environ);
+		print_prefix_env(g_sh_var.environ);
 	return (exit_status);
 }
 

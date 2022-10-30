@@ -9,7 +9,7 @@ int	ft_env(char **strs)//, t_env *envp)
 		ft_putstr_fd("env: does not support arguments\n", 2);
 		return (1);
 	}
-	print_env(g_environ);
+	print_env(g_sh_var.environ);
 	return (0);
 }
 

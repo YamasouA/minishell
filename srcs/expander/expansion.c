@@ -49,7 +49,7 @@ char	*find_env(char *var, size_t len)
 {
 	t_env	*tmp;
 
-	tmp = g_environ;
+	tmp = g_sh_var.environ;
 	while (tmp)
 	{
 		if (ft_strlen(tmp->key) == len
@@ -70,7 +70,7 @@ char	*find_env(char *var, size_t len)
 char	*exp_exit_status(int *i)
 {
 	(*i)++;
-	return (ft_strdup(ft_itoa(g_exit_status)));
+	return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
 }
 
 char	*handle_dollar(char *str, int *i)
@@ -91,7 +91,7 @@ char	*handle_dollar(char *str, int *i)
 		return (exp_exit_status(i));
 //	{
 //		(*i)++;
-//		return (ft_strdup(ft_itoa(g_exit_status)));
+//		return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
 //	}
 	if (ft_isalpha(str[j]) || str[j] == '_')
 	{
