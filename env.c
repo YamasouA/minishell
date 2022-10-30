@@ -25,11 +25,28 @@ void	add_env(t_env **env, t_env *new)
 	last->next = new;
 }
 
+t_env	*env_new(char *key, char *value)
+{
+	t_env	*new;
+	new = (t_env *)malloc(sizeof(t_env) * 1);
+	if (new == NULL)
+		err_exit("malloc error: ");
+	new->key = ft_xstrdup(key);
+	new->value = value;
+//	new->value = ft_xstrdup(value);
+	new->next = NULL;
+	return (new);
+}
 void	update_or_add_value(t_env **env, char *key, char *value)
 {
 	t_env *tmp;
 
 	tmp = *env;
+	if (*env == NULL)
+	{
+		*env = env_new(key, value);
+		return ;
+	}
 	while ((*env)->next)
 	{
 		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
@@ -47,13 +64,14 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 	}
 	else
 	{
-		(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
-		if ((*env)->next == NULL)
-			err_exit("malloc error: ");
-		(*env)->next->key = ft_xstrdup(key);
-		(*env)->next->value = value;
-//		(*env)->next->value = ft_xstrdup(value);
-		(*env)->next->next = NULL;
+		(*env)->next = env_new(key, value);
+		//(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
+		//if ((*env)->next == NULL)
+		//	err_exit("malloc error: ");
+		//(*env)->next->key = ft_xstrdup(key);
+		//(*env)->next->value = value;
+//		//(*env)->next->value = ft_xstrdup(value);
+		//(*env)->next->next = NULL;
 	}
 	*env = tmp;
 }
