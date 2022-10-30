@@ -278,7 +278,7 @@ void	exec_others(t_cmd *cmd)
 	char	**envstr;
 	char	*path;
 
-	printf("ok\n");
+//	printf("ok\n");
 	envstr = envlist_to_str(g_environ);
 	if (is_path(cmd->cmd[0]))
 	{
