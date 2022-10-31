@@ -32,7 +32,7 @@ t_env	*env_new(char *key, char *value)
 	if (new == NULL)
 		err_exit("malloc error: ");
 	new->key = ft_xstrdup(key);
-	new->value = value;
+	new->value = ft_xstrdup(value);
 //	new->value = ft_xstrdup(value);
 	new->next = NULL;
 	return (new);
@@ -40,31 +40,42 @@ t_env	*env_new(char *key, char *value)
 void	update_or_add_value(t_env **env, char *key, char *value)
 {
 	t_env *tmp;
+	t_env *target;
+	t_env *last;
 
 	tmp = *env;
 	if (*env == NULL)
 	{
+//		printf("create\n");
 		*env = env_new(key, value);
 		return ;
 	}
-	while ((*env)->next)
+	target = search_env(*env, key);
+//	while ((*env)->next)
+//	{
+//		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
+//			break ;
+//		*env = (*env)->next;
+//	}
+//	if ((*env)->next != NULL)
+	if (target != NULL)
 	{
-		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
-			break ;
-		*env = (*env)->next;
-	}
-	if ((*env)->next != NULL)
-	{
+//		printf("update\n");
 //		printf("prev:%s\n", (*env)->value);
-		free((*env)->value);
+//		free((*env)->value);
+		free(target->value);
 //		(*env)->value = value;
 //		printf("after:%s\n", value);
-		(*env)->value = ft_xstrdup(value);
+//		(*env)->value = ft_xstrdup(value);
+		target->value = ft_xstrdup(value);
 //		printf("ok3\n");
 	}
 	else
 	{
-		(*env)->next = env_new(key, value);
+//		printf("new\n");
+		last = env_last(*env);
+		last->next = env_new(key, value);
+//		(*env)->next = env_new(key, value);
 		//(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
 		//if ((*env)->next == NULL)
 		//	err_exit("malloc error: ");
@@ -74,6 +85,8 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 		//(*env)->next->next = NULL;
 	}
 	*env = tmp;
+//	print_environ(*env);
+//	print_env(*env);
 }
 
 void	set_data(char *environ, t_env *new)
