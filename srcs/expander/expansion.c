@@ -55,7 +55,8 @@ char	*find_env(char *var, size_t len)
 		if (ft_strlen(tmp->key) == len
 			&& ft_strncmp(tmp->key, var, len) == 0)
 		{
-			return (ft_strdup(tmp->value));
+			if (tmp->value != NULL)
+				return (ft_strdup(tmp->value));
 		}
 		tmp = tmp->next;
 	}
@@ -115,7 +116,7 @@ char	*expand_dollar(char *str, char *expanded, int *i)
 //	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
 	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'
 		|| str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')
-		expanded = ft_joinfree(expanded, handle_dollar(str, i));
+		expanded = ft_joinfree(expanded, handle_dollar(str, i)); //should fix
 	else
 	{
 		expanded = ft_joinfree(expanded, ft_strdup("$"));
@@ -245,7 +246,7 @@ char	*expand_documents(char *str)
 	while (str[i])
 	{
 		if (str[i] == '$')
-			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
+			expanded = ft_joinfree(expanded, exp_dollar(str, &i));  //should fix
 		else
 		{
 			head = i;
@@ -280,11 +281,27 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 	}
 }
 
+void	expand_cmd_strs(t_cmd *cmd)
+{
+//	char	*tmp;
+	int		i;
+
+	i = 0;
+	while (cmd->cmd[i] != NULL) //include expand_cmd_instance?
+	{
+//		tmp = ft_xstrdup(cmd->cmd[i]);
+		expand_cmd_instance(&(cmd->cmd[i]), 0);
+		if (cmd->cmd[i] == NULL)
+			cmd->cmd[i] = ft_xstrdup("");
+		i++;
+	}
+}
+
 void	expand_redir(t_redirect *redirect)
 {
 	char	*tmp;
 
-	tmp = ft_strdup(redirect->file_name);
+	tmp = ft_xstrdup(redirect->file_name);
 	expand_cmd_instance(&(redirect->file_name), 0);
 	if (redirect->file_name == NULL)
 	{
@@ -339,11 +356,12 @@ t_node	*expansion(t_node *node)
 		if (node->cmd->cmd == NULL)
 			return (NULL);
 		i = 0;
-		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
-		{
-			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
-			i++;
-		}
+		expand_cmd_strs(node->cmd);
+//		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
+//		{
+//			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
+//			i++;
+//		}
 		expand_redir_list(node);
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
