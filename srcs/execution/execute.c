@@ -291,6 +291,7 @@ void	exec_others(t_cmd *cmd)
 		else if (!access(cmd->cmd[0], X_OK))
 		{
 			execve(cmd->cmd[0], cmd->cmd, envstr);
+			err_exit("execve error: ");
 		}
 		else
 			print_access_err(cmd->cmd[0]);
@@ -310,7 +311,8 @@ void	exec_others(t_cmd *cmd)
 		}
 //		exit(execve(path, cmd->cmd, envstr));
 		execve(path, cmd->cmd, envstr);
-		printf("%s\n", path);
+		err_exit("execve error: ");
+//		printf("%s\n", path);
 	}
 }
 
