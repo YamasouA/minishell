@@ -81,6 +81,6 @@ size_t			ft_searchidx(char *line, char c);
 unsigned int	ft_abs(int n);
 int				ft_max(int n1, int n2);
 
-char	*ft_xstrdup(const char *s1);
-bool	ft_atol_bool(const char *str, long long *i);
+char			*ft_xstrdup(const char *s1);
+bool			ft_atol_bool(const char *str, long long *i);
 #endif
