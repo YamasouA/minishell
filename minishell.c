@@ -110,7 +110,13 @@ void	init(void)
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
 }
 
-//void	minishell(int argc, char **argv)
+void	all_free(t_token *tok, t_node *node, char *line)
+{
+	free(line);
+	free_token(tok);
+	free_node(node);
+}
+
 void	minishell(void)
 {
 	char	*line;
@@ -119,34 +125,16 @@ void	minishell(void)
 	bool	heredoc_err;
 	int		x;
 
-//	g_sh_var.signal = 0;
-//	signal(SIGINT, signal_handler);
-//	line_length = 0;
-//	g_sh_var.environ = create_env();
-//	pwd = getcwd(NULL, 0);
-//	printf("%s\n", pwd);
-//	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
-//	free(pwd);
-//	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
 	init();
 	while (1) //cut func?
 	{
 		errno = 0;
 		heredoc_err = 0;
-		//signal(SIGINT, signal_handler);
 		set_signal_handler(SIGINT, signal_handler);
 		set_signal_handler(SIGQUIT, SIG_IGN);
 		x = get_print_start();
-//		print_env(g_sh_var.environ);
-//		print_environ(g_sh_var.environ);
 		line = readline("minishell> ");
-//		print_environ(g_sh_var.environ);
-//		printf("%s\n", line);
-//		line = readline("\e[32mminishell\e[0m> "); //green
-//		line = readline("\e[36mminishell\e[0m> "); //cyan
-		//signal(SIGINT, SIG_IGN);
 		set_signal_handler(SIGINT, SIG_IGN);
-//		print_env(g_sh_var.environ);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
@@ -171,13 +159,12 @@ void	minishell(void)
 			continue ;
 		}
 		node = expansion(node);
-		//printf("==EXPANSION==\n");
-		//print_node(node, 0);
 		exec(node, 0);
+		/*
 		free(line); //cut func?
 		free_token(tok);
 		free_node(node);
+		*/
+		all_free(tok, node, line);
 	}
-//	argc = 0;
-//	strlen(*argv);
 }
