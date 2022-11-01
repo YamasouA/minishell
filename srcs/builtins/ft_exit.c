@@ -40,7 +40,7 @@ void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 	i = 0;
 	is_digit = true;
 	//if (strs[1][i] == '-' | strs[1][i] == '+')
-	if (strs[idx][i] == '-' | strs[idx][i] == '+')
+	if (strs[idx][i] == '-' || strs[idx][i] == '+')
 		i++;
 	while (strs[idx][i])
 	{

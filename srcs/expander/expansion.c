@@ -349,13 +349,13 @@ void	expand_redir_list(t_node *node)
 
 t_node	*expansion(t_node *node)
 {
-	int			i;
+//	int			i;
 
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (node->cmd->cmd == NULL)
 			return (NULL);
-		i = 0;
+//		i = 0;
 		expand_cmd_strs(node->cmd);
 //		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
 //		{
