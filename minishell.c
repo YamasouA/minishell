@@ -97,7 +97,7 @@ void	set_signal_handler(int signum, sig_t sighandler)
 		err_exit("signal error: ");
 }
 
-void	init(void)
+void	init(char **line, t_token **tok, t_node **node)
 {
 	char	*pwd;
 
@@ -108,13 +108,45 @@ void	init(void)
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
+	line = NULL;
+	tok = NULL;
+	node = NULL;
 }
 
-void	all_free(t_token *tok, t_node *node, char *line)
+void	all_free(char *line, t_token *tok, t_node *node)
 {
 	free(line);
 	free_token(tok);
 	free_node(node);
+}
+
+char	*readline_wrapper(int *x)
+{
+	char	*line;
+
+	*x = get_print_start();
+	line = readline("minishell> ");
+	if (line == NULL)
+	{
+		display_exit(*x);
+		exit(0);
+	}
+	if (ft_strlen(line) != 0)
+		add_history(line);
+	return (line);
+}
+
+void	loop_init(bool *heredoc_err, char **line, t_token **tok, t_node **node)
+{
+	errno = 0;
+	g_sh_var.signal = 0;
+	*heredoc_err = 0;
+	set_signal_handler(SIGINT, signal_handler);
+	set_signal_handler(SIGQUIT, SIG_IGN);
+	all_free(*line, *tok, *node);
+	*line = NULL;
+	*tok = NULL;
+	*node = NULL;
 }
 
 void	minishell(void)
@@ -125,16 +157,19 @@ void	minishell(void)
 	bool	heredoc_err;
 	int		x;
 
-	init();
+	init(&line, &tok, &node);
 	while (1) //cut func?
 	{
-		errno = 0;
-		heredoc_err = 0;
-		set_signal_handler(SIGINT, signal_handler);
-		set_signal_handler(SIGQUIT, SIG_IGN);
-		x = get_print_start();
-		line = readline("minishell> ");
+		//errno = 0;
+		//heredoc_err = 0;
+		//set_signal_handler(SIGINT, signal_handler);
+		//set_signal_handler(SIGQUIT, SIG_IGN);
+		loop_init(&heredoc_err, &line, &tok, &node);
+		//x = get_print_start();
+		//line = readline("minishell> ");
+		line = readline_wrapper(&x);
 		set_signal_handler(SIGINT, SIG_IGN);
+		/*
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
@@ -142,22 +177,23 @@ void	minishell(void)
 			display_exit(x);
 			exit(0); //include display_exit?
 		}
+		*/
 		if (ft_strlen(line) == 0)
 			continue ;
-		add_history(line);
+		//add_history(line);
 		tok = lexer(line);
 		if (tok == NULL)
-		{
-			free(line);
+		//{
+			//free(line);
 			continue ;
-		}
+		//}
 		node = parse(tok, &heredoc_err);
 		if (g_sh_var.signal != 0 || node == NULL)
-		{
-			free(line);
-			g_sh_var.signal = 0;
+		//{
+			//free(line);
+			//g_sh_var.signal = 0;
 			continue ;
-		}
+		//}
 		node = expansion(node);
 		exec(node, 0);
 		/*
@@ -165,6 +201,6 @@ void	minishell(void)
 		free_token(tok);
 		free_node(node);
 		*/
-		all_free(tok, node, line);
+		//all_free(line, tok, node);
 	}
 }
