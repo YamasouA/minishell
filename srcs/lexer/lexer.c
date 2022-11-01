@@ -20,7 +20,6 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 	return (token);
 }
 
-//bool	is_keyword(char c)
 bool	is_meta(char c)
 {
 	return (strchr(" \t|<>", c));
@@ -76,7 +75,7 @@ char	*find_quote(char *line, char quote)
 {
 	while (*line != '\0')
 	{
-		if (*line == quote)// && *(line - 1) != '\\')
+		if (*line == quote)
 			return (line);
 		line++;
 	}
@@ -88,7 +87,6 @@ ssize_t	len_word(char *line)
 	char	*tmp;
 
 	tmp = line;
-	//while (*tmp != '\0' && !is_keyword(*tmp))
 	while (*tmp != '\0' && !is_meta(*tmp))
 	{
 		if (*tmp == '\'' || *tmp == '"')
@@ -115,13 +113,11 @@ void	free_token_list(t_token *head)
 	}
 }
 
-//void	tokenize_error(char *token, t_token *head)
 void	tokenize_error(char token, t_token *head)
 {
 	g_sh_var.exit_status = 258;
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	ft_putchar_fd(token, 2);
-//	ft_putstr_fd(token, 2);
 	ft_putstr_fd("'\n", 2);
 	free_token_list(head);
 }
@@ -164,17 +160,13 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 		len = len_keyword(line);
 		if (len > 0)
 			cur->next = create_token(TK_KEYWORD, line, len);
-		//else if (!is_keyword(*line))
 		else if (!is_meta(*line))
 		{
 			len = len_word(line);
 			if (len == -1)
 			{
-				// how handle error?
 				quote_error(line, head);
-//				tokenize_error(line, head);
 				return (NULL);
-//				break;
 			}
 			cur->next = create_token(TK_STR, line, len);
 		}
@@ -183,7 +175,6 @@ t_token	*tokenize(t_token *cur, char *line, t_token *head)
 		{
 			tokenize_error(*line, head);
 			return (NULL);
-//			ft_exit2("error");
 		}
 		cur = cur->next;
 	}
@@ -194,43 +185,10 @@ t_token	*lexer(char *line)
 {
 	t_token	head;
 	t_token	*cur;
-	//t_token	*head;
-	//ssize_t	len;
 
-	//head = create_token(TK_HEAD, "", 0);
-	//cur = head;
 	cur = &head;
 	cur->next = NULL;
 	if (!tokenize(cur, line, &head))
 		return (NULL);
-	/*
-	while (*line != '\0')
-	{
-		if (ft_isspace(line)) 
-		{
-			line++;
-			continue;
-		}
-		len = len_keyword(line);
-		if (len > 0)
-		{
-			cur->next = create_token(TK_KEYWORD, line, len);
-			line += len;
-		}
-		else if (!is_keyword(*line))
-		{
-			len = len_word(line);
-			if (len == -1)
-				ft_exit("hello");
-			cur->next = create_token(TK_STR, line, len);
-			line += len;
-		}
-		if (cur->next == NULL)
-			printf("error");
-		cur = cur->next;
-	}*/
-//	print_list(head);
-//	printf("ok\n");
-	//return (head->next);
 	return (head.next);
 }

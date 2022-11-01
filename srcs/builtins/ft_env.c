@@ -1,6 +1,24 @@
 #include "minishell.h"
 
 //t_env	*g_environ;
+//void	print_environ(t_env *env)
+//{
+//	t_env	*tmp;
+//
+//	tmp = env;
+//	while (tmp)
+//	{
+//		if (tmp->value)
+//		{
+//			ft_putstr_fd(tmp->key, 1);
+//			ft_putchar_fd('=', 1);
+//			ft_putstr_fd(tmp->value, 1);
+//			ft_putchar_fd('\n', 1);
+//		}
+////			printf("%s=%s\n", tmp->key, tmp->value);
+//		tmp = tmp->next;
+//	}
+//}
 
 int	ft_env(char **strs)//, t_env *envp)
 {

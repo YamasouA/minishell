@@ -60,8 +60,8 @@ B_SRCS_FILES	=	ft_lstnew.c \
 	 		ft_lstiter.c \
 	 		ft_lstmap.c
 GET_NEXT_LINE_DIR = get_next_line/
-GET_NEXT_LINE_FILES = get_next_line.c \
-				get_next_line_utils.c
+GET_NEXT_LINE_FILES = get_next_line.c
+#				get_next_line_utils.c
 b_flag	=	false
 SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILES))
 B_SRCS = $(addprefix $(B_SRCS_DIR), $(B_SRCS_FILES))

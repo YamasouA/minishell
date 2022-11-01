@@ -2,9 +2,6 @@
 
 t_env	*env_last(t_env *env)
 {
-//	int	i;
-
-//	i = 0;
 	if (env == NULL)
 		return (NULL);
 	while (env->next != NULL)
@@ -28,72 +25,45 @@ void	add_env(t_env **env, t_env *new)
 t_env	*env_new(char *key, char *value)
 {
 	t_env	*new;
+
 	new = (t_env *)malloc(sizeof(t_env) * 1);
 	if (new == NULL)
 		err_exit("malloc error: ");
 	new->key = ft_xstrdup(key);
 	new->value = ft_xstrdup(value);
-//	new->value = ft_xstrdup(value);
 	new->next = NULL;
 	return (new);
 }
+
 void	update_or_add_value(t_env **env, char *key, char *value)
 {
-	t_env *tmp;
-	t_env *target;
-	t_env *last;
+	t_env	*tmp;
+	t_env	*target;
+	t_env	*last;
 
 	tmp = *env;
 	if (*env == NULL)
 	{
-//		printf("create\n");
 		*env = env_new(key, value);
 		return ;
 	}
 	target = search_env(*env, key);
-//	while ((*env)->next)
-//	{
-//		if (ft_strncmp((*env)->key, key, ft_strlen(key) + 1) == 0)
-//			break ;
-//		*env = (*env)->next;
-//	}
-//	if ((*env)->next != NULL)
 	if (target != NULL)
 	{
-//		printf("update\n");
-//		printf("prev:%s\n", (*env)->value);
-//		free((*env)->value);
 		free(target->value);
-//		(*env)->value = value;
-//		printf("after:%s\n", value);
-//		(*env)->value = ft_xstrdup(value);
 		target->value = ft_xstrdup(value);
-//		printf("ok3\n");
 	}
 	else
 	{
-//		printf("new\n");
 		last = env_last(*env);
 		last->next = env_new(key, value);
-//		(*env)->next = env_new(key, value);
-		//(*env)->next = (t_env *)malloc(sizeof(t_env) * 1);
-		//if ((*env)->next == NULL)
-		//	err_exit("malloc error: ");
-		//(*env)->next->key = ft_xstrdup(key);
-		//(*env)->next->value = value;
-//		//(*env)->next->value = ft_xstrdup(value);
-		//(*env)->next->next = NULL;
 	}
 	*env = tmp;
-//	print_environ(*env);
-//	print_env(*env);
 }
 
 void	set_data(char *environ, t_env *new)
 {
 	char	*eq_pos;
-//	char	key;
-//	char	value;
 
 	if (new == NULL)
 		printf("error");
@@ -102,7 +72,6 @@ void	set_data(char *environ, t_env *new)
 	{
 		new->key = ft_strdup(environ);
 		if (new->key == NULL)
-			//printf("error");
 			err_exit("malloc error:");
 		new->value = NULL;
 	}
@@ -111,7 +80,6 @@ void	set_data(char *environ, t_env *new)
 		new->key = ft_substr(environ, 0, eq_pos - environ);
 		new->value = ft_strdup(eq_pos + 1);
 		if (new->key == NULL || new->value == NULL)
-			//printf("error");
 			err_exit("malloc error:");
 	}
 	new->is_env = true;

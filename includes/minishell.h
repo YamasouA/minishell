@@ -3,8 +3,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <errno.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -123,7 +125,8 @@ void	update_or_add_value(t_env **env, char *key, char *value);
 void	print_env(t_env *env);
 
 // minishell.c
-void	minishell(int argc, char **argv);
+void	minishell(void);
+//void	minishell(int argc, char **argv);
 void	set_signal_handler(int signum, sig_t sighandler);
 char	*read_line();
 
@@ -154,6 +157,7 @@ int		ft_export(char **args);//, t_env *envp);
 int		ft_unset(char **keys);//, t_env *envp);
 int		ft_env(char **strs);//, t_env *envp);
 int		ft_exit(char **strs);//, t_env *envp);
+//void	print_environ(t_env *env);
 
 // srcs/execution
 void	exec(t_node *node, int pipe_flag);

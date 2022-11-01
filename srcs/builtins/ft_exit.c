@@ -11,8 +11,8 @@ void	exit_with_str(char **strs, int i)
 
 void	exit_with_number(char **strs, size_t cnt, size_t i)
 {
-	long long n;
-	bool	ret;
+	long long	n;
+	bool		ret;
 
 	if (cnt > i + 1)
 	{
@@ -39,7 +39,6 @@ void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 
 	i = 0;
 	is_digit = true;
-	//if (strs[1][i] == '-' | strs[1][i] == '+')
 	if (strs[idx][i] == '-' || strs[idx][i] == '+')
 		i++;
 	while (strs[idx][i])
@@ -47,7 +46,7 @@ void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 		if (!ft_isdigit(strs[idx][i]))
 		{
 			is_digit = false;
-			break;
+			break ;
 		}
 		i++;
 	}
@@ -72,7 +71,7 @@ void	handle_hyphen(char **strs, int cnt)
 	}
 }
 
-int ft_exit(char **strs)//, t_env *envp)
+int	ft_exit(char **strs)
 {
 	size_t	cnt;
 

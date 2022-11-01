@@ -4,8 +4,7 @@
 
 #define PROMPT_LENGTH 11
 
-
-t_sh_var	g_sh_var={};
+t_sh_var	g_sh_var = {};
 //t_env	*g_environ;
 //bool	g_signal;
 
@@ -57,7 +56,7 @@ int	get_print_start(void)
 	return (x - 1);
 }
 
-void	free_envlist()
+void	free_envlist(void)
 {
 	t_env	*tmp;
 
@@ -98,38 +97,56 @@ void	set_signal_handler(int signum, sig_t sighandler)
 		err_exit("signal error: ");
 }
 
-void	minishell(int argc, char **argv)
+void	init(void)
+{
+	char	*pwd;
+
+	errno = 0;
+	g_sh_var.signal = 0;
+	g_sh_var.environ = create_env();
+	pwd = getcwd(NULL, 0);
+	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
+	free(pwd);
+	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
+}
+
+//void	minishell(int argc, char **argv)
+void	minishell(void)
 {
 	char	*line;
 	t_token	*tok;
 	t_node	*node;
 	bool	heredoc_err;
 	int		x;
-	char	*pwd;
-//	t_env	*pwd;
-//	struct winsize	ws;
-//	int				line_length;
 
-	g_sh_var.signal = 0;
+//	g_sh_var.signal = 0;
 //	signal(SIGINT, signal_handler);
 //	line_length = 0;
-	g_sh_var.environ = create_env();
-	pwd = getcwd(NULL, 0);
-	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
-	free(pwd);
-	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
+//	g_sh_var.environ = create_env();
+//	pwd = getcwd(NULL, 0);
+//	printf("%s\n", pwd);
+//	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
+//	free(pwd);
+//	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
+	init();
 	while (1) //cut func?
 	{
+		errno = 0;
 		heredoc_err = 0;
 		//signal(SIGINT, signal_handler);
 		set_signal_handler(SIGINT, signal_handler);
 		set_signal_handler(SIGQUIT, SIG_IGN);
 		x = get_print_start();
+//		print_env(g_sh_var.environ);
+//		print_environ(g_sh_var.environ);
 		line = readline("minishell> ");
+//		print_environ(g_sh_var.environ);
+//		printf("%s\n", line);
 //		line = readline("\e[32mminishell\e[0m> "); //green
 //		line = readline("\e[36mminishell\e[0m> "); //cyan
 		//signal(SIGINT, SIG_IGN);
 		set_signal_handler(SIGINT, SIG_IGN);
+//		print_env(g_sh_var.environ);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 			// free(line);
@@ -137,7 +154,7 @@ void	minishell(int argc, char **argv)
 			display_exit(x);
 			exit(0); //include display_exit?
 		}
-		if (strlen(line) == 0)
+		if (ft_strlen(line) == 0)
 			continue ;
 		add_history(line);
 		tok = lexer(line);
@@ -161,6 +178,6 @@ void	minishell(int argc, char **argv)
 		free_token(tok);
 		free_node(node);
 	}
-	argc = 0;
-	strlen(*argv);
+//	argc = 0;
+//	strlen(*argv);
 }

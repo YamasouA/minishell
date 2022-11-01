@@ -13,8 +13,6 @@ char	*handle_s_quote(char *str, int *i)
 		j++;
 	}
 	in_quote_str = ft_substr(str, quote_head_index, j);
-	//if (in_quote_str == NULL)
-	//	err_exit("malloc error: ");
 	(*i)++;
 	return (in_quote_str);
 }
@@ -63,11 +61,6 @@ char	*find_env(char *var, size_t len)
 	return (ft_strdup(""));
 }
 
-//bool	ft_isspace2(char c) //rename
-//{
-//	return (c == ' ' || c == '\t' || c == '\v' || c == '\r');
-//}
-
 char	*exp_exit_status(int *i)
 {
 	(*i)++;
@@ -90,10 +83,6 @@ char	*handle_dollar(char *str, int *i)
 	j = *i;
 	if (str[j] == '?')
 		return (exp_exit_status(i));
-//	{
-//		(*i)++;
-//		return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
-//	}
 	if (ft_isalpha(str[j]) || str[j] == '_')
 	{
 		while (ft_isalnum(str[j]) || str[j] == '_')
@@ -101,29 +90,21 @@ char	*handle_dollar(char *str, int *i)
 	}
 	else if (ft_isdigit(str[j]))
 		j++;
-//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-//		&& str[j] != '\'' && str[j] != '\"')
-//		j++;
 	var = find_env(&str[*i], j - *i);
-	//if (var == NULL)
-	//	err_exit("malloc error: ");
 	*i = j;
 	return (var);
 }
 
 char	*expand_dollar(char *str, char *expanded, int *i)
 {
-//	if (str[*i + 1] && !isspace(str[*i + 1]) && str[*i + 1] != '$')
 	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'
 		|| str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')
-		expanded = ft_joinfree(expanded, handle_dollar(str, i)); //should fix
+		expanded = ft_joinfree(expanded, handle_dollar(str, i));
 	else
 	{
 		expanded = ft_joinfree(expanded, ft_strdup("$"));
 		*i += 1;
 	}
-	//if (expanded == NULL)
-	//	err_exit("malloc error: ");
 	return (expanded);
 }
 
@@ -133,26 +114,19 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	ssize_t	j;
 
 	s = ft_strdup("");
-	//if (s == NULL)
-	//	err_exit("malloc error: ")
 	j = *i + 1;
 	while (str[++(*i)] != '\"' && str[(*i)])
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
 			s = ft_joinfree(s, ft_substr(str, j, *i - j));
-			//if (s == NULL)
-			//	err_exit("malloc error:");
-			s = expand_dollar(str, s, i);//handle_dollar(str, i));
-//			s = ft_joinfree(s, handle_dollar(str, i));
+			s = expand_dollar(str, s, i);
 			j = *i;
 			(*i)--;
 		}
 	}
 	if (str[*i])
 		s = ft_joinfree(s, ft_substr(str, j, *i - j));
-	//if (s == NULL)
-	//	err_exit("malloc error:");
 	(*i)++;
 	return (s);
 }
@@ -172,11 +146,8 @@ char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
 	int		i;
-//	int		head;
 
 	expanded = ft_strdup("");
-	//if (expanded == NULL)
-	//	err_exit("malloc error: ")
 	i = 0;
 	while (str[i])
 	{
@@ -194,13 +165,7 @@ char	*expand(char *str, bool heredoc)
 			}
 		}
 		else
-		{
-//			head = i;
-//			while (str[i] && str[i] != '\'' && str[i] != '\"'
-//				&& (str[i] != '$' || heredoc))
-//				i++;
-			expanded = ft_joinfree(expanded, handle_normal(str, &i, heredoc));//ft_substr(str, head, i - head));
-		}
+			expanded = ft_joinfree(expanded, handle_normal(str, &i, heredoc));
 		if (expanded == NULL)
 			err_exit("malloc error");
 	}
@@ -213,8 +178,6 @@ char	*exp_dollar(char *str, int *i)
 	int		j;
 
 	*(i) += 1;
-	//if (!str[*i] || isspace(str[*i]) || str[*i] == '\'' || str[*i] == '\"'
-	//	|| str[*i] == '\n' || str[*i] == '$')
 	if (!ft_isalnum(str[*i]))
 		return (ft_strdup("$"));
 	j = *i;
@@ -225,12 +188,7 @@ char	*exp_dollar(char *str, int *i)
 	}
 	else if (ft_isdigit(str[j]))
 		j++;
-//	while (str[j] != '$' && str[j] && !ft_isspace2(str[j])
-//		&& str[j] != '\'' && str[j] != '\"' && str[j] != '\n')
-//		j++;
 	var = find_env(&str[*i], j - *i);
-	//if (var == NULL)
-	//	err_exit("malloc error");
 	*i = j;
 	return (var);
 }
@@ -246,7 +204,7 @@ char	*expand_documents(char *str)
 	while (str[i])
 	{
 		if (str[i] == '$')
-			expanded = ft_joinfree(expanded, exp_dollar(str, &i));  //should fix
+			expanded = ft_joinfree(expanded, exp_dollar(str, &i));
 		else
 		{
 			head = i;
@@ -283,13 +241,11 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 
 void	expand_cmd_strs(t_cmd *cmd)
 {
-//	char	*tmp;
 	int		i;
 
 	i = 0;
-	while (cmd->cmd[i] != NULL) //include expand_cmd_instance?
+	while (cmd->cmd[i] != NULL)
 	{
-//		tmp = ft_xstrdup(cmd->cmd[i]);
 		expand_cmd_instance(&(cmd->cmd[i]), 0);
 		if (cmd->cmd[i] == NULL)
 			cmd->cmd[i] = ft_xstrdup("");
@@ -349,19 +305,11 @@ void	expand_redir_list(t_node *node)
 
 t_node	*expansion(t_node *node)
 {
-//	int			i;
-
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		if (node->cmd->cmd == NULL)
 			return (NULL);
-//		i = 0;
 		expand_cmd_strs(node->cmd);
-//		while (node->cmd->cmd[i] != NULL) //include expand_cmd_instance?
-//		{
-//			expand_cmd_instance(&(node->cmd->cmd[i]), 0);
-//			i++;
-//		}
 		expand_redir_list(node);
 	}
 	if (node->lhs != NULL || node->rhs != NULL)

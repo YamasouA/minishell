@@ -105,11 +105,8 @@ bool	peek(t_token *tok, char *op)
 
 bool	consume(t_token **tok, char *op)
 {
-//	t_token	*t;
-
 	if (!peek(*tok, op))
 		return (false);
-//	t = *tok;
 	*tok = (*tok)->next;
 	return (true);
 }
@@ -220,7 +217,6 @@ void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag)
 	if (*tok == NULL || (*tok)->kind == TK_KEYWORD)
 	{
 		*error_flag = 1;
-		//perror("OUT!!");
 		return ;
 	}
 	if (type == REDIRECT_IN || type == HEREDOC)
@@ -271,11 +267,9 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 {
 	t_node	*node;
-//	t_token	*t;
 
 	if (*tok == NULL)
 		return (NULL);
-//	t = *tok;
 	node = new_node(ND_COMMAND);
 	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
@@ -361,12 +355,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 	char	*documents;
 	char	*line;
 	char	*exp_deli;
-	//pid_t	pid;
-	//int		status;
-//	int		doc_len;
 
-	//signal(SIGINT, SIG_IGN);
-//	signal(SIGINT, heredoc_signal_handler);
 	exp_deli = expand(deli, 1);
 	documents = ft_strdup("");
 //	if (documents == NULL)
@@ -391,7 +380,6 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			free(documents);
 			return (NULL);
 		}
-		//printf("line:%s;", line);
 		if (line == NULL)// || strlen(line) == 0)
 		{
 //			printf("\e[1A\e[2C");
@@ -403,17 +391,11 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			free(line);
 			break ;
 		}
-		//documents = ft_strjoin(documents, line); //needs free
-		documents = ft_joinfree(documents, line); //needs free
+		documents = ft_joinfree(documents, line);
 		documents = ft_joinfree(documents, ft_strdup("\n"));
 		if (documents == NULL)
 			err_exit("malloc error: ");
 	}
-//	doc_len = ft_strlen(documents);
-//	if (doc_len)
-//		documents[doc_len - 1] = '\0';
-//	printf("%s", documents);
-	//signal(SIGINT, SIG_IGN);
 	set_signal_handler(SIGINT, SIG_IGN);
 	free(exp_deli);
 	return (documents);
@@ -431,45 +413,21 @@ void	get_documents(t_redirect *redirect_in, bool *err)
 		if (redirect_in->type == HEREDOC)
 		{
 			redirect_in->documents = read_heredoc(redirect_in->delemiter, err);
-			//printf("heredoc: %d\n", heredoc_err);
 			numstr = ft_ultoa(xorshift());
-//				printf("%s\n", numstr);
 			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
 			if (redirect_in->file_name == NULL)
 				err_exit("malloc error: ");
-//				printf("%s\n", node->cmd->redirect_in->file_name);
 			free(numstr);
 		}
 	}
-	redirect_in = tmp;	
+	redirect_in = tmp;
 }
 
 void	heredoc(t_node *node, bool *heredoc_err)
 {
-//	int			i;
-//	char		*numstr;
-//	t_redirect	*tmp;
-
-//	i = 0;
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
 		get_documents(node->cmd->redirect_in, heredoc_err);
-//		tmp = node->cmd->redirect_in;
-//		while (node->cmd->redirect_in->next)
-//		{
-//			node->cmd->redirect_in = node->cmd->redirect_in->next;
-//			if (node->cmd->redirect_in->type == HEREDOC)
-//			{
-//				node->cmd->redirect_in->documents = read_heredoc(node->cmd->redirect_in->delemiter, heredoc_err);
-//				//printf("heredoc: %d\n", heredoc_err);
-//				numstr = ft_ultoa(xorshift());
-////				printf("%s\n", numstr);
-//				node->cmd->redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
-////				printf("%s\n", node->cmd->redirect_in->file_name);
-//				free(numstr);
-//			}
-//		}
-//		node->cmd->redirect_in = tmp;
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{

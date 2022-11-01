@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-//t_env	*g_sh_var.environ;
-
 char	*join_with_connector(char *s1, char *s2, char connector)
 {
 	size_t	len1;
@@ -30,40 +28,31 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	return (s);
 }
 
-//char	*no_current_dir(t_env *env, char *path)
 char	*no_current_dir(char *path)
 {
 	char	*pwd;
 	char	*newpwd;
 
 	ft_putendl_fd("cd: error retrieving current directory: \
-		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);
-	
-	//pwd = search_key(env, "PWD");
+		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);	
 	pwd = search_key(g_sh_var.environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
 }
 
-//void	set_pwd(t_env *env, char *path)
 void	set_pwd(char *path)
 {
 	char	*pwd;
 
-	pwd = getcwd(NULL, 0); 
+	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
-		//pwd = no_current_dir(env, path);
 		pwd = no_current_dir(path);
-	//update_or_add_value(&env, "OLDPWD", search_key(env, "PWD"));
-	//update_or_add_value(&env, "PWD", pwd);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", search_key(g_sh_var.environ, "PWD"));
-	printf("ok\n");
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 }
 
-//int	get_path(t_env *env, char *s, char **path)
 int	get_path(char *s, char **path)
 {
 	int	status;
@@ -86,10 +75,10 @@ int	get_path(char *s, char **path)
 
 void	print_error(char *dir, char *msg)
 {
-		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
-		ft_putstr_fd(dir, STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putendl_fd(msg, STDERR_FILENO);
+	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+	ft_putstr_fd(dir, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(msg, STDERR_FILENO);
 }
 
 int	do_cd(char *path)
@@ -105,12 +94,11 @@ int	do_cd(char *path)
 	return (0);
 }
 
-int	ft_cd(char **strs)//, t_env *env)
+int	ft_cd(char **strs)
 {
-	int	status;
+	int		status;
 	char	*path;
 
-	//status = get_path(g_sh_var.environ, strs[1], &path);
 	status = get_path(strs[1], &path);
 	if (status == -1)
 	{
@@ -120,7 +108,6 @@ int	ft_cd(char **strs)//, t_env *env)
 	}
 	status = do_cd(path);
 	if (!status)
-		//set_pwd(g_sh_var.environ, strs[1]);
 		set_pwd(strs[1]);
 	free(path);
 	return (1);

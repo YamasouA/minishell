@@ -63,7 +63,9 @@ OBJS += $(BUILTIN_OBJS)
 OBJS += $(EXEC_OBJS)
 OBJS += $(UTILS_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
-LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
+#CFLAGS = -g -Werror -Wextra -Wall -I /lib/home/linuxbrew/.linuxbrew/opt/readline/include
+LDFLAGS = -L$(shell brew --prefix readline)/lib -lreadline -lhistory
+#LDFLAGS= -L /lib/home/linuxbrew/.linuxbrew/opt/readline/lib -lreadline -lhistory
 INCLUDE = -I includes -I ./libft/includes 
 LIBFT = libft/libft.a
 
@@ -73,7 +75,8 @@ all: $(NAME)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT) $(LDFLAGS)
+#	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT)
 
 ltest: $(LEXER_TEST_OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o test $(LEXER_TEST_OBJS) $(LIBFT)
@@ -83,7 +86,7 @@ $(LIBFT):
 
 clean:
 	$(MAKE) clean -C ./libft
-	$(RM) *.o
+	$(RM) $(OBJS)
 	$(RM) *.TMP
 
 fclean: clean

@@ -25,7 +25,7 @@ bool	is_valid_var(char *str) // shareable unset func
 	return (true);
 }
 
-void	free_args(char **args)
+void	free_args(char **args) //same free_strs
 {
 	size_t	i;
 
@@ -60,43 +60,17 @@ void	update_target_var_value(char *arg, t_env *target_var, int flag)
 	return ;
 }
 
-int	update_env_var(char *arg, int flag)// t_env *envp
+int	update_env_var(char *arg, int flag)
 {
-//	char	*equal_pos;
 	char	**split_args;
-//	char	*value;
 	t_env	*target_var;
-//	char	*tmp;
 
-	split_args = ft_split(arg, '='); // must free
+	split_args = ft_split(arg, '=');
 	target_var = search_env(g_sh_var.environ, split_args[0]);
 	free_args(split_args);
-//	size_t	i;
-//
-//	i = 0;
-//	while (split_args[i])
-//	{
-//		free(split_args[i++]);
-//	}
-//	free(split_args);
-//	free(split_args);
 	if (target_var)
 	{
 		update_target_var_value(arg, target_var, flag);
-//		equal_pos = ft_strchr(arg, '=');
-//		if (!equal_pos)
-//			return (1);
-//		value = ft_substr(equal_pos, 1, ft_strlen(equal_pos + 1));
-//		if (flag & EXPORT_APPEND)
-//		{
-//			target_var->value = ft_joinfree(target_var->value, value);
-//		}
-//		else if (flag & EXPORT_NEW)
-//		{
-//			tmp = target_var->value;
-//			target_var->value = value;
-//			free(tmp);
-//		}
 		return (1);
 	}
 	return (0);
@@ -109,7 +83,7 @@ void	print_invalid_identifier(char *str)
 	ft_putstr_fd("': not a valid identifier\n", 2);
 }
 
-void	push_new_env_var(char *arg)//, t_env *envp)
+void	push_new_env_var(char *arg)
 {
 	t_env	*new;
 
@@ -118,11 +92,7 @@ void	push_new_env_var(char *arg)//, t_env *envp)
 		err_exit("malloc error: ");
 	else
 		set_data(arg, new);
-//	if (g_sh_var.environ == NULL)
-//		add_env(&g_sh_var.environ, new);
-//	else
 	add_env(&g_sh_var.environ, new);
-//		add_env(&envp, new);
 }
 
 int	is_append_flag(char **key, char *eq_pos)
@@ -134,7 +104,7 @@ int	is_append_flag(char **key, char *eq_pos)
 		*(eq_pos - 1) = '\0'; //move below if (is_append_flag) ?
 		tmp = *key;
 		*key = ft_strjoin(*key, eq_pos);
-		free(tmp); //The actual argument(key) is taken in malloc, so it is free.
+		free(tmp);
 		if (*key == NULL)
 			err_exit("malloc error: ");
 		return (1);
@@ -147,12 +117,9 @@ int	which_update_flag(char **key)
 	char	*var_name;
 	char	*eq_pos;
 	int		flag;
-//	char	**split_args;
 
 	flag = EXPORT_NONE;
 	eq_pos = ft_strchr(*key, '=');
-//	if (eq_pos)
-//	{
 	if (is_append_flag(key, eq_pos))
 	{
 		flag = EXPORT_APPEND;
@@ -164,24 +131,17 @@ int	which_update_flag(char **key)
 		flag = EXPORT_NEW;
 		var_name = ft_substr(*key, 0, eq_pos - key[0]);
 	}
-//	}
-//	split_args = ft_split(*key, '=');
-//	equal_pos = ft_strchr(arg, '=');
-
-//	if (!is_valid_var(split_args[0]))
 	if (!is_valid_var(var_name))
 	{
 		free(var_name);
-//		free_args(split_args);
 		print_invalid_identifier(*key);
 		return (EXPORT_ERROR);
 	}
-//	free_args(split_args);
 	free(var_name);
 	return (flag);
 }
 
-int	add_var_to_env(char **args)//, t_env *envp)
+int	add_var_to_env(char **args)
 {
 	int	i;
 	int	flag;
@@ -197,7 +157,7 @@ int	add_var_to_env(char **args)//, t_env *envp)
 		if (flag & EXPORT_NEW || flag & EXPORT_APPEND)
 		{
 			if (!update_env_var(args[i], flag))
-				push_new_env_var(args[i]);//, envp);
+				push_new_env_var(args[i]);
 		}
 	}
 	return (exit_status);
@@ -215,13 +175,13 @@ void	print_prefix_env(t_env *envp)
 	}
 }
 
-int	ft_export(char **args)//, t_env *envp)
+int	ft_export(char **args)
 {
 	int	exit_status;
 
 	exit_status = 0;
 	if (args[1])
-		exit_status = add_var_to_env(args);//, g_sh_var.environ);
+		exit_status = add_var_to_env(args);
 	else
 		print_prefix_env(g_sh_var.environ);
 	return (exit_status);
