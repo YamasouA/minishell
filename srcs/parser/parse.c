@@ -59,7 +59,7 @@ void	free_node(t_node *node)
 t_node	*syntax_error(t_node *node, t_token **tok, t_token *head)
 {
 	size_t	i;
-	
+
 	i = 0;
 	ft_putstr_fd("minishell: syntax error near unexpected token `",
 		STDERR_FILENO);
@@ -242,8 +242,6 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 	size_t	i;
 
 	i = 0;
-	if (peek(*tok, "|") == 1)
-		*err = 1;
 	while (*tok != NULL && !peek(*tok, "|"))
 	{
 		redir_type = which_redir(*tok);
@@ -278,6 +276,11 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	if (node->cmd->cmd == NULL)
 	{
 		err_exit("malloc error: ");
+	}
+	if (peek(*tok, "|") == 1)
+	{
+		*error_flag = 1;
+		return (node);
 	}
 	parse_simple_cmd(tok, node, error_flag, heredoc_flag);
 	return (node);
@@ -383,7 +386,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			free(documents);
 			return (NULL);
 		}
-		if (line == NULL)// || strlen(line) == 0)
+		if (line == NULL)
 		{
 //			printf("\e[1A\e[2C");
 			break ;
@@ -441,6 +444,17 @@ void	heredoc(t_node *node, bool *heredoc_err)
 	}
 }
 
+void	do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag)
+{
+	if (1 <= heredoc_flag && heredoc_flag <= 16)
+		heredoc(node, heredoc_err);
+	else if (heredoc_flag > 16)
+	{
+		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);
+		exit(2);
+	}	
+}
+
 t_node	*parse(t_token **tok, bool *heredoc_err)
 {
 	t_node	*node;
@@ -460,24 +474,11 @@ t_node	*parse(t_token **tok, bool *heredoc_err)
 	{
 		if (tok == NULL || peek(*tok, "|"))
 			return (syntax_error(node, tok, tok_head));
-		node = new_binary(ND_PIPE, node, parse_cmd(tok, &error_flag, &heredoc_flag));
+		node = new_binary(ND_PIPE, node, \
+				parse_cmd(tok, &error_flag, &heredoc_flag));
 		if (error_flag == 1)
 			return (syntax_error(node, tok, tok_head));
-		/*
-		if (node->rhs == NULL)
-			return (syntax_error("pipe should have rhs", node, tok));
-		*/
-//		if (node == NULL)
-//			return (NULL);
 	}
-	if (1 <= heredoc_flag && heredoc_flag <= 16)
-		heredoc(node, heredoc_err);
-	else if (heredoc_flag > 16)
-	{
-		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);
-		exit(2);
-	}
-//	printf("==PARSE==\n");
-//	print_node(node, 0);
+	do_heredoc(node, heredoc_err, heredoc_flag);
 	return (node);
 }
