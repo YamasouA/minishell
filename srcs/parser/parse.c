@@ -51,27 +51,30 @@ void	free_node(t_node *node)
 	{
 		free_cmd(node->cmd);
 		free(node->cmd);
+		node->cmd = NULL;
 	}
 	free(node);
 }
 
-t_node	*syntax_error(t_node *node, t_token *tok, t_token *head)
+t_node	*syntax_error(t_node *node, t_token **tok, t_token *head)
 {
 	size_t	i;
-
+	
 	i = 0;
 	ft_putstr_fd("minishell: syntax error near unexpected token `",
 		STDERR_FILENO);
-	if (tok == NULL)
+	if (*tok == NULL)
 		ft_putstr_fd("newline", STDERR_FILENO);
 	else
 	{
-		while (i < tok->len)
-			ft_putchar_fd(tok->str[i++], STDERR_FILENO);
+		while (i < (*tok)->len)
+			ft_putchar_fd((*tok)->str[i++], STDERR_FILENO);
 	}
 	ft_putendl_fd("'", STDERR_FILENO);
 	free_token(head);
+	*tok = NULL;
 	free_node(node);
+	node = NULL;
 	g_sh_var.exit_status = 258;
 	return (NULL);
 }
@@ -438,7 +441,7 @@ void	heredoc(t_node *node, bool *heredoc_err)
 	}
 }
 
-t_node	*parse(t_token *tok, bool *heredoc_err)
+t_node	*parse(t_token **tok, bool *heredoc_err)
 {
 	t_node	*node;
 	int		error_flag;
@@ -447,17 +450,17 @@ t_node	*parse(t_token *tok, bool *heredoc_err)
 
 	error_flag = 0;
 	heredoc_flag = 0;
-	tok_head = tok;
-	node = parse_cmd(&tok, &error_flag, &heredoc_flag);
+	tok_head = *tok;
+	node = parse_cmd(tok, &error_flag, &heredoc_flag);
 	if (error_flag == 1)
 		return (syntax_error(node, tok, tok_head));
 	if (node == NULL)
 		return (NULL);
-	while (tok != NULL && consume(&tok, "|"))
+	while (*tok != NULL && consume(tok, "|"))
 	{
-		if (tok == NULL || peek(tok, "|"))
+		if (tok == NULL || peek(*tok, "|"))
 			return (syntax_error(node, tok, tok_head));
-		node = new_binary(ND_PIPE, node, parse_cmd(&tok, &error_flag, &heredoc_flag));
+		node = new_binary(ND_PIPE, node, parse_cmd(tok, &error_flag, &heredoc_flag));
 		if (error_flag == 1)
 			return (syntax_error(node, tok, tok_head));
 		/*

@@ -108,9 +108,9 @@ void	init(char **line, t_token **tok, t_node **node)
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
-	line = NULL;
-	tok = NULL;
-	node = NULL;
+	*line = NULL;
+	*tok = NULL;
+	*node = NULL;
 }
 
 void	all_free(char *line, t_token *tok, t_node *node)
@@ -138,12 +138,12 @@ char	*readline_wrapper(int *x)
 
 void	loop_init(bool *heredoc_err, char **line, t_token **tok, t_node **node)
 {
-	errno = 0;
-	g_sh_var.signal = 0;
-	*heredoc_err = 0;
 	set_signal_handler(SIGINT, signal_handler);
 	set_signal_handler(SIGQUIT, SIG_IGN);
 	all_free(*line, *tok, *node);
+	errno = 0;
+	g_sh_var.signal = 0;
+	*heredoc_err = 0;
 	*line = NULL;
 	*tok = NULL;
 	*node = NULL;
@@ -187,13 +187,14 @@ void	minishell(void)
 			//free(line);
 			continue ;
 		//}
-		node = parse(tok, &heredoc_err);
+		node = parse(&tok, &heredoc_err);
 		if (g_sh_var.signal != 0 || node == NULL)
-		//{
+//		{
 			//free(line);
 			//g_sh_var.signal = 0;
+//			tok = NULL;
 			continue ;
-		//}
+//		}
 		node = expansion(node);
 		exec(node, 0);
 		/*
