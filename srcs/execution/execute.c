@@ -133,7 +133,7 @@ char	**envlist_to_str(t_env *env)
 //			perror("OUT");
 		head = head->next;
 	}
-	envstr[i] = NULL;
+	envstr[++i] = NULL;
 	return (envstr);
 }
 
@@ -197,6 +197,16 @@ char	*check_path_list(char **env_path, char *cmd)
 	return (save_error_path);
 }
 
+void	free_strs(char **strs)
+{
+	int i;
+
+	i = 0;
+	while (strs[i] != NULL)
+		free(strs[i++]);
+	free(strs);
+}
+
 char	*check_path(char *path)
 {
 	char	*env_path;
@@ -208,6 +218,7 @@ char	*check_path(char *path)
 		return (NULL);
 	split_path = ft_split(env_path, ':');
 	join_path = check_path_list(split_path, path);
+	free_strs(split_path);
 	if (errno == 0)
 		return (join_path);
 	errno = ENOENT;
@@ -267,6 +278,7 @@ bool	is_directory(char *pathname)
 {
 	struct stat	sb;
 
+	ft_memset(&sb, 0, sizeof(struct stat));
 	stat(pathname, &sb);
 	if ((sb.st_mode & S_IFMT) == S_IFDIR)
 		return (true);

@@ -105,11 +105,11 @@ bool	peek(t_token *tok, char *op)
 
 bool	consume(t_token **tok, char *op)
 {
-	t_token	*t;
+//	t_token	*t;
 
 	if (!peek(*tok, op))
 		return (false);
-	t = *tok;
+//	t = *tok;
 	*tok = (*tok)->next;
 	return (true);
 }
@@ -271,11 +271,11 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 {
 	t_node	*node;
-	t_token	*t;
+//	t_token	*t;
 
 	if (*tok == NULL)
 		return (NULL);
-	t = *tok;
+//	t = *tok;
 	node = new_node(ND_COMMAND);
 	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
 	if (node->cmd->cmd == NULL)
@@ -386,6 +386,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 			//rl_redisplay();
 			//signal(SIGINT, SIG_IGN);
 			set_signal_handler(SIGINT, SIG_IGN);
+			free(line);
 			free(exp_deli);
 			free(documents);
 			return (NULL);
@@ -440,7 +441,7 @@ void	get_documents(t_redirect *redirect_in, bool *err)
 			free(numstr);
 		}
 	}
-//	node->cmd->redirect_in = tmp;	
+	redirect_in = tmp;	
 }
 
 void	heredoc(t_node *node, bool *heredoc_err)
