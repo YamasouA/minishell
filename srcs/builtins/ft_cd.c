@@ -34,7 +34,8 @@ char	*no_current_dir(char *path)
 	char	*newpwd;
 
 	ft_putendl_fd("cd: error retrieving current directory: \
-		getcwd: cannot access parent directories: No such file or directory", STDERR_FILENO);	
+		getcwd: cannot access parent directories: \
+		No such file or directory", STDERR_FILENO);
 	pwd = search_key(g_sh_var.environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	printf("pwd:: %s\n", newpwd);
@@ -48,7 +49,8 @@ void	set_pwd(char *path)
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 		pwd = no_current_dir(path);
-	update_or_add_value(&g_sh_var.environ, "OLDPWD", search_key(g_sh_var.environ, "PWD"));
+	update_or_add_value(&g_sh_var.environ, "OLDPWD", \
+		search_key(g_sh_var.environ, "PWD"));
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 }

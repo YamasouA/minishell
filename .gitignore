@@ -1,4 +1,6 @@
 *.o
+.devcontainer/Dockerfile
+.devcontainer/devcontainer.json
 .vscode/settings.json
 test
 minishell
