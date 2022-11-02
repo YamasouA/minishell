@@ -366,7 +366,7 @@ char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
 {
 	char	*line;
 	char	*documents;
-	
+
 	documents = ft_strdup("");
 	while (1)
 	{

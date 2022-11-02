@@ -156,50 +156,20 @@ void	minishell(void)
 	int		x;
 
 	init(&line, &tok, &node);
-	while (1) //cut func?
+	while (1)
 	{
-		//errno = 0;
-		//heredoc_err = 0;
-		//set_signal_handler(SIGINT, signal_handler);
-		//set_signal_handler(SIGQUIT, SIG_IGN);
 		loop_init(&heredoc_err, &line, &tok, &node);
-		//x = get_print_start();
-		//line = readline("minishell> ");
 		line = readline_wrapper(&x);
 		set_signal_handler(SIGINT, SIG_IGN);
-		/*
-		if (line == NULL)// || strlen(line) == 0)
-		{
-			// free(line);
-//			free_envlist(g_sh_var.environ);
-			display_exit(x);
-			exit(0); //include display_exit?
-		}
-		*/
 		if (ft_strlen(line) == 0)
 			continue ;
-		//add_history(line);
 		tok = lexer(line);
 		if (tok == NULL)
-		//{
-			//free(line);
 			continue ;
-		//}
 		node = parse(&tok, &heredoc_err);
 		if (g_sh_var.signal != 0 || node == NULL)
-//		{
-			//free(line);
-			//g_sh_var.signal = 0;
-//			tok = NULL;
 			continue ;
-//		}
 		node = expansion(node);
 		exec(node, 0);
-		/*
-		free(line); //cut func?
-		free_token(tok);
-		free_node(node);
-		*/
-		//all_free(line, tok, node);
 	}
 }

@@ -9,6 +9,13 @@ void	error_checker(char *msg, int n)
 	}
 }
 
+void	err_is_a_directory(char *filename)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(filename, 2);
+	ft_putstr_fd(": is a directory\n", 2);
+}
+
 void	xunlink(const char *pathname)
 {
 	int	ret;
@@ -266,9 +273,10 @@ void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
 {
 	if (is_directory(cmd->cmd[0]))
 	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd->cmd[0], 2);
-		ft_putstr_fd(": is a directory\n", 2);
+		//ft_putstr_fd("minishell: ", 2);
+		//ft_putstr_fd(cmd->cmd[0], 2);
+		//ft_putstr_fd(": is a directory\n", 2);
+		err_is_a_directory(cmd->cmd[0]);
 		exit(126);
 	}
 	else if (!access(cmd->cmd[0], X_OK))
@@ -332,35 +340,25 @@ int	print_redirect_err(char *file_name)
 bool	is_valid_file_name(t_redirect *redirect)
 {
 	if (redirect->type == REDIRECT_NONE)
-	{
-		print_redirect_err(redirect->file_name); //include return ?
-		return (0);
-	}
+		return (print_redirect_err(redirect->file_name));
 	else if (redirect->type == APPEND || redirect->type == REDIRECT_OUT)
 	{
 		if ((access(redirect->file_name, W_OK) && errno == EACCES)
 			|| redirect->file_name[0] == '\0')
-		{
-//			print_redirect_err(redirect->file_name);
 			return (print_redirect_err(redirect->file_name));
-//			return (0);
-		}
 		else if (is_directory(redirect->file_name))
 		{
-			ft_putstr_fd("minishell: ", 2); //cut func
-			ft_putstr_fd(redirect->file_name, 2);
-			ft_putstr_fd(": is a directory\n", 2);
+			//ft_putstr_fd("minishell: ", 2);
+			//ft_putstr_fd(redirect->file_name, 2);
+			//ft_putstr_fd(": is a directory\n", 2);
+			err_is_a_directory(redirect->file_name);
 			return (0);
 		}
 	}
 	else
 	{
 		if (access(redirect->file_name, R_OK))
-		{
 			return (print_redirect_err(redirect->file_name));
-//			print_redirect_err(redirect->file_name);
-//			return (0);
-		}
 	}
 	return (1);
 }

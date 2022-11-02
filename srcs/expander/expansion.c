@@ -142,6 +142,16 @@ char	*handle_normal(char *str, int *i, bool heredoc)
 	return (ft_substr(str, head, *i - head));
 }
 
+bool	is_expand_none(char *str, char *expanded, int i)
+{
+	if (expanded[0] == '\0' && str[i] == '\0')
+	{
+		free(expanded);
+		return (true);
+	}
+	return (false);
+}
+
 char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
@@ -158,11 +168,8 @@ char	*expand(char *str, bool heredoc)
 		else if (str[i] == '$' && !heredoc)
 		{
 			expanded = expand_dollar(str, expanded, &i);
-			if (expanded[0] == '\0' && str[i] == '\0')
-			{
-				free(expanded);
+			if (is_expand_none(str, expanded, i))
 				return (NULL);
-			}
 		}
 		else
 			expanded = ft_joinfree(expanded, handle_normal(str, &i, heredoc));
