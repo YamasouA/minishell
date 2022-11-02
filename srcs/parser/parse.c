@@ -286,8 +286,6 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	return (node);
 }
 
-#define TMPFILE "tmp/tempfile"
-
 static int	count_digit(unsigned long n)
 {
 	int				count;
@@ -468,8 +466,8 @@ t_node	*parse(t_token **tok, bool *heredoc_err)
 	node = parse_cmd(tok, &error_flag, &heredoc_flag);
 	if (error_flag == 1)
 		return (syntax_error(node, tok, tok_head));
-	if (node == NULL)
-		return (NULL);
+//	if (node == NULL)
+//		return (NULL);
 	while (*tok != NULL && consume(tok, "|"))
 	{
 		if (tok == NULL || peek(*tok, "|"))
@@ -480,5 +478,6 @@ t_node	*parse(t_token **tok, bool *heredoc_err)
 			return (syntax_error(node, tok, tok_head));
 	}
 	do_heredoc(node, heredoc_err, heredoc_flag);
+	*tok = tok_head;
 	return (node);
 }
