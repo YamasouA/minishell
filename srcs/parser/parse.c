@@ -354,44 +354,32 @@ static int	check_state(void)
 	return (0);
 }
 
-char	*read_heredoc(char *deli, bool *heredoc_err)
+void	processing_on_signal(char *line, char *documents, bool *heredoc_err)
 {
-	char	*documents;
-	char	*line;
-	char	*exp_deli;
+	*heredoc_err = 1;
+	set_signal_handler(SIGINT, SIG_IGN);
+	free(line);
+	free(documents);
+}
 
-	exp_deli = expand(deli, 1);
+char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
+{
+	char	*line;
+	char	*documents;
+	
 	documents = ft_strdup("");
-//	if (documents == NULL)
-//		err_exit("strdup error: ");
-	rl_event_hook = check_state;
-	//signal(SIGINT, heredoc_signal_handler);
-	set_signal_handler(SIGINT, heredoc_signal_handler);
 	while (1)
 	{
 		line = readline("> ");
 		if (g_sh_var.signal != 0)
 		{
-			*heredoc_err = 1;
-			//printf("\n");
-			//rl_on_new_line();
-			//rl_replace_line("", 0);
-			//rl_redisplay();
-			//signal(SIGINT, SIG_IGN);
-			set_signal_handler(SIGINT, SIG_IGN);
-			free(line);
-			free(exp_deli);
-			free(documents);
+			processing_on_signal(line, documents, heredoc_err);
 			return (NULL);
 		}
 		if (line == NULL)
-		{
-//			printf("\e[1A\e[2C");
 			break ;
-		}
 		if (ft_strncmp(line, exp_deli, ft_strlen(exp_deli) + 1) == 0)
 		{
-			//documents = check_quote(documents, deli);
 			free(line);
 			break ;
 		}
@@ -400,6 +388,18 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 		if (documents == NULL)
 			err_exit("malloc error: ");
 	}
+	return (documents);
+}
+
+char	*read_heredoc(char *deli, bool *heredoc_err)
+{
+	char	*documents;
+	char	*exp_deli;
+
+	exp_deli = expand(deli, 1);
+	rl_event_hook = check_state;
+	set_signal_handler(SIGINT, heredoc_signal_handler);
+	documents = heredoc_loop(exp_deli, heredoc_err);
 	set_signal_handler(SIGINT, SIG_IGN);
 	free(exp_deli);
 	return (documents);
