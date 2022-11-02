@@ -38,7 +38,6 @@ char	*no_current_dir(char *path)
 		No such file or directory", STDERR_FILENO);
 	pwd = search_key(g_sh_var.environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
-	printf("pwd:: %s\n", newpwd);
 	return (newpwd);
 }
 
@@ -60,7 +59,7 @@ int	get_path(char *s, char **path)
 	int	status;
 
 	status = -1;
-	if (s == NULL)
+	if (*s == '\0')
 		*path = ft_xstrdup(search_key(g_sh_var.environ, "HOME"));
 	else if (ft_strncmp(s, "-", 2) == 0)
 		*path = ft_xstrdup(search_key(g_sh_var.environ, "OLDPWD"));
@@ -68,7 +67,7 @@ int	get_path(char *s, char **path)
 		*path = ft_xstrdup(s);
 	if (*path != NULL)
 		status = 0;
-	if (*path == NULL && s == NULL)
+	if (*path == NULL && *s == '\0')
 		*path = ft_xstrdup("HOME");
 	if (*path == NULL && ft_strncmp(s, "-", 2) == 0)
 		*path = ft_xstrdup("OLDPWD");
@@ -106,13 +105,13 @@ int	ft_cd(char **strs)
 	{
 		print_error(path, "not set");
 		free(path);
-		return (0);
+		return (1);
 	}
 	status = do_cd(path);
 	if (!status)
 		set_pwd(strs[1]);
 	free(path);
-	return (1);
+	return (status);
 }
 /*
 void	print_cmds(char **strs)
