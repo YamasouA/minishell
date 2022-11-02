@@ -2,8 +2,6 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 
-#define PROMPT_LENGTH 11
-
 t_sh_var	g_sh_var = {};
 //t_env	*g_environ;
 //bool	g_signal;

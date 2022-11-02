@@ -1,10 +1,5 @@
 #include "minishell.h"
 
-#define EXPORT_NONE 0
-#define EXPORT_NEW 1
-#define EXPORT_APPEND 2
-#define EXPORT_ERROR 4
-
 //t_env	*g_sh_var.environ;
 
 bool	is_valid_var(char *str) // shareable unset func

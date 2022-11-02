@@ -15,6 +15,13 @@
 # include "libft.h"
 # include "get_next_line.h"
 
+# define PROMPT_LENGTH 11
+# define TMPFILE "tmp/tempfile"
+# define EXPORT_NONE 0
+# define EXPORT_NEW 1
+# define EXPORT_APPEND 2
+# define EXPORT_ERROR 4
+
 typedef struct termios			t_termios;
 typedef enum e_token_kind		t_kind;
 enum e_token_kind

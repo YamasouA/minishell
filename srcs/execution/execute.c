@@ -262,49 +262,60 @@ bool	is_directory(char *pathname)
 	return (false);
 }
 
+void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
+{
+	if (is_directory(cmd->cmd[0]))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->cmd[0], 2);
+		ft_putstr_fd(": is a directory\n", 2);
+		exit(126);
+	}
+	else if (!access(cmd->cmd[0], X_OK))
+	{
+		execve(cmd->cmd[0], cmd->cmd, envstr);
+		err_exit("execve error: ");
+	}
+	else
+		print_access_err(cmd->cmd[0]);
+}
+
+void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
+{
+	char	*path;
+
+	path = check_path(cmd->cmd[0]);
+	if (path == NULL || errno != 0)
+	{
+		if (errno == EACCES)
+			print_access_err(path);
+		else if (errno == ENOENT)
+			print_access_err(cmd->cmd[0]);
+		else if (path == NULL) //&& errno == 0)
+			print_access_err(cmd->cmd[0]);
+//			perror("OUT1");
+	}
+//		exit(execve(path, cmd->cmd, envstr));
+	execve(path, cmd->cmd, envstr);
+	err_exit("execve error: ");
+}
+
 void	exec_others(t_cmd *cmd)
 {
 	char	**envstr;
-	char	*path;
 
 	envstr = envlist_to_str(g_sh_var.environ);
 	if (is_path(cmd->cmd[0]))
 	{
-		if (is_directory(cmd->cmd[0]))
-		{
-			ft_putstr_fd("minishell: ", 2); //cut func
-			ft_putstr_fd(cmd->cmd[0], 2);
-			ft_putstr_fd(": is a directory\n", 2);
-			exit(126);
-		}
-		else if (!access(cmd->cmd[0], X_OK))
-		{
-			execve(cmd->cmd[0], cmd->cmd, envstr);
-			err_exit("execve error: ");
-		}
-		else
-			print_access_err(cmd->cmd[0]);
+		exec_by_cmd_path(cmd, envstr);
 	}
 	else
 	{
-		path = check_path(cmd->cmd[0]);
-		if (path == NULL || errno != 0)
-		{
-			if (errno == EACCES) //cut func
-				print_access_err(path);
-			else if (errno == ENOENT)
-				print_access_err(cmd->cmd[0]);
-			else if (path == NULL) //&& errno == 0)
-				print_access_err(cmd->cmd[0]);
-//			perror("OUT1");
-		}
-//		exit(execve(path, cmd->cmd, envstr));
-		execve(path, cmd->cmd, envstr);
-		err_exit("execve error: ");
+		exec_by_cmd_name(cmd, envstr);
 	}
 }
 
-void	print_redirect_err(char *file_name)
+int	print_redirect_err(char *file_name)
 {
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(file_name, 2);
@@ -314,6 +325,7 @@ void	print_redirect_err(char *file_name)
 		ft_putstr_fd(": No such file or directory\n", 2);
 	else
 		ft_putstr_fd(": ambiguous redirect\n", 2);
+	return (0);
 //	return (1);
 }
 
@@ -329,9 +341,9 @@ bool	is_valid_file_name(t_redirect *redirect)
 		if ((access(redirect->file_name, W_OK) && errno == EACCES)
 			|| redirect->file_name[0] == '\0')
 		{
-			print_redirect_err(redirect->file_name);
-//			return (print_redirect_err(redirect->file_name));
-			return (0);
+//			print_redirect_err(redirect->file_name);
+			return (print_redirect_err(redirect->file_name));
+//			return (0);
 		}
 		else if (is_directory(redirect->file_name))
 		{
@@ -345,9 +357,9 @@ bool	is_valid_file_name(t_redirect *redirect)
 	{
 		if (access(redirect->file_name, R_OK))
 		{
-//			return (print_redirect_err(redirect->file_name));
-			print_redirect_err(redirect->file_name);
-			return (0);
+			return (print_redirect_err(redirect->file_name));
+//			print_redirect_err(redirect->file_name);
+//			return (0);
 		}
 	}
 	return (1);
