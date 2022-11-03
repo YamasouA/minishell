@@ -19,21 +19,6 @@ int	exec_builtin(t_cmd *cmd)
 	return (1);
 }
 
-void	exec_others(t_cmd *cmd)
-{
-	char	**envstr;
-
-	envstr = envlist_to_str(g_sh_var.environ);
-	if (is_path(cmd->cmd[0]))
-	{
-		exec_by_cmd_path(cmd, envstr);
-	}
-	else
-	{
-		exec_by_cmd_name(cmd, envstr);
-	}
-}
-
 int	exe_process(t_cmd *cmd)
 {
 	int	status;

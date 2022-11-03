@@ -1,5 +1,20 @@
 #include "minishell.h"
 
+size_t	count_envlist(t_env *env)
+{
+	t_env	*head;
+	size_t	cnt;
+
+	cnt = 0;
+	head = env;
+	while (head != NULL)
+	{
+		cnt++;
+		head = head->next;
+	}
+	return (cnt);
+}
+
 t_env	*env_last(t_env *env)
 {
 	if (env == NULL)

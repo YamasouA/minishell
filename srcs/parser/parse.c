@@ -1,35 +1,6 @@
 #include "minishell.h"
 
 //parse_utils
-bool	peek(t_token *tok, char *op)
-{
-	if (tok->kind != TK_KEYWORD
-		|| tok->len != ft_strlen(op)
-		|| ft_memcmp(tok->str, op, tok->len))
-		return (false);
-	return (true);
-}
-
-bool	consume(t_token **tok, char *op)
-{
-	if (!peek(*tok, op))
-		return (false);
-	*tok = (*tok)->next;
-	return (true);
-}
-
-size_t	cmd_len(t_token *tok)
-{
-	size_t	n;
-
-	n = 0;
-	while (tok != NULL && !peek(tok, "|"))
-	{
-		n++;
-		tok = tok->next;
-	}
-	return (n);
-}
 //so far
 
 //bool	is_redir(t_token *tok)
@@ -39,28 +10,7 @@ size_t	cmd_len(t_token *tok)
 //}
 
 //signal
-static void	heredoc_signal_handler(int sig)
-{
-	g_sh_var.signal = sig;
-}
-
-static int	check_state(void)
-{
-	if (g_sh_var.signal != 0)
-	{
-		//g_sh_var.signal = 0;
-		rl_done = 1;
-	}
-	return (0);
-}
-
-void	processing_on_signal(char *line, char *documents, bool *heredoc_err)
-{
-	*heredoc_err = 1;
-	set_signal_handler(SIGINT, SIG_IGN);
-	free(line);
-	free(documents);
-}
+//B
 //so far
 
 t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)

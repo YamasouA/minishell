@@ -6,7 +6,7 @@ t_token	*tokenize_error(char token, t_token *head)
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	ft_putchar_fd(token, 2);
 	ft_putstr_fd("'\n", 2);
-	free_token_list(head);
+	free_token(head->next);
 	return (NULL);
 }
 
@@ -31,6 +31,6 @@ t_token	*quote_error(char *token, t_token *head)
 		token++;
 	}
 	ft_putstr_fd("'\n", 2);
-	free_token_list(head);
+	free_token(head->next);
 	return (NULL);
 }

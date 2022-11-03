@@ -1,5 +1,30 @@
 #include "minishell.h"
 
+char	**envlist_to_str(t_env *env)
+{
+	t_env	*head;
+	size_t	cnt;
+	size_t	i;
+	char	**envstr;
+
+	cnt = count_envlist(env);
+	envstr = (char **)malloc(sizeof(char *) * (cnt + 1));
+	if (envstr == NULL)
+		err_exit("malloc error: ");
+	i = -1;
+	head = env;
+	while (head != NULL)
+	{
+		if (head->value)
+			envstr[++i] = join_with_connector(head->key, head->value, '=');
+		if (envstr[i] == NULL)
+			err_exit("malloc error: ");
+		head = head->next;
+	}
+	envstr[++i] = NULL;
+	return (envstr);
+}
+
 void	update_or_add_value(t_env **env, char *key, char *value)
 {
 	t_env	*tmp;
