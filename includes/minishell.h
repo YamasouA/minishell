@@ -104,31 +104,61 @@ struct s_node
 	t_cmd		*cmd;
 };
 
-t_env	*create_env(void);
-char	*search_key(t_env *env, char *key);
-t_env	*search_env(t_env *env, char *key);
+
+// env
+// env_utils.c
 void	set_data(char *environ, t_env *new);
 void	add_env(t_env **env, t_env *new);
 t_env	*env_last(t_env *env);
+t_env	*env_new(char *key, char *value);
+size_t	count_envlist(t_env *env);
+
+// env.c
+t_env	*create_env(void);
+char	**envlist_to_str(t_env *env);
 void	update_or_add_value(t_env **env, char *key, char *value);
-void	print_env(t_env *env);
+
+// search_env.c
+char	*search_key(t_env *env, char *key);
+t_env	*search_env(t_env *env, char *key);
+char	*find_env(char *var, size_t len);
+//void	print_env(t_env *env);
 
 // minishell.c
 void	minishell(void);
 void	set_signal_handler(int signum, sig_t sighandler);
 //char	*read_line(void);
 
+
+
 // srcs/expander
+// expansion.c
 t_node	*expansion(t_node *node);
-//char	*expand(char *str, bool heredoc);
+char	*expand(char *str, bool heredoc);
 void	expand_cmd_instance(char **cmd_data, bool here_doc);
 
 //expansion_dollar.c
 char	*expand_dollar(char *str, char *expanded, int *i);
 
 //expansion_heredoc.c
+char	*expand_documents(char *str);
 
-// srcs/parser
+// expansion_normal.c
+char	*handle_normal(char *str, int *i, bool heredoc);
+
+// expansion_quote.c
+char	*handle_s_quote(char *str, int *i);
+char	*handle_d_quote(char *str, int *i, bool here_doc);
+
+// expansion_redirect.c
+void	expand_redir_list(t_node *node);
+
+// expansion_utils.c
+bool	is_expand_none(char *str, char *expanded, int i);
+
+
+// parser
+// parse.c
 t_node	*parse(t_token **tok, bool *heredoc_err);
 void	print_node(t_node *node, int tab_n);
 void	free_node(t_node *node);
@@ -142,6 +172,7 @@ char	*ft_ultoa(unsigned long n);
 unsigned long	xorshift(void);
 
 //parse_redirect.c
+int	which_redir(t_token *tok);
 void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag);
 
 //parse_signal.c
@@ -161,7 +192,9 @@ void	free_cmd(t_cmd *cmd);
 void	free_redirect(t_redirect *redir);
 void	free_token(t_token *tok);
 
-// srcs/lexer
+
+// lexer
+// lexer.c
 t_token	*lexer(char *line);
 
 // lexer_utils.c
@@ -177,19 +210,67 @@ t_token	*tokenize_error(char token, t_token *head);
 t_token	*quote_error(char *token, t_token *head);
 
 // builtins
-char	*join_with_connector(char *s1, char *s2, char connector);
-int		ft_echo(char **strs);//, t_env *envp);
-int		ft_cd(char **strs);//, t_env *env);
-int		ft_pwd(char **strs);//,t_env *envp);
-int		ft_export(char **args);//, t_env *envp);
-int		ft_unset(char **keys);//, t_env *envp);
-int		ft_env(char **strs);//, t_env *envp);
-int		ft_exit(char **strs);//, t_env *envp);
-int		print_error_and_usage(char *arg, char *cmd_name);
+// export_error.c
+void	print_invalid_identifier(char *str);
+int	print_error_and_usage(char *arg, char *cmd_name);
+// export_utils.c
+bool	is_valid_var(char *str); // shareable unset func
+int	is_append_flag(char **key, char *eq_pos);
+// ft_cd.c
+int	ft_cd(char **strs);
+// ft_echo.c
+int	ft_echo(char **strs);//, t_env *envp)
+// ft_env.c
+char	**envlist_to_str(t_env *env);
+int	ft_env(char **strs);//, t_env *envp)
+// ft_exit.c
+int	ft_exit(char **strs);
+// ft_export.c
+int	ft_export(char **args);
+// ft_pwd.c
+int	ft_pwd(char **strs);
+// ft_unset.c
+int	ft_unset(char **keys);//, t_env *envp)
+// print_prefix_env.c
+void	print_prefix_env(t_env *envp);
 
-// srcs/execution
+// execution
+// execute.c
 void	exec(t_node *node, int pipe_flag);
 
-// srcs/utils
+// connect_redirects.c
+int	do_redirect(t_cmd *cmd);
+
+// exec_cmd.c
+int	exe_process(t_cmd *cmd);
+pid_t	exe_cmd(t_cmd *cmd, int pipe_flag);
+
+// exec_error.c
+void	print_exec_process_error(char *cmd, char *msg, int status);
+void	print_access_err(char *msg);
+void	err_is_a_directory(char *filename);
+int	print_redirect_err(char *file_name);
+
+// exec_others.c
+void	exec_others(t_cmd *cmd);
+
+// exec_utils.c
+bool	is_redirect(t_cmd *cmd);
+bool	which_builtin(char **cmd);
+bool	is_path(char *cmd_name);
+bool	is_directory(char *pathname);
+
+// handle_path.c
+char	*check_path(char *path);
+
+
+// utils
+// err_exit.c
 void	err_exit(char *msg);
+
+// free_utils.c
+void	free_strs(char **strs);
+
+// utils.c
+char	*join_with_connector(char *s1, char *s2, char connector);
 #endif

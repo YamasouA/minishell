@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static char	*expand(char *str, bool heredoc)
+char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
 	int		i;

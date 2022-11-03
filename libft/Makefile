@@ -47,16 +47,16 @@ SRCS_FILES	=	ft_strlen.c \
 		ft_abs.c \
 		ft_max.c \
 		ft_joinfree.c \
-		ft_xstrdup.c \
 		ft_atol_bool.c
 X_SRCS_DIR = xsrcs/
-XSRCS_FILES = error_checker.c \
-	xstrdup.c \
+X_SRCS_FILES = error_checker.c \
+	ft_xstrdup.c \
 	xclose.c \
 	xdup.c \
 	xfork.c \
 	xopen.c \
 	xpipe.c \
+	ft_xstrdup.c \
 	xunlink.c
 
 B_SRCS_DIR = list/
@@ -75,8 +75,10 @@ GET_NEXT_LINE_FILES = get_next_line.c
 b_flag	=	false
 SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILES))
 B_SRCS = $(addprefix $(B_SRCS_DIR), $(B_SRCS_FILES))
+X_SRCS = $(addprefix $(X_SRCS_DIR), $(X_SRCS_FILES))
 GNL_SRCS = $(addprefix $(GET_NEXT_LINE_DIR), $(GET_NEXT_LINE_FILES))
 OBJS	:=	$(SRCS:.c=.o)
+OBJS	+=	$(X_SRCS:.c=.o)
 B_OBJS	:=	$(B_SRCS:.c=.o)
 GNL_OBJS := $(GNL_SRCS:.c=.o)
 OBJS += $(GNL_OBJS)

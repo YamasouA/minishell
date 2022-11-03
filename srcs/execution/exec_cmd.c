@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	exec_builtin(t_cmd *cmd)
+static int	exec_builtin(t_cmd *cmd)
 {
 	const char	*builtins[] = {"cd", "echo", "unset", \
 		"export", "exit", "pwd", "env"};
@@ -42,7 +42,7 @@ int	exe_process(t_cmd *cmd)
 static void	sig_handler(int sig)
 {
 	(void)sig;
-	ft_putchar_fd("\n", 1);
+	ft_putchar_fd('\n', 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 }

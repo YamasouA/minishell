@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	which_redir(t_token *tok)
+int	which_redir(t_token *tok)
 {
 	if (peek(tok, "<"))
 		return (REDIRECT_IN);

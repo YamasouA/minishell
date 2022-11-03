@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
+static void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
 {
 	if (is_directory(cmd->cmd[0]))
 	{
@@ -19,7 +19,7 @@ void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
 		print_access_err(cmd->cmd[0]);
 }
 
-void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
+static void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
 {
 	char	*path;
 
@@ -32,9 +32,7 @@ void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
 			print_access_err(cmd->cmd[0]);
 		else if (path == NULL) //&& errno == 0)
 			print_access_err(cmd->cmd[0]);
-//			perror("OUT1");
 	}
-//		exit(execve(path, cmd->cmd, envstr));
 	execve(path, cmd->cmd, envstr);
 	err_exit("execve error: ");
 }

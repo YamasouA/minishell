@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-bool	is_valid_file_name(t_redirect *redirect)
+static bool	is_valid_file_name(t_redirect *redirect)
 {
 	if (redirect->type == REDIRECT_NONE)
 		return (print_redirect_err(redirect->file_name));
@@ -26,7 +26,7 @@ bool	is_valid_file_name(t_redirect *redirect)
 	return (1);
 }
 
-int	open_and_dup2(t_redirect *redirect)
+static int	open_and_dup2(t_redirect *redirect)
 {
 	int	fd;
 
@@ -53,7 +53,7 @@ int	open_and_dup2(t_redirect *redirect)
 	return (0);
 }
 
-void	create_heredoc_tmpfile(t_redirect *redirect_in)
+static void	create_heredoc_tmpfile(t_redirect *redirect_in)
 {
 	int		fd;
 

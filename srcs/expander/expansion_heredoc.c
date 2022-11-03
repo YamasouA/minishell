@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*exp_dollar(char *str, int *i)
+static char	*exp_dollar(char *str, int *i)
 {
 	char	*var;
 	int		j;

@@ -16,6 +16,11 @@
 # include	<limits.h>
 # include	<stdlib.h>
 # include	<unistd.h>
+# include	<errno.h>
+# include	<stdio.h>
+# include	<sys/types.h>
+# include	<sys/stat.h>
+# include	<fcntl.h>
 
 typedef struct s_list
 {
@@ -82,5 +87,13 @@ unsigned int	ft_abs(int n);
 int				ft_max(int n1, int n2);
 
 char			*ft_xstrdup(const char *s1);
+void			xclose(int fd);
+int				xopen(char *path, int flags);
+void			xpipe(int pipefd[2]);
+int				xdup(int oldfd);
+void			xdup2(int oldfd, int newfd);
+pid_t			xfork(void);
+void			xunlink(const char *pathname);
+void			error_checker(char *msg, int n);
 bool			ft_atol_bool(const char *str, long long *i);
 #endif

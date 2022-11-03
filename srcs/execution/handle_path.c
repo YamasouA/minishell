@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*create_and_check_path(char *env_path, char *cmd_name)
+static char	*create_and_check_path(char *env_path, char *cmd_name)
 {
 	char	*join_path;
 
@@ -12,7 +12,7 @@ char	*create_and_check_path(char *env_path, char *cmd_name)
 	return (join_path);
 }
 
-char	*check_path_list(char **env_path, char *cmd)
+static char	*check_path_list(char **env_path, char *cmd)
 {
 	int		i;
 	char	*join_path;

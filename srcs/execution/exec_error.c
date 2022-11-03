@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-//
 void	print_exec_process_error(char *cmd, char *msg, int status)
 {
 	ft_putstr_fd("minishell: ", 2);

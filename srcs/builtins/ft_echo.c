@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	echo_without_newline(char **strs, int i)
+static void	echo_without_newline(char **strs, int i)
 {
 	while (strs[i])
 	{
@@ -10,7 +10,7 @@ void	echo_without_newline(char **strs, int i)
 	}			
 }
 
-void	echo_with_option_n(char **strs)
+static void	echo_with_option_n(char **strs)
 {
 	int	i;
 
@@ -18,7 +18,7 @@ void	echo_with_option_n(char **strs)
 	echo_without_newline(strs, i);
 }
 
-void	echo_no_option(char **strs)
+static void	echo_no_option(char **strs)
 {
 	int	i;
 

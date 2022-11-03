@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	exit_with_str(char **strs, int i)
+static void	exit_with_str(char **strs, int i)
 {
 	ft_putendl_fd("exit", STDERR_FILENO);
 	ft_putstr_fd("minishell : exit: ", STDERR_FILENO);
@@ -9,7 +9,7 @@ void	exit_with_str(char **strs, int i)
 	exit(255);
 }
 
-void	exit_with_number(char **strs, size_t cnt, size_t i)
+static void	exit_with_number(char **strs, size_t cnt, size_t i)
 {
 	long long	n;
 	bool		ret;
@@ -32,7 +32,7 @@ void	exit_with_number(char **strs, size_t cnt, size_t i)
 	}
 }
 
-void	exit_with_arg(char **strs, size_t cnt, size_t idx)
+static void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 {
 	bool	is_digit;
 	size_t	i;
@@ -56,7 +56,7 @@ void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 		exit_with_str(strs, idx);
 }
 
-void	handle_hyphen(char **strs, int cnt)
+static void	handle_hyphen(char **strs, int cnt)
 {
 	if (cnt == 2)
 	{

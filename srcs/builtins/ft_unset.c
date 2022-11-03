@@ -2,7 +2,7 @@
 
 //t_env	*g_sh_var.environ;
 
-bool	is_valid_unset_args(char *str) //same is_valid_vat
+static bool	is_valid_unset_args(char *str) //same is_valid_vat
 {
 	int	i;
 
@@ -18,7 +18,7 @@ bool	is_valid_unset_args(char *str) //same is_valid_vat
 	return (true);
 }
 
-void	free_env(t_env **env)
+static void	free_env(t_env **env)
 {
 	free((*env)->key);
 	free((*env)->value);
@@ -26,14 +26,14 @@ void	free_env(t_env **env)
 	*env = NULL;
 }
 
-void	print_unset_error(char *msg)
+static void	print_unset_error(char *msg)
 {
 	ft_putstr_fd("minishell: unset: `", 2);
 	ft_putstr_fd(msg, 2);
 	ft_putstr_fd("': not a valid identifier\n", 2);
 }
 
-void	del_and_free_env(char *key)//, t_env *envp)
+static void	del_and_free_env(char *key)//, t_env *envp)
 {
 	t_env	*prev_env;
 	t_env	*cur;

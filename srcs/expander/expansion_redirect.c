@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	expand_redir(t_redirect *redirect)
+static void	expand_redir(t_redirect *redirect)
 {
 	char	*tmp;
 

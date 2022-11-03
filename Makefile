@@ -9,10 +9,12 @@ ENV_DIR = srcs/env/
 ENV_FILES = env.c \
 	env_utils.c \
 	search_env.c
+ENV_SRCS = $(addprefix $(ENV_DIR), $(ENV_FILES))
 
 UTILS_DIR = srcs/utils/
 UTILS_FILES = err_exit.c \
-	free_utils.c
+	free_utils.c \
+	utils.c
 UTILS_SRCS = $(addprefix $(UTILS_DIR), $(UTILS_FILES))
 
 PARCER_DIR = srcs/parser/
@@ -26,8 +28,8 @@ PARCER_FILES = parse.c \
 PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 
 EXPAND_DIR = srcs/expander/
-EXPAND_FILES = expansion.c \
-	expansion_dollar.c \
+EXPAND_FILES = expansion_dollar.c \
+	expansion.c \
 	expansion_heredoc.c \
 	expansion_normal.c \
 	expansion_quote.c \
@@ -42,7 +44,7 @@ BUILTIN_FILES = ft_cd.c \
 	ft_exit.c \
 	ft_export.c \
 	export_error.c \
-	export _utils.c \
+	export_utils.c \
 	ft_pwd.c \
 	ft_unset.c \
 	print_prefix_env.c
@@ -82,12 +84,14 @@ LEXER_OBJS = $(LEXER_SRCS:.c=.o)
 BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
 UTILS_OBJS = $(UTILS_SRCS:.c=.o)
 EXEC_OBJS = $(EXEC_SRCS:.c=.o)
+ENV_OBJS = $(ENV_SRCS:.c=.o)
 OBJS += $(PARCER_OBJS)
 OBJS += $(EXPAND_OBJS)
 OBJS += $(LEXER_OBJS)
 OBJS += $(BUILTIN_OBJS)
 OBJS += $(EXEC_OBJS)
 OBJS += $(UTILS_OBJS)
+OBJS += $(ENV_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
 #CFLAGS = -g -Werror -Wextra -Wall -I /lib/home/linuxbrew/.linuxbrew/opt/readline/include
 LDFLAGS = -L$(shell brew --prefix readline)/lib -lreadline -lhistory
