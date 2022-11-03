@@ -2,6 +2,36 @@
 
 //t_env	*g_sh_var.environ;
 
+bool	is_valid_var(char *str) // shareable unset func
+{
+	int	i;
+
+	if (!str)
+		return (false);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
+		return (false);
+	i = 1;
+	while (str[i])
+	{
+		if ((!ft_isalnum(str[i]) && str[i] != '_'))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+void	free_args(char **args) //same free_strs
+{
+	size_t	i;
+
+	i = 0;
+	while (args[i])
+	{
+		free(args[i++]);
+	}
+	free(args);
+}
+
 void	update_target_var_value(char *arg, t_env *target_var, int flag)
 {	
 	char	*equal_pos;
@@ -41,6 +71,13 @@ int	update_env_var(char *arg, int flag)
 	return (0);
 }
 
+void	print_invalid_identifier(char *str)
+{
+	ft_putstr_fd("minishell: export: `", 2);
+	ft_putstr_fd(str, 2);
+	ft_putstr_fd("': not a valid identifier\n", 2);
+}
+
 void	push_new_env_var(char *arg)
 {
 	t_env	*new;
@@ -53,6 +90,22 @@ void	push_new_env_var(char *arg)
 	add_env(&g_sh_var.environ, new);
 }
 
+int	is_append_flag(char **key, char *eq_pos)
+{
+	char	*tmp;
+
+	if (eq_pos && eq_pos != *key && *(eq_pos - 1) == '+' && *key[0] != '+')
+	{
+		*(eq_pos - 1) = '\0'; //move below if (is_append_flag) ?
+		tmp = *key;
+		*key = ft_strjoin(*key, eq_pos);
+		free(tmp);
+		if (*key == NULL)
+			err_exit("malloc error: ");
+		return (1);
+	}
+	return (0);
+}
 
 int	which_update_flag(char **key)
 {
@@ -104,6 +157,45 @@ int	add_var_to_env(char **args)
 	}
 	return (exit_status);
 }
+
+void	print_prefix_env(t_env *envp)
+{
+	while (envp)
+	{
+		if (envp->value)
+			printf("declare -x %s=\"%s\"\n", envp->key, envp->value);
+		else
+			printf("declare -x %s\n", envp->key);
+		envp = envp->next;
+	}
+}
+
+int	print_error_and_usage(char *arg, char *cmd_name)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd_name, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putchar_fd(arg[0], 2);
+	ft_putchar_fd(arg[1], 2);
+	ft_putstr_fd(": options not supported\n", 2);
+	ft_putstr_fd(cmd_name, 2);
+	ft_putstr_fd(": usage: ", 2);
+	ft_putstr_fd(cmd_name, 2);
+	if (ft_strncmp(cmd_name, "export", 7) == 0)
+		ft_putstr_fd(" [name[=value] ...] or export\n", 2);
+	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
+		ft_putstr_fd(" [name...]\n", 2);
+	else if (ft_strncmp(cmd_name, "env", 4) == 0)
+		ft_putstr_fd(" [no options, no arguments]\n", 2);
+	return (2);
+}
+
+//int	export_error_and_usage(char *arg, char *cmd_name)
+//{
+//	print_error_and_usage(arg, cmd_name);
+//	ft_putstr_fd(" [name[=value] ...] or export\n", 2);
+//	return (2);
+//}
 
 int	ft_export(char **args)
 {
