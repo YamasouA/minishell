@@ -34,7 +34,7 @@ EXPAND_FILES = expansion_dollar.c \
 	expansion_normal.c \
 	expansion_quote.c \
 	expansion_redirect.c \
-	expansion_utils.c \
+	expansion_utils.c
 EXPAND_SRCS = $(addprefix $(EXPAND_DIR), $(EXPAND_FILES))
 
 BUILTIN_DIR = srcs/builtins/
