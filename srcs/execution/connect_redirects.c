@@ -1,4 +1,4 @@
-#incllude "minishell.h"
+#include "minishell.h"
 
 bool	is_valid_file_name(t_redirect *redirect)
 {

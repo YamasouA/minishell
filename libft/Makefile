@@ -49,6 +49,16 @@ SRCS_FILES	=	ft_strlen.c \
 		ft_joinfree.c \
 		ft_xstrdup.c \
 		ft_atol_bool.c
+X_SRCS_DIR = xsrcs/
+XSRCS_FILES = error_checker.c \
+	xstrdup.c \
+	xclose.c \
+	xdup.c \
+	xfork.c \
+	xopen.c \
+	xpipe.c \
+	xunlink.c
+
 B_SRCS_DIR = list/
 B_SRCS_FILES	=	ft_lstnew.c \
 	 		ft_lstadd_front.c \

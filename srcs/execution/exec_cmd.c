@@ -42,7 +42,7 @@ int	exe_process(t_cmd *cmd)
 static void	sig_handler(int sig)
 {
 	(void)sig;
-	printf("\n");
+	ft_putchar_fd("\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 }

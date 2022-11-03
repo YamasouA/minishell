@@ -62,7 +62,8 @@ int	update_env_var(char *arg, int flag)
 
 	split_args = ft_split(arg, '=');
 	target_var = search_env(g_sh_var.environ, split_args[0]);
-	free_args(split_args);
+	// free_args(split_args);
+	free_strs(split_args);
 	if (target_var)
 	{
 		update_target_var_value(arg, target_var, flag);

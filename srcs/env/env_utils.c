@@ -74,4 +74,3 @@ void	set_data(char *environ, t_env *new)
 	new->is_env = true;
 	new->next = NULL;
 }
-

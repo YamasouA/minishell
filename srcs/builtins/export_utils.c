@@ -35,14 +35,14 @@ int	is_append_flag(char **key, char *eq_pos)
 	return (0);
 }
 
-void	free_args(char **args) //same free_strs
-{
-	size_t	i;
+// void	free_args(char **args) //same free_strs
+// {
+// 	size_t	i;
 
-	i = 0;
-	while (args[i])
-	{
-		free(args[i++]);
-	}
-	free(args);
-}
+// 	i = 0;
+// 	while (args[i])
+// 	{
+// 		free(args[i++]);
+// 	}
+// 	free(args);
+// }

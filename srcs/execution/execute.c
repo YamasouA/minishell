@@ -1,15 +1,5 @@
 #include "minishell.h"
 
-void	free_strs(char **strs)
-{
-	int	i;
-
-	i = 0;
-	while (strs[i] != NULL)
-		free(strs[i++]);
-	free(strs);
-}
-
 pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
 {
 	pid_t	pid;

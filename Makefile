@@ -3,20 +3,36 @@ CC = gcc
 NAME = minishell
 
 SRCS = main.c \
-		minishell.c \
-		env.c
+		minishell.c
+
+ENV_DIR = srcs/env/
+ENV_FILES = env.c \
+	env_utils.c \
+	search_env.c
 
 UTILS_DIR = srcs/utils/
-UTILS_FILES = err_exit.c
+UTILS_FILES = err_exit.c \
+	free_utils.c
 UTILS_SRCS = $(addprefix $(UTILS_DIR), $(UTILS_FILES))
 
 PARCER_DIR = srcs/parser/
 PARCER_FILES = parse.c \
-	parse_utils.c
+	parse_utils.c \
+	parse_heredoc_utils.c \
+	parse_heredoc.c \
+	parse_redirect.c \
+	parse_signal.c \
+	syntax_error.c
 PARCER_SRCS = $(addprefix $(PARCER_DIR), $(PARCER_FILES))
 
 EXPAND_DIR = srcs/expander/
-EXPAND_FILES = expansion.c
+EXPAND_FILES = expansion.c \
+	expansion_dollar.c \
+	expansion_heredoc.c \
+	expansion_normal.c \
+	expansion_quote.c \
+	expansion_redirect.c \
+	expansion_utils.c \
 EXPAND_SRCS = $(addprefix $(EXPAND_DIR), $(EXPAND_FILES))
 
 BUILTIN_DIR = srcs/builtins/
@@ -25,17 +41,27 @@ BUILTIN_FILES = ft_cd.c \
 	ft_env.c \
 	ft_exit.c \
 	ft_export.c \
+	export_error.c \
+	export _utils.c \
 	ft_pwd.c \
-	ft_unset.c
+	ft_unset.c \
+	print_prefix_env.c
 BUILTIN_SRCS = $(addprefix $(BUILTIN_DIR), $(BUILTIN_FILES))
 
 EXEC_DIR = srcs/execution/
-EXEC_FILES = execute.c
+EXEC_FILES = execute.c \
+	connect_redirects.c \
+	exec_cmd.c \
+	exec_error.c \
+	exec_others.c \
+	exec_utils.c \
+	handle_path.c
 EXEC_SRCS = $(addprefix $(EXEC_DIR), $(EXEC_FILES))
 
 LEXER_DIR = srcs/lexer/
 LEXER_FILES = lexer.c \
-	lexer_utils.c
+	lexer_utils.c \
+	lexer_error.c
 LEXER_SRCS = $(addprefix $(LEXER_DIR), $(LEXER_FILES))
 
 LEXER_TEST_SRCS += $(PARCER_SRCS)
