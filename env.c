@@ -132,7 +132,6 @@ t_env	*create_env(void)
 	return (env);
 }
 
-
 /*
 int main()
 {
