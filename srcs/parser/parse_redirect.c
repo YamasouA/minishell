@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	which_redir(t_token *tok)
+static int	which_redir(t_token *tok)
 {
 	if (peek(tok, "<"))
 		return (REDIRECT_IN);
@@ -13,7 +13,7 @@ int	which_redir(t_token *tok)
 	return (-1);
 }
 
-t_redirect	*new_redir(int redir_type, t_token *tok)
+static t_redirect	*new_redir(int redir_type, t_token *tok)
 {
 	t_redirect	*redirect;
 
@@ -37,7 +37,7 @@ t_redirect	*new_redir(int redir_type, t_token *tok)
 	return (redirect);
 }
 
-void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
+static void	add_tail_redir(t_node *node, int redir_type, t_token *tok)
 {
 	t_redirect	*tmp;
 

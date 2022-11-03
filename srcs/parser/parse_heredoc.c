@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
+static char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
 {
 	char	*line;
 	char	*documents;
@@ -29,7 +29,7 @@ char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
 	return (documents);
 }
 
-char	*read_heredoc(char *deli, bool *heredoc_err)
+static char	*read_heredoc(char *deli, bool *heredoc_err)
 {
 	char	*documents;
 	char	*exp_deli;
@@ -43,7 +43,7 @@ char	*read_heredoc(char *deli, bool *heredoc_err)
 	return (documents);
 }
 
-void	get_documents(t_redirect *redirect_in, bool *err)
+static void	get_documents(t_redirect *redirect_in, bool *err)
 {
 	t_redirect	*tmp;
 	char		*numstr;
@@ -65,7 +65,7 @@ void	get_documents(t_redirect *redirect_in, bool *err)
 	redirect_in = tmp;
 }
 
-void	heredoc(t_node *node, bool *heredoc_err)
+static void	heredoc(t_node *node, bool *heredoc_err)
 {
 	if (node->lhs == NULL && node->rhs == NULL)
 	{

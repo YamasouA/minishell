@@ -37,7 +37,7 @@
 //	}
 //}
 
-t_token	*create_token(t_kind kind, char *c, size_t len)
+static t_token	*create_token(t_kind kind, char *c, size_t len)
 {
 	t_token	*token;
 
@@ -52,7 +52,7 @@ t_token	*create_token(t_kind kind, char *c, size_t len)
 	return (token);
 }
 
-t_token	*tokenize(t_token *cur, char *line, t_token *head)
+static t_token	*tokenize(t_token *cur, char *line, t_token *head)
 {
 	ssize_t	len;
 

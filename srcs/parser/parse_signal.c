@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-static void	heredoc_signal_handler(int sig)
+void	heredoc_signal_handler(int sig)
 {
 	g_sh_var.signal = sig;
 }
 
-static int	check_state(void)
+int	check_state(void)
 {
 	if (g_sh_var.signal != 0)
 	{

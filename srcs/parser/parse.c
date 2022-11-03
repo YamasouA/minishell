@@ -13,7 +13,8 @@
 //B
 //so far
 
-t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
+static t_node	*parse_simple_cmd(t_token **tok, t_node *node, \
+		int *err, int *heredoc)
 {
 	int		redir_type;
 	size_t	i;
@@ -42,7 +43,7 @@ t_node	*parse_simple_cmd(t_token **tok, t_node *node, int *err, int *heredoc)
 	return (node);
 }
 
-t_node	*new_node(t_node_kind kind)
+static t_node	*new_node(t_node_kind kind)
 {
 	t_node	*node;
 
@@ -67,7 +68,7 @@ t_node	*new_node(t_node_kind kind)
 	return (node);
 }
 
-t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
+static t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 {
 	t_node	*node;
 
@@ -88,7 +89,7 @@ t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	return (node);
 }
 
-t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
+static t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
 

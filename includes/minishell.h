@@ -120,7 +120,13 @@ void	set_signal_handler(int signum, sig_t sighandler);
 
 // srcs/expander
 t_node	*expansion(t_node *node);
-char	*expand(char *str, bool heredoc);
+//char	*expand(char *str, bool heredoc);
+void	expand_cmd_instance(char **cmd_data, bool here_doc);
+
+//expansion_dollar.c
+char	*expand_dollar(char *str, char *expanded, int *i);
+
+//expansion_heredoc.c
 
 // srcs/parser
 t_node	*parse(t_token **tok, bool *heredoc_err);
@@ -128,12 +134,47 @@ void	print_node(t_node *node, int tab_n);
 void	free_node(t_node *node);
 void	free_token(t_token *tok);
 
+//parse_heredoc.c
+void	do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag);
+
+//parse_heredoc_utils.c
+char	*ft_ultoa(unsigned long n);
+unsigned long	xorshift(void);
+
+//parse_redirect.c
+void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag);
+
+//parse_signal.c
+void	heredoc_signal_handler(int sig);
+int	check_state(void);
+void	processing_on_signal(char *line, char *documents, bool *heredoc_err);
+
+//parse_utils.c
+bool	peek(t_token *tok, char *op);
+bool	consume(t_token **tok, char *op);
+size_t	cmd_len(t_token *tok);
+
+//syntax_error.c
+t_node	*syntax_error(t_node *node, t_token **tok, t_token *head);
+void	free_node(t_node *node);
+void	free_cmd(t_cmd *cmd);
+void	free_redirect(t_redirect *redir);
+void	free_token(t_token *tok);
+
 // srcs/lexer
 t_token	*lexer(char *line);
-bool	ft_isspace(char str);
 
 // lexer_utils.c
-void	ft_exit2(char *msg);
+//void	ft_exit2(char *msg);
+bool	ft_isspace(char str);
+bool	is_meta(char c);
+size_t	len_keyword(char *c);
+char	*find_quote(char *line, char quote); //same strchr?
+ssize_t	len_word(char *line);
+
+//lexer_error.c
+t_token	*tokenize_error(char token, t_token *head);
+t_token	*quote_error(char *token, t_token *head);
 
 // builtins
 char	*join_with_connector(char *s1, char *s2, char connector);

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*expand(char *str, bool heredoc)
+static char	*expand(char *str, bool heredoc)
 {
 	char	*expanded;
 	int		i;
@@ -48,7 +48,7 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 	}
 }
 
-void	expand_cmd_strs(t_cmd *cmd)
+static void	expand_cmd_strs(t_cmd *cmd)
 {
 	int		i;
 
@@ -62,7 +62,7 @@ void	expand_cmd_strs(t_cmd *cmd)
 	}
 }
 
-void	recursive_expansion(t_node *node)
+static void	recursive_expansion(t_node *node)
 {
 	if (node->lhs != NULL)
 		expansion(node->lhs);

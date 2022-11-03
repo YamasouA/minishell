@@ -1,12 +1,12 @@
 #include "minishell.h"
 
-char	*exp_exit_status(int *i)
+static char	*exp_exit_status(int *i)
 {
 	(*i)++;
 	return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
 }
 
-char	*handle_dollar(char *str, int *i)
+static char	*handle_dollar(char *str, int *i)
 {
 	char	*var;
 	int		j;
