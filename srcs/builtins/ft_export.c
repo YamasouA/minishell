@@ -181,9 +181,21 @@ int	print_error_and_usage(char *arg, char *cmd_name)
 	ft_putstr_fd(cmd_name, 2);
 	ft_putstr_fd(": usage: ", 2);
 	ft_putstr_fd(cmd_name, 2);
-	ft_putstr_fd(" [name[=value] ...] or export\n", 2);
+	if (ft_strncmp(cmd_name, "export", 7) == 0)
+		ft_putstr_fd(" [name[=value] ...] or export\n", 2);
+	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
+		ft_putstr_fd(" [name...]\n", 2);
+	else if (ft_strncmp(cmd_name, "env", 4) == 0)
+		ft_putstr_fd(" [no options, no arguments]\n", 2);
 	return (2);
 }
+
+//int	export_error_and_usage(char *arg, char *cmd_name)
+//{
+//	print_error_and_usage(arg, cmd_name);
+//	ft_putstr_fd(" [name[=value] ...] or export\n", 2);
+//	return (2);
+//}
 
 int	ft_export(char **args)
 {

@@ -132,16 +132,6 @@ t_env	*create_env(void)
 	return (env);
 }
 
-void	print_env(t_env *env)
-{
-	while (env)
-	{
-		if (env->value)
-			printf("%s=%s\n", env->key, env->value);
-		env = env->next;
-	}
-}
-
 /*
 int main()
 {

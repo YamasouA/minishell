@@ -144,6 +144,7 @@ int		ft_export(char **args);//, t_env *envp);
 int		ft_unset(char **keys);//, t_env *envp);
 int		ft_env(char **strs);//, t_env *envp);
 int		ft_exit(char **strs);//, t_env *envp);
+int		print_error_and_usage(char *arg, char *cmd_name);
 
 // srcs/execution
 void	exec(t_node *node, int pipe_flag);

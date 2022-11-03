@@ -58,11 +58,23 @@ void	del_and_free_env(char *key)//, t_env *envp)
 	}
 }
 
+//int	unset_error_and_usage(char *arg, char *cmd_name)
+//{
+//	print_error_and_usage(arg, cmd_name);
+//	ft_putstr_fd(" [name...]\n", 2);
+//	return (2);
+//}
+
 int	ft_unset(char **keys)//, t_env *envp)
 {
 	int	i;
 	int	exit_status;
 
+	if (keys[1] && (keys[1][0] == '-' && keys[1][1]))
+	{
+		exit_status = print_error_and_usage(keys[1], "unset");
+		return (exit_status);
+	}
 	exit_status = 0;
 	i = 1;
 	while (keys[i])
