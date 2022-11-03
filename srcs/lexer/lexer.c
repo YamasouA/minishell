@@ -5,24 +5,9 @@ bool	ft_isspace(char str)
 	return (str == '\t' || str == ' ');
 }
 
-t_token	*create_token(t_kind kind, char *c, size_t len)
-{
-	t_token	*token;
-
-	token = ft_calloc(1, sizeof(t_token));
-	if (token == NULL)
-		//return NULL;
-		err_exit("malloc error: ");
-	token->kind = kind;
-	token->str = c;
-	token->len = len;
-	token->next = NULL;
-	return (token);
-}
-
 bool	is_meta(char c)
 {
-	return (strchr(" \t|<>", c));
+	return (ft_strchr(" \t|<>", c));
 }
 
 size_t	len_keyword(char *c)
@@ -49,29 +34,29 @@ size_t	len_keyword(char *c)
 	return (0);
 }
 
-void	print_list(t_token *list)
-{
-	static char	*kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
-	size_t		i;
+//void	print_list(t_token *list)
+//{
+//	static char	*kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
+//	size_t		i;
+//
+//	while (list != NULL)
+//	{
+//		printf("ENUM: %s\n", kind[list->kind]);
+//		printf("str: ");
+//		i = 0;
+//		while (i < list->len)
+//		{
+//			printf("%c", *(list->str + i));
+//			i++;
+//		}
+//		printf("\n");
+//		printf("len: %zu\n", list->len);
+//		printf("\n");
+//		list = list->next;
+//	}
+//}
 
-	while (list != NULL)
-	{
-		printf("ENUM: %s\n", kind[list->kind]);
-		printf("str: ");
-		i = 0;
-		while (i < list->len)
-		{
-			printf("%c", *(list->str + i));
-			i++;
-		}
-		printf("\n");
-		printf("len: %zu\n", list->len);
-		printf("\n");
-		list = list->next;
-	}
-}
-
-char	*find_quote(char *line, char quote)
+char	*find_quote(char *line, char quote) //same strchr?
 {
 	while (*line != '\0')
 	{
@@ -91,7 +76,7 @@ ssize_t	len_word(char *line)
 	{
 		if (*tmp == '\'' || *tmp == '"')
 		{
-			tmp = find_quote(tmp + 1, *tmp);
+			tmp = find_quote(tmp + 1, *tmp); //same strchr?
 			if (tmp == NULL)
 				return (-1);
 		}
@@ -100,7 +85,7 @@ ssize_t	len_word(char *line)
 	return (tmp - line);
 }
 
-void	free_token_list(t_token *head)
+void	free_token_list(t_token *head) //same token_free?
 {
 	t_token	*tmp;
 
@@ -113,39 +98,19 @@ void	free_token_list(t_token *head)
 	}
 }
 
-t_token	*tokenize_error(char token, t_token *head)
+t_token	*create_token(t_kind kind, char *c, size_t len)
 {
-	g_sh_var.exit_status = 258;
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	ft_putchar_fd(token, 2);
-	ft_putstr_fd("'\n", 2);
-	free_token_list(head);
-	return (NULL);
-}
+	t_token	*token;
 
-t_token	*quote_error(char *token, t_token *head)
-{
-	char	*tmp;
-
-	g_sh_var.exit_status = 258;
-	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", 2);
-	while (*token != '\0')
-	{
-		if (*token == '\'' || *token == '"')
-		{
-			tmp = token;
-			token = find_quote(token + 1, *token);
-			if (token == NULL)
-			{
-				ft_putchar_fd(tmp[0], 2);
-				break ;
-			}
-		}
-		token++;
-	}
-	ft_putstr_fd("'\n", 2);
-	free_token_list(head);
-	return (NULL);
+	token = ft_calloc(1, sizeof(t_token));
+	if (token == NULL)
+		//return NULL;
+		err_exit("malloc error: ");
+	token->kind = kind;
+	token->str = c;
+	token->len = len;
+	token->next = NULL;
+	return (token);
 }
 
 t_token	*tokenize(t_token *cur, char *line, t_token *head)

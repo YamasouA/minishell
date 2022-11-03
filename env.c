@@ -9,17 +9,28 @@ t_env	*env_last(t_env *env)
 	return (env);
 }
 
-void	add_env(t_env **env, t_env *new)
+t_env	*search_env(t_env *env, char *key)
 {
-	t_env	*last;
-
-	if (*env == NULL)
+	while (env)
 	{
-		*env = new;
-		return ;
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			return (env);
+		env = env->next;
 	}
-	last = env_last(*env);
-	last->next = new;
+	return (NULL);
+}
+
+char	*search_key(t_env *env, char *key)
+{
+	while (env)
+	{
+//		printf("key:%s\n", env->key);
+		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
+			return (env->value);
+		env = env->next;
+	}
+//	printf("key:%s\n", env->key);
+	return (NULL);
 }
 
 t_env	*env_new(char *key, char *value)
@@ -61,6 +72,7 @@ void	update_or_add_value(t_env **env, char *key, char *value)
 	*env = tmp;
 }
 
+//create_env
 void	set_data(char *environ, t_env *new)
 {
 	char	*eq_pos;
@@ -86,28 +98,17 @@ void	set_data(char *environ, t_env *new)
 	new->next = NULL;
 }
 
-t_env	*search_env(t_env *env, char *key)
+void	add_env(t_env **env, t_env *new)
 {
-	while (env)
-	{
-		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
-			return (env);
-		env = env->next;
-	}
-	return (NULL);
-}
+	t_env	*last;
 
-char	*search_key(t_env *env, char *key)
-{
-	while (env)
+	if (*env == NULL)
 	{
-//		printf("key:%s\n", env->key);
-		if (ft_strncmp(env->key, key, ft_strlen(key) + 1) == 0)
-			return (env->value);
-		env = env->next;
+		*env = new;
+		return ;
 	}
-//	printf("key:%s\n", env->key);
-	return (NULL);
+	last = env_last(*env);
+	last->next = new;
 }
 
 t_env	*create_env(void)
@@ -131,16 +132,7 @@ t_env	*create_env(void)
 	}
 	return (env);
 }
-
-void	print_env(t_env *env)
-{
-	while (env)
-	{
-		if (env->value)
-			printf("%s=%s\n", env->key, env->value);
-		env = env->next;
-	}
-}
+//so far
 
 /*
 int main()

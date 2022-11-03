@@ -20,6 +20,16 @@
 //	}
 //}
 
+void	print_env(t_env *env) //move env.c ?
+{
+	while (env)
+	{
+		if (env->value)
+			printf("%s=%s\n", env->key, env->value);
+		env = env->next;
+	}
+}
+
 int	ft_env(char **strs)//, t_env *envp)
 {
 	if (strs[1])

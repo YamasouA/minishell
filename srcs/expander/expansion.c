@@ -29,7 +29,7 @@ size_t	strptr_len(char **line)
 	return (cnt);
 }
 
-void	free_split(char **ptr_ptr)
+void	free_split(char **ptr_ptr) //similar func exist ?
 {
 	size_t	len;
 	size_t	i;
