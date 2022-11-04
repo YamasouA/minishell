@@ -54,7 +54,7 @@ static void	get_documents(t_redirect *redirect_in, bool *err)
 		redirect_in = redirect_in->next;
 		if (redirect_in->type == HEREDOC)
 		{
-			redirect_in->documents = read_heredoc(redirect_in->delemiter, err);
+			redirect_in->documents = read_heredoc(redirect_in->delimiter, err);
 			numstr = ft_ultoa(xorshift());
 			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
 			if (redirect_in->file_name == NULL)

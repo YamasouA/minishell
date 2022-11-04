@@ -80,7 +80,7 @@ enum e_redirect_type
 typedef struct s_redirect		t_redirect;
 struct s_redirect
 {
-	char			*delemiter;
+	char			*delimiter;
 	t_redirect_type	type;
 	char			*file_name;
 	t_redirect		*next;
@@ -267,6 +267,7 @@ void			err_exit(char *msg);
 
 // free_utils.c
 void			free_strs(char **strs);
+void			all_free(char *line, t_token *tok, t_node *node);
 
 // utils.c
 char			*join_with_connector(char *s1, char *s2, char connector);

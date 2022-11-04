@@ -23,8 +23,8 @@ static t_redirect	*new_redir(int redir_type, t_token *tok)
 	redirect->type = redir_type;
 	if (redir_type == HEREDOC)
 	{
-		redirect->delemiter = ft_substr(tok->str, 0, tok->len);
-		if (redirect->delemiter == NULL)
+		redirect->delimiter = ft_substr(tok->str, 0, tok->len);
+		if (redirect->delimiter == NULL)
 			err_exit("malloc error: ");
 	}
 	else

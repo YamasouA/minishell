@@ -25,8 +25,8 @@ void	expand_redir_list(t_node *node)
 		node->cmd->redirect_in = node->cmd->redirect_in->next;
 		if (node->cmd->redirect_in->type == HEREDOC)
 		{
-			if (node->cmd->redirect_in->delemiter[0] != '\''
-				&& node->cmd->redirect_in->delemiter[0] != '\"')
+			if (node->cmd->redirect_in->delimiter[0] != '\''
+				&& node->cmd->redirect_in->delimiter[0] != '\"')
 				expand_cmd_instance(&(node->cmd->redirect_in->documents), 1);
 		}
 		else

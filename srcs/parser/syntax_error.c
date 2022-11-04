@@ -9,7 +9,7 @@ void	free_redirect(t_redirect *redir)
 	{
 		tmp = redir;
 		redir = redir->next;
-		free(tmp->delemiter);
+		free(tmp->delimiter);
 		free(tmp->file_name);
 		free(tmp->documents);
 		free(tmp);

@@ -17,6 +17,27 @@ static void	signal_handler(int sig)
 	}
 }
 
+void	set_signal_handler(int signum, sig_t sighandler)
+{
+	if (signal(signum, sighandler) == SIG_ERR)
+		err_exit("signal error: ");
+}
+
+//void	free_envlist(void)
+//{
+//	t_env	*tmp;
+//
+//	while (g_sh_var.environ != NULL)
+//	{
+//		tmp = g_sh_var.environ;
+//		g_sh_var.environ = g_sh_var.environ->next;
+//		free(tmp->key);
+//		free(tmp->value);
+//		free(tmp);
+//	}
+//}
+
+//exit output control
 int	get_x_pos(void)
 {
 	int		i;	
@@ -54,20 +75,6 @@ int	get_print_start(void)
 	return (x - 1);
 }
 
-void	free_envlist(void)
-{
-	t_env	*tmp;
-
-	while (g_sh_var.environ != NULL)
-	{
-		tmp = g_sh_var.environ;
-		g_sh_var.environ = g_sh_var.environ->next;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
-	}
-}
-
 void	display_exit(int x)
 {
 	struct winsize	ws;
@@ -88,12 +95,7 @@ void	display_exit(int x)
 	else
 		printf("\e[1A\e[%dCexit\n", x + PROMPT_LENGTH);
 }
-
-void	set_signal_handler(int signum, sig_t sighandler)
-{
-	if (signal(signum, sighandler) == SIG_ERR)
-		err_exit("signal error: ");
-}
+//so far
 
 void	init(char **line, t_token **tok, t_node **node)
 {
@@ -109,13 +111,6 @@ void	init(char **line, t_token **tok, t_node **node)
 	*line = NULL;
 	*tok = NULL;
 	*node = NULL;
-}
-
-void	all_free(char *line, t_token *tok, t_node *node)
-{
-	free(line);
-	free_token(tok);
-	free_node(node);
 }
 
 char	*readline_wrapper(int *x)
