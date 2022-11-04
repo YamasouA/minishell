@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-//move utils ?
 int	which_update_flag(char **key)
 {
 	char	*var_name;
@@ -30,7 +29,7 @@ int	which_update_flag(char **key)
 	return (flag);
 }
 
-bool	is_valid_var(char *str) // shareable unset func
+bool	is_valid_var(char *str)
 {
 	int	i;
 
@@ -54,7 +53,7 @@ int	is_append_flag(char **key, char *eq_pos)
 
 	if (eq_pos && eq_pos != *key && *(eq_pos - 1) == '+' && *key[0] != '+')
 	{
-		*(eq_pos - 1) = '\0'; //move below if (is_append_flag) ?
+		*(eq_pos - 1) = '\0';
 		tmp = *key;
 		*key = ft_strjoin(*key, eq_pos);
 		free(tmp);
@@ -64,15 +63,3 @@ int	is_append_flag(char **key, char *eq_pos)
 	}
 	return (0);
 }
-
-// void	free_args(char **args) //same free_strs
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (args[i])
-// 	{
-// 		free(args[i++]);
-// 	}
-// 	free(args);
-// }

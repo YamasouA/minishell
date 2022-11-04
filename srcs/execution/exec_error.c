@@ -40,6 +40,4 @@ int	print_redirect_err(char *file_name)
 	else
 		ft_putstr_fd(": ambiguous redirect\n", 2);
 	return (0);
-//	return (1);
 }
-//

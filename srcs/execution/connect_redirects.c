@@ -11,9 +11,6 @@ static bool	is_valid_file_name(t_redirect *redirect)
 			return (print_redirect_err(redirect->file_name));
 		else if (is_directory(redirect->file_name))
 		{
-			//ft_putstr_fd("minishell: ", 2);
-			//ft_putstr_fd(redirect->file_name, 2);
-			//ft_putstr_fd(": is a directory\n", 2);
 			err_is_a_directory(redirect->file_name);
 			return (0);
 		}
@@ -57,7 +54,6 @@ static void	create_heredoc_tmpfile(t_redirect *redirect_in)
 {
 	int		fd;
 
-//	flag = O_CREAT | O_WRONLY | O_TRUNC;
 	fd = open(redirect_in->file_name, O_CREAT | O_WRONLY | O_TRUNC, 00644);
 	ft_putstr_fd(redirect_in->documents, fd);
 	free(redirect_in->documents);

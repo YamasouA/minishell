@@ -6,7 +6,6 @@ static t_token	*create_token(t_kind kind, char *c, size_t len)
 
 	token = ft_calloc(1, sizeof(t_token));
 	if (token == NULL)
-		//return NULL;
 		err_exit("malloc error: ");
 	token->kind = kind;
 	token->str = c;

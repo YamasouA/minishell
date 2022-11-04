@@ -92,23 +92,3 @@ int	ft_exit(char **strs)
 	}
 	return (1);
 }
-
-//int main()
-//{
-//	t_env	*envp;
-//	//char *strs[] = {"exit", "10"};
-//	//char *strs[] = {"exit", "257"};
-//	//char *strs[] = {"exit", "-10"};
-//	//char *strs[] = {"exit", "-257"};
-//	//char *strs[] = {"exit", "-1000"};
-//	//char *strs[] = {"exit", "1000"};
-//	//char *strs[] = {"exit", "a"};
-//	//char *strs[] = {"exit", "12a"};
-//	char *strs[] = {"exit", "a12"};
-//	//char *strs[] = {"exit", "5", "2", "3"}; // 終了ステータスがよくわからない
-//	//char *strs[] = {"exit", "x", "y", "z"};
-//	//char *strs[] = {"exit", "5", "y", "z"};
-//	//char *strs[] = {"exit", "x", "3", "z"};
-//	envp = create_env();
-//	ft_exit(strs, envp);
-//}

@@ -1,18 +1,5 @@
 #include "minishell.h"
 
-//parse_utils
-//so far
-
-//bool	is_redir(t_token *tok)
-//{
-//	return (peek(tok, "<") || peek(tok, ">")
-//		|| (peek(tok, "<<") || peek(tok, ">>")));
-//}
-
-//signal
-//B
-//so far
-
 static t_node	*parse_simple_cmd(t_token **tok, t_node *node, \
 		int *err, int *heredoc)
 {
@@ -54,7 +41,6 @@ static t_node	*new_node(t_node_kind kind)
 	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
 	if (node->cmd == NULL)
 		err_exit("malloc error: ");
-	//node->cmd->cmd = NULL;
 	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (node->cmd->redirect_in == NULL)
 		err_exit("malloc error: ");
@@ -96,11 +82,6 @@ static t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 	node = (t_node *)malloc(sizeof(t_node) * 1);
 	if (node == NULL)
 		err_exit("malloc error: ");
-	//if (node == NULL || lhs == NULL || rhs == NULL)
-//	if (lhs == NULL || rhs == NULL)
-//	{
-//		return (NULL);
-//	}
 	node->kind = kind;
 	node->lhs = lhs;
 	node->rhs = rhs;
@@ -120,8 +101,6 @@ t_node	*parse(t_token **tok, bool *heredoc_err)
 	node = parse_cmd(tok, &error_flag, &heredoc_flag);
 	if (error_flag == 1)
 		return (syntax_error(node, tok, tok_head));
-//	if (node == NULL)
-//		return (NULL);
 	while (*tok != NULL && consume(tok, "|"))
 	{
 		if (tok == NULL || peek(*tok, "|"))

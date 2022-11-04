@@ -43,7 +43,7 @@ void	display_exit(int x)
 	int				line_length;
 
 	line_length = 0;
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) //cut func ?
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1)
 		return ;
 	if (0 < ws.ws_col && ws.ws_col == (int)ws.ws_col)
 		line_length = (int)ws.ws_col;

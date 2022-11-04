@@ -1,11 +1,5 @@
 #include "minishell.h"
 
-//void	ft_exit2(char *msg)
-//{
-//	printf("%s\n", msg);
-//	exit(EXIT_FAILURE);
-//}
-
 bool	ft_isspace(char str)
 {
 	return (str == '\t' || str == ' ');
@@ -40,7 +34,7 @@ size_t	len_keyword(char *c)
 	return (0);
 }
 
-char	*find_quote(char *line, char quote) //same strchr?
+char	*find_quote(char *line, char quote)
 {
 	while (*line != '\0')
 	{
@@ -60,7 +54,7 @@ ssize_t	len_word(char *line)
 	{
 		if (*tmp == '\'' || *tmp == '"')
 		{
-			tmp = find_quote(tmp + 1, *tmp); //same strchr?
+			tmp = find_quote(tmp + 1, *tmp);
 			if (tmp == NULL)
 				return (-1);
 		}

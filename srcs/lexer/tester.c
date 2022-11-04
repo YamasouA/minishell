@@ -18,7 +18,6 @@ char	*add_redirect_out(char *line, char *output)
 static void tester(char *file_name)
 {
 	int fd;
-	//char *file_name;
 	char *line;
 	t_token	*tok;
 	t_node	*node;
@@ -26,7 +25,6 @@ static void tester(char *file_name)
 	bool	heredoc_err;
 	char	*line2;
 	char	*line3;
-//	t_env	*environ;
 	if (system(NULL) == 0)
 		return ;
 	printf("\n\n\nfile_name: %s\n", file_name);

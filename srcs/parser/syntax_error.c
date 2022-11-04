@@ -1,6 +1,5 @@
 #include "minishell.h"
 
-//free or syntax_error
 void	free_redirect(t_redirect *redir)
 {
 	t_redirect	*tmp;
@@ -28,7 +27,7 @@ void	free_cmd(t_cmd *cmd)
 	free_redirect(cmd->redirect_out);
 }
 
-void	free_token(t_token *tok) //same free_token_list ?
+void	free_token(t_token *tok)
 {
 	t_token	*tmp;
 
@@ -56,7 +55,6 @@ void	free_node(t_node *node)
 	}
 	free(node);
 }
-//so far or
 
 t_node	*syntax_error(t_node *node, t_token **tok, t_token *head)
 {
@@ -80,4 +78,3 @@ t_node	*syntax_error(t_node *node, t_token **tok, t_token *head)
 	g_sh_var.exit_status = 258;
 	return (NULL);
 }
-//so far

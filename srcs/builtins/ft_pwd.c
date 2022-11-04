@@ -12,7 +12,6 @@ int	ft_pwd(char **strs)
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 	{
-		//ft_putstr_fd("error pwd", 2);
 		perror("getcwd error: ");
 		return (1);
 	}
@@ -20,8 +19,3 @@ int	ft_pwd(char **strs)
 	free(pwd);
 	return (0);
 }
-
-//int main()
-//{
-//	ft_pwd();
-//}

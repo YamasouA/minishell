@@ -1,8 +1,6 @@
 #include "minishell.h"
 
 t_sh_var	g_sh_var = {};
-//t_env	*g_environ;
-//bool	g_signal;
 
 static void	signal_handler(int sig)
 {
@@ -14,20 +12,6 @@ static void	signal_handler(int sig)
 		rl_redisplay();
 	}
 }
-
-//void	free_envlist(void)
-//{
-//	t_env	*tmp;
-//
-//	while (g_sh_var.environ != NULL)
-//	{
-//		tmp = g_sh_var.environ;
-//		g_sh_var.environ = g_sh_var.environ->next;
-//		free(tmp->key);
-//		free(tmp->value);
-//		free(tmp);
-//	}
-//}
 
 void	init(char **line, t_token **tok, t_node **node)
 {

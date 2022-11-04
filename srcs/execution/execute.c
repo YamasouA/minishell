@@ -1,5 +1,5 @@
 #include "minishell.h"
-								//t_cmd *cmd is better?
+
 static pid_t	exe_terminal_node(t_node *node, int pipe_flag)
 {
 	pid_t	pid;
@@ -10,7 +10,6 @@ static pid_t	exe_terminal_node(t_node *node, int pipe_flag)
 		g_sh_var.exit_status = exe_process(node->cmd);
 	}
 	else
-//	else if (node->cmd->cmd[0] != NULL)
 	{
 		pid = exe_cmd(node->cmd, pipe_flag);
 	}
@@ -42,8 +41,6 @@ static void	get_exit_status(pid_t pid)
 			{
 				if (WTERMSIG(status) == SIGQUIT)
 					ft_putendl_fd("Quit: 3", 2);
-				//else if(WTERMSIG(status) == SIGINT)
-					//ft_putendl_fd("", 2);
 				g_sh_var.exit_status = WTERMSIG(status) + 128;
 			}
 			else if (WIFEXITED(status))
@@ -59,7 +56,6 @@ void	exec(t_node *node, int pipe_flag)
 	static pid_t	pid;
 
 	errno = 0;
-	//g_sh_var.exit_status = 0;
 	if (pipe_flag == 0)
 	{
 		backup_stdin = xdup(0);

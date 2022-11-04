@@ -4,9 +4,6 @@ static void	exec_by_cmd_path(t_cmd *cmd, char **envstr)
 {
 	if (is_directory(cmd->cmd[0]))
 	{
-		//ft_putstr_fd("minishell: ", 2);
-		//ft_putstr_fd(cmd->cmd[0], 2);
-		//ft_putstr_fd(": is a directory\n", 2);
 		err_is_a_directory(cmd->cmd[0]);
 		exit(126);
 	}
@@ -30,7 +27,7 @@ static void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
 			print_access_err(path);
 		else if (errno == ENOENT)
 			print_access_err(cmd->cmd[0]);
-		else if (path == NULL) //&& errno == 0)
+		else if (path == NULL)
 			print_access_err(cmd->cmd[0]);
 	}
 	execve(path, cmd->cmd, envstr);
