@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/04 22:51:30 by shongou           #+#    #+#             */
+/*   Updated: 2022/11/04 22:51:32 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	echo_without_newline(char **strs, int i)
@@ -7,7 +19,7 @@ static void	echo_without_newline(char **strs, int i)
 		ft_putstr_fd(strs[i++], 1);
 		if (strs[i] != NULL)
 			ft_putstr_fd(" ", 1);
-	}			
+	}
 }
 
 static void	echo_with_option_n(char **strs)

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_heredoc.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/04 22:54:37 by shongou           #+#    #+#             */
+/*   Updated: 2022/11/04 22:54:38 by shongou          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
@@ -88,5 +100,5 @@ void	do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);
 		exit(2);
-	}	
+	}
 }
