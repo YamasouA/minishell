@@ -1,6 +1,6 @@
 #include "minishell.h"
-
-static pid_t	exe_terminal_node(t_node *node, int pipe_flag) //t_cmd *cmd is better?
+								//t_cmd *cmd is better?
+static pid_t	exe_terminal_node(t_node *node, int pipe_flag)
 {
 	pid_t	pid;
 

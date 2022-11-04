@@ -41,4 +41,3 @@ void	expand_redir_list(t_node *node)
 	}
 	node->cmd->redirect_out = head;
 }
-

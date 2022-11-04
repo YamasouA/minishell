@@ -72,14 +72,14 @@ void		ft_lstiter(t_list *lst, void (*f)(void *));
 t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 char		*ft_ltoa(long long n);
 
-char			*ft_xstrdup(const char *s1);
-void			xclose(int fd);
-int				xopen(char *path, int flags);
-void			xpipe(int pipefd[2]);
-int				xdup(int oldfd);
-void			xdup2(int oldfd, int newfd);
-pid_t			xfork(void);
-void			xunlink(const char *pathname);
-void			error_checker(char *msg, int n);
-bool			ft_atol_bool(const char *str, long long *i);
+char		*ft_xstrdup(const char *s1);
+void		xclose(int fd);
+int			xopen(char *path, int flags);
+void		xpipe(int pipefd[2]);
+int			xdup(int oldfd);
+void		xdup2(int oldfd, int newfd);
+pid_t		xfork(void);
+void		xunlink(const char *pathname);
+void		error_checker(char *msg, int n);
+bool		ft_atol_bool(const char *str, long long *i);
 #endif

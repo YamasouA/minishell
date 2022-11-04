@@ -39,4 +39,3 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 	(*i)++;
 	return (s);
 }
-

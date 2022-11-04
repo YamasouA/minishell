@@ -1,42 +1,5 @@
 #include "minishell.h"
 
-
-//void	print_list(t_token *list)
-//{
-//	static char	*kind[4] = {"TK_KEYWORD", "TK_STR", "TK_IDENT", "TK_HEAD"};
-//	size_t		i;
-//
-//	while (list != NULL)
-//	{
-//		printf("ENUM: %s\n", kind[list->kind]);
-//		printf("str: ");
-//		i = 0;
-//		while (i < list->len)
-//		{
-//			printf("%c", *(list->str + i));
-//			i++;
-//		}
-//		printf("\n");
-//		printf("len: %zu\n", list->len);
-//		printf("\n");
-//		list = list->next;
-//	}
-//}
-
-
-//void	free_token_list(t_token *head) //same token_free?
-//{
-//	t_token	*tmp;
-//
-//	head = head->next;
-//	while (head != NULL)
-//	{
-//		tmp = head;
-//		head = head->next;
-//		free(tmp);
-//	}
-//}
-
 static t_token	*create_token(t_kind kind, char *c, size_t len)
 {
 	t_token	*token;

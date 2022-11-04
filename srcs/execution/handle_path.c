@@ -40,7 +40,6 @@ static char	*check_path_list(char **env_path, char *cmd)
 	return (save_error_path);
 }
 
-
 char	*check_path(char *path)
 {
 	char	*env_path;

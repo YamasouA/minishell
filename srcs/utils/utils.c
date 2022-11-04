@@ -27,4 +27,3 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	s[i] = '\0';
 	return (s);
 }
-

@@ -10,4 +10,3 @@ char	*handle_normal(char *str, int *i, bool heredoc)
 		(*i)++;
 	return (ft_substr(str, head, *i - head));
 }
-

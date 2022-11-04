@@ -52,4 +52,3 @@ unsigned long	xorshift(void)
 	w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
 	return (w);
 }
-
