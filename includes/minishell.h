@@ -10,6 +10,8 @@
 # include <fcntl.h>
 # include <signal.h>
 # include <errno.h>
+# include <termios.h>
+# include <sys/ioctl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "libft.h"
@@ -216,6 +218,8 @@ bool			is_valid_var(char *str); // shareable unset func
 int				is_append_flag(char **key, char *eq_pos);
 // ft_cd.c
 int				ft_cd(char **strs);
+char			*no_current_dir(char *path);
+void			print_error(char *dir, char *msg);
 // ft_echo.c
 int				ft_echo(char **strs);//, t_env *envp)
 // ft_env.c
@@ -265,10 +269,15 @@ char			*check_path(char *path);
 // err_exit.c
 void			err_exit(char *msg);
 
+//exit_output_control.c
+void			display_exit(int x);
+int				get_print_start(void);
+
 // free_utils.c
 void			free_strs(char **strs);
 void			all_free(char *line, t_token *tok, t_node *node);
 
 // utils.c
 char			*join_with_connector(char *s1, char *s2, char connector);
+void			set_signal_handler(int signum, sig_t sighandler);
 #endif

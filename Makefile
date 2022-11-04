@@ -13,6 +13,7 @@ ENV_SRCS = $(addprefix $(ENV_DIR), $(ENV_FILES))
 
 UTILS_DIR = srcs/utils/
 UTILS_FILES = err_exit.c \
+	exit_output_control.c \
 	free_utils.c \
 	utils.c
 UTILS_SRCS = $(addprefix $(UTILS_DIR), $(UTILS_FILES))
@@ -39,6 +40,7 @@ EXPAND_SRCS = $(addprefix $(EXPAND_DIR), $(EXPAND_FILES))
 
 BUILTIN_DIR = srcs/builtins/
 BUILTIN_FILES = ft_cd.c \
+	cd_error.c \
 	ft_echo.c \
 	ft_env.c \
 	ft_exit.c \

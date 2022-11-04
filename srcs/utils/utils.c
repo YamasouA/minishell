@@ -27,3 +27,9 @@ char	*join_with_connector(char *s1, char *s2, char connector)
 	s[i] = '\0';
 	return (s);
 }
+
+void	set_signal_handler(int signum, sig_t sighandler)
+{
+	if (signal(signum, sighandler) == SIG_ERR)
+		err_exit("signal error: ");
+}

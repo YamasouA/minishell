@@ -4,8 +4,11 @@ int	ft_pwd(char **strs)
 {
 	char	*pwd;
 
-	if (strs[0] == NULL)
-		return (1);
+	if (strs[1] && (strs[1][0] == '-' && strs[1][1]))
+	{
+		print_error_and_usage(strs[1], "pwd");
+		return (2);
+	}
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
 	{

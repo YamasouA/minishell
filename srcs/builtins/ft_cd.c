@@ -1,18 +1,5 @@
 #include "minishell.h"
 
-static char	*no_current_dir(char *path)
-{
-	char	*pwd;
-	char	*newpwd;
-
-	ft_putendl_fd("cd: error retrieving current directory: \
-		getcwd: cannot access parent directories: \
-		No such file or directory", STDERR_FILENO);
-	pwd = search_key(g_sh_var.environ, "PWD");
-	newpwd = join_with_connector(pwd, path, '/');
-	return (newpwd);
-}
-
 static void	set_pwd(char *path)
 {
 	char	*pwd;
@@ -46,14 +33,6 @@ static int	get_path(char *s, char **path)
 	return (status);
 }
 
-static void	print_error(char *dir, char *msg)
-{
-	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
-	ft_putstr_fd(dir, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putendl_fd(msg, STDERR_FILENO);
-}
-
 static int	do_cd(char *path)
 {
 	int	status;
@@ -72,6 +51,11 @@ int	ft_cd(char **strs)
 	int		status;
 	char	*path;
 
+	if (strs[1] && (strs[1][0] == '-' && strs[1][1]))
+	{
+		print_error_and_usage(strs[1], "cd");
+		return (2);
+	}
 	status = get_path(strs[1], &path);
 	if (status == -1)
 	{
