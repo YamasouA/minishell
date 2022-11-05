@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_output_control.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:55:47 by shongou           #+#    #+#             */
-/*   Updated: 2022/11/04 22:55:49 by shongou          ###   ########.fr       */
+/*   Updated: 2022/11/05 23:33:25 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	get_print_start(void)
 	state.c_lflag &= ~(ICANON | ECHO);
 	if (tcsetattr(0, TCSANOW, &state) == -1)
 		return (0);
-	ft_putstr_fd("\e[6n", 0);
+	ft_putstr_fd("\e[6n", STDIN_FILENO);
 	x = get_x_pos();
 	if (tcsetattr(0, TCSANOW, &oldstate) == -1)
 		return (0);

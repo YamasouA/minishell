@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:52:39 by shongou           #+#    #+#             */
-/*   Updated: 2022/11/04 22:52:41 by shongou          ###   ########.fr       */
+/*   Updated: 2022/11/05 23:35:22 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	exe_process(t_cmd *cmd)
 static void	sig_handler(int sig)
 {
 	(void)sig;
-	ft_putchar_fd('\n', 1);
+	ft_putchar_fd('\n', STDOUT_FILENO);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 }

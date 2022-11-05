@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:51:36 by shongou           #+#    #+#             */
-/*   Updated: 2022/11/04 22:51:38 by shongou          ###   ########.fr       */
+/*   Updated: 2022/11/05 23:41:14 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	ft_env(char **strs)
 		if (strs[1] && (strs[1][0] == '-' && strs[1][1]))
 			print_error_and_usage(strs[1], "env");
 		else
-			ft_putstr_fd("env: does not support arguments\n", 2);
+			ft_putstr_fd("env: does not support arguments\n", STDERR_FILENO);
 		return (2);
 	}
 	print_env(g_sh_var.environ);

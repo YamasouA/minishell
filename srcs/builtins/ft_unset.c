@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:51:58 by shongou           #+#    #+#             */
-/*   Updated: 2022/11/04 22:51:59 by shongou          ###   ########.fr       */
+/*   Updated: 2022/11/05 23:41:13 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ static void	free_env(t_env **env)
 
 static void	print_unset_error(char *msg)
 {
-	ft_putstr_fd("minishell: unset: `", 2);
-	ft_putstr_fd(msg, 2);
-	ft_putstr_fd("': not a valid identifier\n", 2);
+	ft_putstr_fd("minishell: unset: `", STDERR_FILENO);
+	ft_putstr_fd(msg, STDERR_FILENO);
+	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 }
 
 static void	del_and_free_env(char *key)

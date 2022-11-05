@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shongou <shongou@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:53:04 by shongou           #+#    #+#             */
-/*   Updated: 2022/11/04 22:53:07 by shongou          ###   ########.fr       */
+/*   Updated: 2022/11/05 23:37:16 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void	get_exit_status(pid_t pid)
 			if (WIFSIGNALED(status))
 			{
 				if (WTERMSIG(status) == SIGQUIT)
-					ft_putendl_fd("Quit: 3", 2);
+					ft_putendl_fd("Quit: 3", STDERR_FILENO);
 				g_sh_var.exit_status = WTERMSIG(status) + 128;
 			}
 			else if (WIFEXITED(status))
