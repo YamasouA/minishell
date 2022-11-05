@@ -28,7 +28,7 @@ static void	exit_with_number(char **strs, size_t cnt, size_t i)
 
 	if (cnt > i + 1)
 	{
-		ft_putendl_fd("exit", STDOUT_FILENO);
+		ft_putendl_fd("exit", STDERR_FILENO);
 		ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 	}
 	else
@@ -36,7 +36,7 @@ static void	exit_with_number(char **strs, size_t cnt, size_t i)
 		ret = ft_atol_bool(strs[i], &n);
 		if (ret)
 		{
-			ft_putendl_fd("exit", STDOUT_FILENO);
+			ft_putendl_fd("exit", STDERR_FILENO);
 			exit(n);
 		}
 		else
@@ -72,7 +72,7 @@ static void	handle_hyphen(char **strs, int cnt)
 {
 	if (cnt == 2)
 	{
-		ft_putendl_fd("exit", STDOUT_FILENO);
+		ft_putendl_fd("exit", STDERR_FILENO);
 		exit(g_sh_var.exit_status);
 	}
 	else
@@ -92,7 +92,7 @@ int	ft_exit(char **strs)
 		cnt++;
 	if (cnt == 1)
 	{
-		ft_putendl_fd("exit", STDOUT_FILENO);
+		ft_putendl_fd("exit", STDERR_FILENO);
 		exit(g_sh_var.exit_status);
 	}
 	else
