@@ -1,6 +1,0 @@
-<<$cat
-cat << delimiter
-<<$HOME
-<<"$HOME"
-<<'"$HOME"'
-cat << HEREDOC arg1 arg2

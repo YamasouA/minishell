@@ -1,6 +1,0 @@
-ls | cat main.c
-ls | asf |,.ma:
-ls | cat | , | .test
-ls -l | grep *.c
-echo abc | cat
-//(not well only test) cat | cat | ls

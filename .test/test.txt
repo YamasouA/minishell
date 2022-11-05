@@ -1,3 +1,0 @@
-echo -n aaa
-echo -n -n -n aaa
-ls -l
