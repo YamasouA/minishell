@@ -1,5 +1,4 @@
 CC = gcc
-# CFLAGS = -Wall -Wextra -Werror -I $(shell brew --prefix readline)/include -g -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 NAME = minishell
 
 SRCS = main.c \
@@ -68,17 +67,6 @@ LEXER_FILES = lexer.c \
 	lexer_error.c
 LEXER_SRCS = $(addprefix $(LEXER_DIR), $(LEXER_FILES))
 
-LEXER_TEST_SRCS += $(PARCER_SRCS)
-LEXER_TEST_SRCS += $(UTILS_SRCS)
-LEXER_TEST_SRCS += $(BUILTIN_SRCS)
-LEXER_TEST_SRCS += $(LEXER_SRCS)
-LEXER_TEST_SRCS += $(EXEC_SRCS)
-LEXER_TEST_SRCS += $(EXPAND_SRCS)
-LEXER_TEST_SRCS += $(ENV_SRCS)
-LEXER_TEST_SRCS += srcs/lexer/tester.c
-
-LEXER_TEST_OBJS = $(LEXER_TEST_SRCS:.c=.o)
-
 OBJS = $(SRCS:.c=.o)
 PARCER_OBJS = $(PARCER_SRCS:.c=.o)
 EXPAND_OBJS = $(EXPAND_SRCS:.c=.o)
@@ -95,9 +83,7 @@ OBJS += $(EXEC_OBJS)
 OBJS += $(UTILS_OBJS)
 OBJS += $(ENV_OBJS)
 CFLAGS = -g -Werror -Wextra -Wall -I $(shell brew --prefix readline)/include
-#CFLAGS = -g -Werror -Wextra -Wall -I /lib/home/linuxbrew/.linuxbrew/opt/readline/include
 LDFLAGS = -L$(shell brew --prefix readline)/lib -lreadline -lhistory
-#LDFLAGS= -L /lib/home/linuxbrew/.linuxbrew/opt/readline/lib -lreadline -lhistory
 INCLUDE = -I includes -I ./libft/includes 
 LIBFT = libft/libft.a
 
@@ -108,10 +94,6 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT) $(LDFLAGS)
-#	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o $(NAME) $(OBJS) $(LIBFT)
-
-ltest: $(LEXER_TEST_OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDE) -o test $(LEXER_TEST_OBJS) $(LIBFT)
 
 $(LIBFT):
 	$(MAKE) -C ./libft
@@ -119,7 +101,6 @@ $(LIBFT):
 clean:
 	$(MAKE) clean -C ./libft
 	$(RM) $(OBJS)
-	$(RM) *.TMP
 
 fclean: clean
 	$(MAKE) fclean -C ./libft
