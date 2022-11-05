@@ -33,6 +33,8 @@ void	init(char **line, t_token **tok, t_node **node)
 	g_sh_var.signal = 0;
 	g_sh_var.environ = create_env();
 	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
+		err_exit("getcwd error: ");
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
@@ -59,11 +61,11 @@ char	*readline_wrapper(int *x)
 
 void	loop_init(bool *heredoc_err, char **line, t_token **tok, t_node **node)
 {
+	errno = 0;
+	g_sh_var.signal = 0;
 	set_signal_handler(SIGINT, signal_handler);
 	set_signal_handler(SIGQUIT, SIG_IGN);
 	all_free(*line, *tok, *node);
-	errno = 0;
-	g_sh_var.signal = 0;
 	*heredoc_err = 0;
 	*line = NULL;
 	*tok = NULL;
