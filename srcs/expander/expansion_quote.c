@@ -36,7 +36,7 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 
 	s = ft_strdup("");
 	j = *i + 1;
-	while (str[++(*i)] != '\"' && str[(*i)])
+	while (str[++(*i)] != '\"')
 	{
 		if (str[*i] == '$' && !here_doc)
 		{
@@ -46,8 +46,7 @@ char	*handle_d_quote(char *str, int *i, bool here_doc)
 			(*i)--;
 		}
 	}
-	if (str[*i])
-		s = ft_joinfree(s, ft_substr(str, j, *i - j));
+	s = ft_joinfree(s, ft_substr(str, j, *i - j));
 	(*i)++;
 	return (s);
 }

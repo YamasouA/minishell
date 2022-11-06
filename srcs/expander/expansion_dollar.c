@@ -18,6 +18,22 @@ static char	*exp_exit_status(int *i)
 	return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
 }
 
+static int	is_odd_dquote(char *str)
+{
+	int		i;
+	int		cnt;
+
+	cnt = 0;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '"')
+			cnt++;
+		i++;
+	}
+	return (cnt % 2);
+}
+
 static char	*handle_dollar(char *str, int *i)
 {
 	char	*var;
@@ -26,7 +42,7 @@ static char	*handle_dollar(char *str, int *i)
 	(*i)++;
 	if (str[*i] == '\'' || str[*i] == '\"')
 	{
-		if (str[*i] == '\'' || ft_strchr(str + *i + 1, '\"'))
+		if (str[*i] == '\'' || is_odd_dquote(str + *i + 1))
 			return (ft_strdup(""));
 		else
 			return (ft_strdup("$"));

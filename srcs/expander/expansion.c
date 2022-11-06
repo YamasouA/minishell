@@ -52,7 +52,7 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 		*cmd_data = expand(*cmd_data, here_doc);
 		free(tmp);
 	}
-	else
+	else if (here_doc)
 	{
 		tmp = *cmd_data;
 		*cmd_data = expand_documents(*cmd_data);
@@ -86,8 +86,6 @@ t_node	*expansion(t_node *node)
 {
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		if (node->cmd->cmd == NULL)
-			return (NULL);
 		expand_cmd_strs(node->cmd);
 		expand_redir_list(node);
 	}
