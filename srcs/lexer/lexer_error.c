@@ -15,7 +15,8 @@
 t_token	*tokenize_error(char token, t_token *head)
 {
 	g_sh_var.exit_status = 258;
-	ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
+	ft_putstr_fd("minishell: syntax error near unexpected token `", \
+			STDERR_FILENO);
 	ft_putchar_fd(token, STDERR_FILENO);
 	ft_putstr_fd("'\n", STDERR_FILENO);
 	free_token(head->next);
@@ -27,7 +28,8 @@ t_token	*quote_error(char *token, t_token *head)
 	char	*tmp;
 
 	g_sh_var.exit_status = 258;
-	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", STDERR_FILENO);
+	ft_putstr_fd("minishell: unexpected EOF while looking for matching `", \
+			STDERR_FILENO);
 	while (*token != '\0')
 	{
 		if (*token == '\'' || *token == '"')

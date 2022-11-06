@@ -52,7 +52,7 @@ char	*readline_wrapper(int *x)
 	if (line == NULL)
 	{
 		display_exit(*x);
-		exit(0);
+		exit(g_sh_var.exit_status);
 	}
 	if (ft_strlen(line) != 0)
 		add_history(line);

@@ -31,7 +31,10 @@ int	print_error_and_usage(char *arg, char *cmd_name)
 	ft_putstr_fd(": usage: ", STDERR_FILENO);
 	ft_putstr_fd(cmd_name, STDERR_FILENO);
 	if (ft_strncmp(cmd_name, "export", 7) == 0)
-		ft_putstr_fd(" [name[=value] ...] or export [no arguments]\n", STDERR_FILENO);
+	{
+		ft_putstr_fd(" [name[=value] ...] or export [no arguments]\n", \
+				STDERR_FILENO);
+	}
 	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
 		ft_putstr_fd(" [name...]\n", STDERR_FILENO);
 	else if (ft_strncmp(cmd_name, "env", 4) == 0)

@@ -21,7 +21,7 @@ bool	is_redirect(t_cmd *cmd)
 
 bool	which_builtin(char **cmd)
 {
-	static char	*builtins[] = {"cd", "echo", "unset", \
+	const char	*builtins[] = {"cd", "echo", "unset", \
 		"export", "exit", "pwd", "env", NULL};
 	size_t		i;
 

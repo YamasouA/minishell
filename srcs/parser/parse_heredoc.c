@@ -98,7 +98,8 @@ void	do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag)
 		heredoc(node, heredoc_err);
 	else if (heredoc_flag > 16)
 	{
-		ft_putstr_fd("minishell: maximum here-document count exceeded\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: maximum here-document count exceeded\n", \
+				STDERR_FILENO);
 		exit(2);
 	}
 }

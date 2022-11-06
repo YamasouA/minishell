@@ -70,8 +70,8 @@ void	exec(t_node *node, int pipe_flag)
 	errno = 0;
 	if (pipe_flag == 0)
 	{
-		backup_stdin = xdup(0);
-		backup_stdout = xdup(1);
+		backup_stdin = xdup(STDIN_FILENO);
+		backup_stdout = xdup(STDOUT_FILENO);
 	}
 	if (node->lhs == NULL && node->rhs == NULL)
 		pid = exe_terminal_node(node, pipe_flag);
@@ -79,8 +79,8 @@ void	exec(t_node *node, int pipe_flag)
 		go_through_tree(node, pipe_flag);
 	if (pipe_flag == 0)
 	{
-		xdup2(backup_stdin, 0);
-		xdup2(backup_stdout, 1);
+		xdup2(backup_stdin, STDIN_FILENO);
+		xdup2(backup_stdout, STDOUT_FILENO);
 		xclose(backup_stdin);
 		xclose(backup_stdout);
 		get_exit_status(pid);
