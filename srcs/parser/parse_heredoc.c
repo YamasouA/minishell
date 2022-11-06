@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
+static char	*heredoc_loop(char *exp_deli)
 {
 	char	*line;
 	char	*documents;
@@ -23,7 +23,7 @@ static char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
 		line = readline("> ");
 		if (g_sh_var.signal != 0)
 		{
-			processing_on_signal(line, documents, heredoc_err);
+			processing_on_signal(line, documents);
 			return (NULL);
 		}
 		if (line == NULL)
@@ -41,7 +41,7 @@ static char	*heredoc_loop(char *exp_deli, bool *heredoc_err)
 	return (documents);
 }
 
-static char	*read_heredoc(char *deli, bool *heredoc_err)
+static char	*read_heredoc(char *deli)
 {
 	char	*documents;
 	char	*exp_deli;
@@ -49,13 +49,13 @@ static char	*read_heredoc(char *deli, bool *heredoc_err)
 	exp_deli = expand(deli, 1);
 	rl_event_hook = check_state;
 	set_signal_handler(SIGINT, heredoc_signal_handler);
-	documents = heredoc_loop(exp_deli, heredoc_err);
+	documents = heredoc_loop(exp_deli);
 	set_signal_handler(SIGINT, SIG_IGN);
 	free(exp_deli);
 	return (documents);
 }
 
-static void	get_documents(t_redirect *redirect_in, bool *err)
+static void	get_documents(t_redirect *redirect_in)
 {
 	t_redirect	*tmp;
 	char		*numstr;
@@ -66,7 +66,7 @@ static void	get_documents(t_redirect *redirect_in, bool *err)
 		redirect_in = redirect_in->next;
 		if (redirect_in->type == HEREDOC)
 		{
-			redirect_in->documents = read_heredoc(redirect_in->delimiter, err);
+			redirect_in->documents = read_heredoc(redirect_in->delimiter);
 			numstr = ft_ultoa(xorshift());
 			redirect_in->file_name = ft_strjoin(TMPFILE, numstr);
 			if (redirect_in->file_name == NULL)
@@ -77,25 +77,25 @@ static void	get_documents(t_redirect *redirect_in, bool *err)
 	redirect_in = tmp;
 }
 
-static void	heredoc(t_node *node, bool *heredoc_err)
+static void	heredoc(t_node *node)
 {
 	if (node->lhs == NULL && node->rhs == NULL)
 	{
-		get_documents(node->cmd->redirect_in, heredoc_err);
+		get_documents(node->cmd->redirect_in);
 	}
 	if (node->lhs != NULL || node->rhs != NULL)
 	{
 		if (node->lhs != NULL)
-			heredoc(node->lhs, heredoc_err);
+			heredoc(node->lhs);
 		if (node->rhs != NULL)
-			heredoc(node->rhs, heredoc_err);
+			heredoc(node->rhs);
 	}
 }
 
-void	do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag)
+void	do_heredoc(t_node *node, int heredoc_flag)
 {
 	if (1 <= heredoc_flag && heredoc_flag <= 16)
-		heredoc(node, heredoc_err);
+		heredoc(node);
 	else if (heredoc_flag > 16)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", \

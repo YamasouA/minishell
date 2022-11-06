@@ -24,9 +24,8 @@ int	check_state(void)
 	return (0);
 }
 
-void	processing_on_signal(char *line, char *documents, bool *heredoc_err)
+void	processing_on_signal(char *line, char *documents)
 {
-	*heredoc_err = 1;
 	g_sh_var.exit_status = 1;
 	set_signal_handler(SIGINT, SIG_IGN);
 	free(line);

@@ -59,14 +59,13 @@ char	*readline_wrapper(int *x)
 	return (line);
 }
 
-void	loop_init(bool *heredoc_err, char **line, t_token **tok, t_node **node)
+void	loop_init(char **line, t_token **tok, t_node **node)
 {
 	errno = 0;
 	g_sh_var.signal = 0;
 	set_signal_handler(SIGINT, signal_handler);
 	set_signal_handler(SIGQUIT, SIG_IGN);
 	all_free(*line, *tok, *node);
-	*heredoc_err = 0;
 	*line = NULL;
 	*tok = NULL;
 	*node = NULL;
@@ -77,13 +76,12 @@ void	minishell(void)
 	char	*line;
 	t_token	*tok;
 	t_node	*node;
-	bool	heredoc_err;
 	int		x;
 
 	init(&line, &tok, &node);
 	while (1)
 	{
-		loop_init(&heredoc_err, &line, &tok, &node);
+		loop_init(&line, &tok, &node);
 		line = readline_wrapper(&x);
 		set_signal_handler(SIGINT, SIG_IGN);
 		if (ft_strlen(line) == 0)
@@ -91,7 +89,7 @@ void	minishell(void)
 		tok = lexer(line);
 		if (tok == NULL)
 			continue ;
-		node = parse(&tok, &heredoc_err);
+		node = parse(&tok);
 		if (g_sh_var.signal != 0 || node == NULL)
 			continue ;
 		node = expansion(node);

@@ -100,7 +100,7 @@ static t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 	return (node);
 }
 
-t_node	*parse(t_token **tok, bool *heredoc_err)
+t_node	*parse(t_token **tok)
 {
 	t_node	*node;
 	int		error_flag;
@@ -122,7 +122,7 @@ t_node	*parse(t_token **tok, bool *heredoc_err)
 		if (error_flag == 1)
 			return (syntax_error(node, tok, tok_head));
 	}
-	do_heredoc(node, heredoc_err, heredoc_flag);
+	do_heredoc(node, heredoc_flag);
 	*tok = tok_head;
 	return (node);
 }

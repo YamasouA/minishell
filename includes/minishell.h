@@ -169,13 +169,13 @@ bool			is_expand_none(char *str, char *expanded, int i);
 
 // parser
 // parse.c
-t_node			*parse(t_token **tok, bool *heredoc_err);
+t_node			*parse(t_token **tok);
 void			print_node(t_node *node, int tab_n);
 void			free_node(t_node *node);
 void			free_token(t_token *tok);
 
 //parse_heredoc.c
-void			do_heredoc(t_node *node, bool *heredoc_err, int heredoc_flag);
+void			do_heredoc(t_node *node, int heredoc_flag);
 
 //parse_heredoc_utils.c
 char			*ft_ultoa(unsigned long n);
@@ -189,8 +189,7 @@ void			parse_redir(t_token **tok, t_node *node, int type, \
 //parse_signal.c
 void			heredoc_signal_handler(int sig);
 int				check_state(void);
-void			processing_on_signal(char *line, char *documents, \
-										bool *heredoc_err);
+void			processing_on_signal(char *line, char *documents);
 
 //parse_utils.c
 bool			peek(t_token *tok, char *op);
