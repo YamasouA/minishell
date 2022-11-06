@@ -56,13 +56,9 @@ static t_node	*new_node(t_node_kind kind)
 	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (node->cmd->redirect_in == NULL)
 		err_exit("malloc error: ");
-	node->cmd->redirect_in->next = NULL;
 	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
 	if (node->cmd->redirect_out == NULL)
 		err_exit("malloc error: ");
-	node->cmd->redirect_out->next = NULL;
-	node->lhs = NULL;
-	node->rhs = NULL;
 	return (node);
 }
 
@@ -91,7 +87,7 @@ static t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
 
-	node = (t_node *)malloc(sizeof(t_node) * 1);
+	node = (t_node *)ft_calloc(sizeof(t_node), 1);
 	if (node == NULL)
 		err_exit("malloc error: ");
 	node->kind = kind;

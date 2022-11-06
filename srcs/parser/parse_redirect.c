@@ -78,10 +78,7 @@ void	parse_redir(t_token **tok, t_node *node, int type, int *error_flag)
 	}
 	if (type == REDIRECT_IN || type == HEREDOC)
 	{
-		if (type == HEREDOC)
-			add_tail_redir(node, type, *tok);
-		else
-			add_tail_redir(node, type, *tok);
+		add_tail_redir(node, type, *tok);
 	}
 	else if (type == REDIRECT_OUT || type == APPEND)
 	{
