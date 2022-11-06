@@ -17,7 +17,7 @@ static pid_t	exe_terminal_node(t_node *node, int pipe_flag)
 	pid_t	pid;
 
 	pid = 0;
-	if (!pipe_flag && which_builtin(node->cmd->cmd))
+	if (pipe_flag == TOP_NODE && which_builtin(node->cmd->cmd))
 	{
 		g_sh_var.exit_status = exe_process(node->cmd);
 	}
@@ -31,11 +31,11 @@ static pid_t	exe_terminal_node(t_node *node, int pipe_flag)
 static void	go_through_tree(t_node *node, int pipe_flag)
 {
 	if (node->lhs != NULL)
-		exec(node->lhs, 1);
+		exec(node->lhs, INTERNAL_NODE);
 	if (node->rhs != NULL && pipe_flag == 0)
-		exec(node->rhs, 2);
+		exec(node->rhs, RIGHT_BOTTOM_NODE);
 	else if (node->rhs != NULL)
-		exec(node->rhs, 1);
+		exec(node->rhs, INTERNAL_NODE);
 }
 
 static void	get_exit_status(pid_t pid)
@@ -68,7 +68,7 @@ void	exec(t_node *node, int pipe_flag)
 	static pid_t	pid;
 
 	errno = 0;
-	if (pipe_flag == 0)
+	if (pipe_flag == TOP_NODE)
 	{
 		backup_stdin = xdup(STDIN_FILENO);
 		backup_stdout = xdup(STDOUT_FILENO);
@@ -77,7 +77,7 @@ void	exec(t_node *node, int pipe_flag)
 		pid = exe_terminal_node(node, pipe_flag);
 	if (node->lhs != NULL || node->rhs != NULL)
 		go_through_tree(node, pipe_flag);
-	if (pipe_flag == 0)
+	if (pipe_flag == TOP_NODE)
 	{
 		xdup2(backup_stdin, STDIN_FILENO);
 		xdup2(backup_stdout, STDOUT_FILENO);

@@ -35,6 +35,9 @@
 # define EXPORT_NEW 1
 # define EXPORT_APPEND 2
 # define EXPORT_ERROR 4
+# define TOP_NODE 0
+# define INTERNAL_NODE 1
+# define RIGHT_BOTTOM_NODE 2
 
 typedef struct termios			t_termios;
 typedef enum e_token_kind		t_kind;

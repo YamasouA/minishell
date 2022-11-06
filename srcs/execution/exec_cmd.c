@@ -71,7 +71,7 @@ pid_t	exe_cmd(t_cmd *cmd, int pipe_flag)
 	{
 		set_signal_handler(SIGINT, SIG_DFL);
 		set_signal_handler(SIGQUIT, SIG_DFL);
-		if (pipe_flag != 1)
+		if (pipe_flag != INTERNAL_NODE)
 			exit(exe_process(cmd));
 		xdup2(fd[1], 1);
 		xclose(fd[1]);
