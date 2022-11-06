@@ -52,7 +52,7 @@ static char	*check_path_list(char **env_path, char *cmd)
 	return (save_error_path);
 }
 
-char	*check_path(char *path)
+char	*check_path(char *cmd_name)
 {
 	char	*env_path;
 	char	*join_path;
@@ -62,7 +62,7 @@ char	*check_path(char *path)
 	if (env_path == NULL)
 		return (NULL);
 	split_path = ft_split(env_path, ':');
-	join_path = check_path_list(split_path, path);
+	join_path = check_path_list(split_path, cmd_name);
 	free_strs(split_path);
 	if (errno == 0)
 		return (join_path);

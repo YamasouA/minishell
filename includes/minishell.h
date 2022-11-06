@@ -274,7 +274,7 @@ bool			is_path(char *cmd_name);
 bool			is_directory(char *pathname);
 
 // handle_path.c
-char			*check_path(char *path);
+char			*check_path(char *cmd_name);
 
 // utils
 // err_exit.c

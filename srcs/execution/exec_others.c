@@ -37,9 +37,7 @@ static void	exec_by_cmd_name(t_cmd *cmd, char **envstr)
 	{
 		if (errno == EACCES)
 			print_access_err(path);
-		else if (errno == ENOENT)
-			print_access_err(cmd->cmd[0]);
-		else if (path == NULL)
+		else if (errno == ENOENT || path == NULL)
 			print_access_err(cmd->cmd[0]);
 	}
 	execve(path, cmd->cmd, envstr);

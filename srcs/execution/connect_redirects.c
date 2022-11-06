@@ -44,17 +44,17 @@ static int	open_and_dup2(t_redirect *redirect)
 	if (redirect->type == APPEND)
 	{
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		xdup2(fd, 1);
+		xdup2(fd, STDOUT_FILENO);
 	}
 	else if (redirect->type == REDIRECT_OUT)
 	{
 		fd = open(redirect->file_name, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		xdup2(fd, 1);
+		xdup2(fd, STDOUT_FILENO);
 	}
 	else
 	{
 		fd = open(redirect->file_name, O_RDONLY);
-		xdup2(fd, 0);
+		xdup2(fd, STDIN_FILENO);
 		if (redirect->type == HEREDOC)
 			xunlink(redirect->file_name);
 	}
