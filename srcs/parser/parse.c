@@ -111,7 +111,7 @@ t_node	*parse(t_token **tok)
 		return (syntax_error(node, tok, tok_head));
 	while (*tok != NULL && consume(tok, "|"))
 	{
-		if (tok == NULL || peek(*tok, "|"))
+		if (*tok == NULL || peek(*tok, "|"))
 			return (syntax_error(node, tok, tok_head));
 		node = new_binary(ND_PIPE, node, \
 				parse_cmd(tok, &error_flag, &heredoc_flag));
