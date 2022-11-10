@@ -30,7 +30,7 @@ static int	get_path(char *s, char **path)
 	int	status;
 
 	status = -1;
-	if (*s == '\0')
+	if (!s || *s == '\0')
 		*path = ft_xstrdup(search_key(g_sh_var.environ, "HOME"));
 	else if (ft_strncmp(s, "-", 2) == 0)
 		*path = ft_xstrdup(search_key(g_sh_var.environ, "OLDPWD"));
