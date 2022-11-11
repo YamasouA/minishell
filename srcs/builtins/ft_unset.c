@@ -30,6 +30,8 @@ static bool	is_valid_unset_args(char *str)
 
 static void	free_env(t_env **env)
 {
+	if (env == NULL)
+		return ;
 	free((*env)->key);
 	free((*env)->value);
 	free(*env);

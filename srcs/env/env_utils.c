@@ -40,6 +40,8 @@ void	add_env(t_env **env, t_env *new)
 {
 	t_env	*last;
 
+	if (env == NULL)
+		return ;
 	if (*env == NULL)
 	{
 		*env = new;
@@ -67,7 +69,7 @@ void	set_data(char *environ, t_env *new)
 	char	*eq_pos;
 
 	if (new == NULL)
-		printf("error");
+		return ;
 	eq_pos = ft_strchr(environ, '=');
 	if (eq_pos == NULL)
 	{

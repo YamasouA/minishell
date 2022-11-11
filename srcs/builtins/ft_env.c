@@ -26,10 +26,17 @@ int	ft_env(char **strs)
 {
 	if (strs[1])
 	{
-		if (strs[1] && (strs[1][0] == '-' && strs[1][1]))
+		if (strs[1][0] == '-' && strs[1][1])
 			print_error_and_usage(strs[1], "env");
 		else
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
 			ft_putstr_fd("env: does not support arguments\n", STDERR_FILENO);
+			ft_putstr_fd("env", STDERR_FILENO);
+			ft_putstr_fd(": usage: ", STDERR_FILENO);
+			ft_putstr_fd("env", STDERR_FILENO);
+			ft_putstr_fd(" [no arguments]\n", STDERR_FILENO);
+		}
 		return (2);
 	}
 	print_env(g_sh_var.environ);
