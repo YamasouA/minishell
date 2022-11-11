@@ -49,6 +49,8 @@ static void	exit_with_arg(char **strs, size_t cnt, size_t idx)
 	bool	is_digit;
 	size_t	i;
 
+	if (ft_strncmp(strs[idx], "-", ft_strlen(strs[idx]) + 1) == 0)
+		exit_with_str(strs, idx);
 	i = 0;
 	is_digit = true;
 	if (strs[idx][i] == '-' || strs[idx][i] == '+')
@@ -77,8 +79,6 @@ static void	handle_hyphen(char **strs, int cnt)
 	}
 	else
 	{
-		if (ft_strncmp(strs[2], "-", ft_strlen(strs[2]) + 1) == 0)
-			exit_with_str(strs, 2);
 		exit_with_arg(strs, cnt, 2);
 	}
 }
