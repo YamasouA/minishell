@@ -17,7 +17,7 @@ static void	set_pwd(char *path)
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
-	if (pwd == NULL)
+	if (pwd == NULL) // reference errno?
 		pwd = no_current_dir(path);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", \
 		search_key(g_sh_var.environ, "PWD"));
@@ -38,9 +38,9 @@ static int	get_path(char *s, char **path)
 		*path = ft_xstrdup(s);
 	if (*path != NULL)
 		status = 0;
-	if (*path == NULL && *s == '\0')
+	else if (*path == NULL && (!s || *s == '\0'))
 		*path = ft_xstrdup("HOME");
-	if (*path == NULL && ft_strncmp(s, "-", 2) == 0)
+	else if (*path == NULL && ft_strncmp(s, "-", 2) == 0)
 		*path = ft_xstrdup("OLDPWD");
 	return (status);
 }
@@ -50,7 +50,7 @@ static int	do_cd(char *path)
 	int	status;
 
 	status = chdir(path);
-	if (status == -1)
+	if (status == -1) // reference errno?
 	{
 		print_error(path, "No such file or directory");
 		return (1);

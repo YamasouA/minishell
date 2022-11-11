@@ -17,9 +17,9 @@ char	*no_current_dir(char *path)
 	char	*pwd;
 	char	*newpwd;
 
-	ft_putendl_fd("cd: error retrieving current directory: \
-		getcwd: cannot access parent directories: \
-		No such file or directory", STDERR_FILENO);
+	ft_putstr_fd("cd: error retrieving current directory: ", STDERR_FILENO);
+	ft_putstr_fd("getcwd: cannot access parent directories: ", STDERR_FILENO);
+	ft_putendl_fd("No such file or directory", STDERR_FILENO);
 	pwd = search_key(g_sh_var.environ, "PWD");
 	newpwd = join_with_connector(pwd, path, '/');
 	return (newpwd);
