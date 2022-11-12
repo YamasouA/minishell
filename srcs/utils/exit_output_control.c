@@ -14,7 +14,7 @@
 
 static int	get_x_pos(void)
 {
-	int		i;
+	size_t	i;
 	char	c;
 	char	p[32];
 	char	*semic_pos;

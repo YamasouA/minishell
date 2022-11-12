@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-char	*handle_s_quote(char *str, int *i)
+char	*handle_s_quote(char *str, size_t *i)
 {
 	char	*in_quote_str;
-	int		quote_head_index;
-	int		j;
+	size_t	quote_head_index;
+	size_t	j;
 
 	quote_head_index = *i + 1;
 	j = 0;
@@ -29,7 +29,7 @@ char	*handle_s_quote(char *str, int *i)
 	return (in_quote_str);
 }
 
-char	*handle_d_quote(char *str, int *i, bool here_doc)
+char	*handle_d_quote(char *str, size_t *i, bool here_doc)
 {
 	char	*s;
 	ssize_t	j;

@@ -14,7 +14,7 @@
 
 static bool	is_valid_unset_args(char *str)
 {
-	int	i;
+	size_t	i;
 
 	if (!ft_isalpha(str[0]) && str[0] != '_')
 		return (false);
@@ -70,8 +70,8 @@ static void	del_and_free_env(char *key)
 
 int	ft_unset(char **keys)
 {
-	int	i;
-	int	exit_status;
+	size_t	i;
+	int		exit_status;
 
 	if (keys[1] && (keys[1][0] == '-' && keys[1][1]))
 	{

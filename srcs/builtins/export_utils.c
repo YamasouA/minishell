@@ -43,7 +43,7 @@ int	which_update_flag(char **key)
 
 bool	is_valid_var(char *str)
 {
-	int	i;
+	size_t	i;
 
 	if (!str)
 		return (false);

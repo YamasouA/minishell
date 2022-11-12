@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static void	echo_without_newline(char **strs, int i)
+static void	echo_without_newline(char **strs, size_t i)
 {
 	while (strs[i])
 	{
@@ -24,7 +24,7 @@ static void	echo_without_newline(char **strs, int i)
 
 static void	echo_with_option_n(char **strs)
 {
-	int	i;
+	size_t	i;
 
 	i = 2;
 	echo_without_newline(strs, i);
@@ -32,7 +32,7 @@ static void	echo_with_option_n(char **strs)
 
 static void	echo_no_option(char **strs)
 {
-	int	i;
+	size_t	i;
 
 	i = 1;
 	echo_without_newline(strs, i);

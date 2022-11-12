@@ -26,15 +26,15 @@ static char	*create_and_check_path(char *env_path, char *cmd_name)
 
 static char	*check_path_list(char **env_path, char *cmd)
 {
-	int		i;
-	char	*join_path;
-	char	*save_error_path;
+	size_t		i;
+	char		*join_path;
+	char		*save_error_path;
 
 	save_error_path = NULL;
-	i = -1;
-	while (env_path[++i] != NULL)
+	i = 0;
+	while (env_path[i] != NULL)
 	{
-		join_path = create_and_check_path(env_path[i], cmd);
+		join_path = create_and_check_path(env_path[i++], cmd);
 		if (errno == 0)
 		{
 			free(save_error_path);

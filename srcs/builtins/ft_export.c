@@ -72,9 +72,9 @@ static void	push_new_env_var(char *arg)
 
 static int	add_var_to_env(char **args)
 {
-	int	i;
-	int	flag;
-	int	exit_status;
+	size_t	i;
+	int		flag;
+	int		exit_status;
 
 	exit_status = 0;
 	i = 0;

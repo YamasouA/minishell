@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-char	*handle_normal(char *str, int *i, bool heredoc)
+char	*handle_normal(char *str, size_t *i, bool heredoc)
 {
-	int	head;
+	size_t	head;
 
 	head = *i;
 	while (str[*i] && str[*i] != '\'' && str[*i] != '\"'

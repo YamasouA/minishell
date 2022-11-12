@@ -14,7 +14,7 @@
 
 void	free_strs(char **strs)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (strs[i] != NULL)

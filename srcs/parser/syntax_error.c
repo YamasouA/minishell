@@ -29,7 +29,7 @@ void	free_redirect(t_redirect *redir)
 
 void	free_cmd(t_cmd *cmd)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (cmd->cmd[i] != NULL)

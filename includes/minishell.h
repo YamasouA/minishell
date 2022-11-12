@@ -152,17 +152,17 @@ char			*expand(char *str, bool heredoc);
 void			expand_cmd_instance(char **cmd_data, bool here_doc);
 
 //expansion_dollar.c
-char			*expand_dollar(char *str, char *expanded, int *i);
+char			*expand_dollar(char *str, char *expanded, size_t *i);
 
 //expansion_heredoc.c
 char			*expand_documents(char *str);
 
 // expansion_normal.c
-char			*handle_normal(char *str, int *i, bool heredoc);
+char			*handle_normal(char *str, size_t *i, bool heredoc);
 
 // expansion_quote.c
-char			*handle_s_quote(char *str, int *i);
-char			*handle_d_quote(char *str, int *i, bool here_doc);
+char			*handle_s_quote(char *str, size_t *i);
+char			*handle_d_quote(char *str, size_t *i, bool here_doc);
 
 // expansion_redirect.c
 void			expand_redir_list(t_node *node);
