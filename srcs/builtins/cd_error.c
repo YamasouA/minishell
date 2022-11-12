@@ -25,10 +25,18 @@ char	*no_current_dir(char *path)
 	return (newpwd);
 }
 
+void	error_discription(char *msg)
+{
+	if (*msg != '\0')
+		ft_putendl_fd(msg, STDERR_FILENO);
+	else
+		perror(msg);
+}
+
 void	print_error(char *dir, char *msg)
 {
 	ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 	ft_putstr_fd(dir, STDERR_FILENO);
 	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putendl_fd(msg, STDERR_FILENO);
+	error_discription(msg);
 }
