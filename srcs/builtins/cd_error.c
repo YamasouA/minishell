@@ -21,7 +21,13 @@ char	*no_current_dir(char *path)
 	ft_putstr_fd("getcwd: cannot access parent directories: ", STDERR_FILENO);
 	ft_putendl_fd("No such file or directory", STDERR_FILENO);
 	pwd = search_key(g_sh_var.environ, "PWD");
-	newpwd = join_with_connector(pwd, path, '/');
+	if (pwd == NULL || path == NULL)
+	{
+		free(pwd);
+		newpwd = NULL;
+	}
+	else
+		newpwd = join_with_connector(pwd, path, '/');
 	return (newpwd);
 }
 
