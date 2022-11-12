@@ -34,7 +34,14 @@ void	init(char **line, t_token **tok, t_node **node)
 	g_sh_var.environ = create_env();
 	pwd = getcwd(NULL, 0);
 	if (pwd == NULL)
-		err_exit("getcwd error: ");
+	{
+		ft_putstr_fd("init: error retrieving current directory: ", \
+				STDERR_FILENO);
+		ft_putstr_fd("getcwd: cannot access parent directories: ", \
+				STDERR_FILENO);
+		ft_putendl_fd("No such file or directory", \
+				STDERR_FILENO);
+	}
 	update_or_add_value(&g_sh_var.environ, "PWD", pwd);
 	free(pwd);
 	update_or_add_value(&g_sh_var.environ, "OLDPWD", NULL);
