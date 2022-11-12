@@ -14,8 +14,8 @@
 
 char	*expand(char *str, bool heredoc)
 {
-	char	*expanded;
-	int		i;
+	char		*expanded;
+	size_t		i;
 
 	expanded = ft_strdup("");
 	i = 0;
@@ -62,7 +62,7 @@ void	expand_cmd_instance(char **cmd_data, bool here_doc)
 
 static void	expand_cmd_strs(t_cmd *cmd)
 {
-	int		i;
+	size_t		i;
 
 	i = 0;
 	while (cmd->cmd[i] != NULL)

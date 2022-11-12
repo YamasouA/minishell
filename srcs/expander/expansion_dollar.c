@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static char	*exp_exit_status(int *i)
+static char	*exp_exit_status(size_t *i)
 {
 	(*i)++;
 	return (ft_strdup(ft_itoa(g_sh_var.exit_status)));
@@ -20,7 +20,7 @@ static char	*exp_exit_status(int *i)
 
 static int	is_odd_dquote(char *str)
 {
-	int		i;
+	size_t	i;
 	int		cnt;
 
 	cnt = 0;
@@ -34,7 +34,7 @@ static int	is_odd_dquote(char *str)
 	return (cnt % 2);
 }
 
-static char	*handle_dollar(char *str, int *i)
+static char	*handle_dollar(char *str, size_t *i)
 {
 	char	*var;
 	int		j;
@@ -62,7 +62,7 @@ static char	*handle_dollar(char *str, int *i)
 	return (var);
 }
 
-char	*expand_dollar(char *str, char *expanded, int *i)
+char	*expand_dollar(char *str, char *expanded, size_t *i)
 {
 	if (ft_isalnum(str[*i + 1]) || str[*i + 1] == '_'
 		|| str[*i + 1] == '\'' || str[*i + 1] == '"' || str[*i + 1] == '?')

@@ -68,7 +68,7 @@ t_env	*create_env(void)
 	extern char	**environ;
 	t_env		*env;
 	t_env		*new;
-	int			i;
+	size_t		i;
 
 	i = 0;
 	env = NULL;

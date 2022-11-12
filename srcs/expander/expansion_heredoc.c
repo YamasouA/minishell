@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static char	*exp_dollar(char *str, int *i)
+static char	*exp_dollar(char *str, size_t *i)
 {
 	char	*var;
 	int		j;
@@ -35,9 +35,9 @@ static char	*exp_dollar(char *str, int *i)
 
 char	*expand_documents(char *str)
 {
-	int		i;
-	int		head;
-	char	*expanded;
+	size_t		i;
+	size_t		head;
+	char		*expanded;
 
 	expanded = ft_strdup("");
 	i = 0;
