@@ -46,17 +46,17 @@ static t_node	*new_node(t_node_kind kind)
 {
 	t_node	*node;
 
-	node = (t_node *)ft_calloc(sizeof(t_node), 1);
+	node = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (node == NULL)
 		err_exit("malloc error: ");
 	node->kind = kind;
-	node->cmd = (t_cmd *)ft_calloc(sizeof(t_cmd), 1);
+	node->cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
 	if (node->cmd == NULL)
 		err_exit("malloc error: ");
-	node->cmd->redirect_in = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	node->cmd->redirect_in = (t_redirect *)ft_calloc(1, sizeof(t_redirect));
 	if (node->cmd->redirect_in == NULL)
 		err_exit("malloc error: ");
-	node->cmd->redirect_out = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	node->cmd->redirect_out = (t_redirect *)ft_calloc(1, sizeof(t_redirect));
 	if (node->cmd->redirect_out == NULL)
 		err_exit("malloc error: ");
 	return (node);
@@ -69,7 +69,7 @@ static t_node	*parse_cmd(t_token **tok, int *error_flag, int *heredoc_flag)
 	if (*tok == NULL)
 		return (NULL);
 	node = new_node(ND_COMMAND);
-	node->cmd->cmd = (char **)ft_calloc(sizeof(char *), (cmd_len(*tok) + 1));
+	node->cmd->cmd = (char **)ft_calloc((cmd_len(*tok) + 1), sizeof(char *));
 	if (node->cmd->cmd == NULL)
 	{
 		err_exit("malloc error: ");
@@ -87,7 +87,7 @@ static t_node	*new_binary(t_node_kind kind, t_node *lhs, t_node *rhs)
 {
 	t_node	*node;
 
-	node = (t_node *)ft_calloc(sizeof(t_node), 1);
+	node = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (node == NULL)
 		err_exit("malloc error: ");
 	node->kind = kind;

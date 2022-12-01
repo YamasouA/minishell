@@ -18,10 +18,7 @@ static void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		ft_putchar_fd('\n', 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		g_sh_var.signal = sig;
 	}
 }
 
@@ -55,7 +52,16 @@ char	*readline_wrapper(int *x)
 	char	*line;
 
 	*x = get_print_start();
+	rl_event_hook = check_state;
 	line = readline("minishell> ");
+	if (g_sh_var.signal != 0)
+	{
+		g_sh_var.exit_status = 1;
+//		ft_putchar_fd('\n', 2);
+//		rl_on_new_line();
+//		rl_replace_line("", 0);
+//		rl_redisplay();
+	}
 	if (line == NULL)
 	{
 		display_exit(*x);

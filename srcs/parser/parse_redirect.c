@@ -29,7 +29,7 @@ static t_redirect	*new_redir(int redir_type, t_token *tok)
 {
 	t_redirect	*redirect;
 
-	redirect = (t_redirect *)ft_calloc(sizeof(t_redirect), 1);
+	redirect = (t_redirect *)ft_calloc(1, sizeof(t_redirect));
 	if (redirect == NULL)
 		err_exit("malloc error: ");
 	redirect->type = redir_type;
